@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 
 namespace CoTech.Bi.Rx {
-  public static class EventEmitter {
+  public class EventEmitter {
 
-    private static ServiceContainer container = new ServiceContainer();
+    private ServiceContainer container = new ServiceContainer();
 
-    public static Channel<T> CreateChannel<T>() {
+    public Channel<T> CreateChannel<T>() {
       if(container.GetService(typeof(Channel<T>)) != null) {
         throw new Exception("channel already exists");
       }
@@ -16,7 +16,7 @@ namespace CoTech.Bi.Rx {
       return channel;
     }
 
-    public static IDisposable Subscribe<T>(IObserver<T> observer) {
+    public IDisposable Subscribe<T>(IObserver<T> observer) {
       Channel<T> channel = (Channel<T>)container.GetService(typeof(Channel<T>));
       if(channel == null){
         throw new Exception("channel not found");

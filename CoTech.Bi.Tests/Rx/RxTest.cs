@@ -6,7 +6,7 @@ namespace CoTech.Bi.Tests
 {
     public class RxTest
     {
-
+        EventEmitter emitter = new EventEmitter();
         public RxTest()
         {
 
@@ -16,9 +16,9 @@ namespace CoTech.Bi.Tests
         public void SubscribeToIntChannelAndReceive24()
         {
         //Given
-        Channel<Int32> intChannel = EventEmitter.CreateChannel<Int32>();
+        Channel<Int32> intChannel = emitter.CreateChannel<Int32>();
         SaveValueObserver<Int32> observer = new SaveValueObserver<Int32>();
-        IDisposable subscription = EventEmitter.Subscribe<int>(observer);
+        IDisposable subscription = emitter.Subscribe<int>(observer);
         //When
         intChannel.SendEvent(24);
         //Then
