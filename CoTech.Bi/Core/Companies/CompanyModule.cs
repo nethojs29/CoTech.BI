@@ -1,11 +1,11 @@
 using CoTech.Bi.Loader;
-using CoTech.Bi.Modules.Companies.Models;
+using CoTech.Bi.Core.Companies.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CoTech.Bi.Modules.Companies
+namespace CoTech.Bi.Core.Companies
 {
   public class CompanyModule : IModule
   {

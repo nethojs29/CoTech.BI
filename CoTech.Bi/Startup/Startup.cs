@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CoTech.Bi.Rx;
 using CoTech.Bi.Loader;
+using CoTech.Bi.Entity;
 
 namespace CoTech.Bi
 {
@@ -30,9 +31,10 @@ namespace CoTech.Bi
         public void ConfigureServices(IServiceCollection services)
         {
 			services.AddEntityFrameworkMySql();
+            services.AddDbContext<BiContext>();
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
-                options.Audience = "http://localhost:5001/";
-                options.Authority = "http://localhost:5000/";
+                options.Audience = "http://localhost:5001/"; // web host
+                options.Authority = "http://localhost:5000/"; // api host
             });
             services.AddCors();
             services.AddMvc();
