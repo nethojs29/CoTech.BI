@@ -1,4 +1,4 @@
-namespace CoTech.Bi.Modules.Companies.Models
+namespace CoTech.Bi.Core.Companies.Models
 {
     public class CompanyEntity {
         public long Id { get; set; }

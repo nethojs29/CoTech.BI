@@ -1,11 +1,16 @@
 ﻿using System;
+using CoTech.Bi.Authorization;
+using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Loader;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace CoTech.Bi
+namespace CoTech.Bi.Entity
 {
-    public partial class BiContext : DbContext
+    public partial class BiContext : IdentityDbContext<UserEntity, RoleEntity, long>
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

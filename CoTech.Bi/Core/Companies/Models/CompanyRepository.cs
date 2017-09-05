@@ -1,6 +1,7 @@
+using CoTech.Bi.Entity;
 using Microsoft.EntityFrameworkCore;
 
-namespace CoTech.Bi.Modules.Companies.Models
+namespace CoTech.Bi.Core.Companies.Models
 {
     public class CompanyRepository
     {
