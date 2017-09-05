@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using CoTech.Bi.Core.Permissions.Model;
 using CoTech.Bi.Entity;
+using CoTech.Bi.Identity.DataAccess;
 
 namespace CoTech.Bi.Core.Users
 {
@@ -16,6 +17,7 @@ namespace CoTech.Bi.Core.Users
   {
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
+
     }
 
     public void ConfigureEntities(ModelBuilder modelBuilder)
@@ -25,15 +27,16 @@ namespace CoTech.Bi.Core.Users
 
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddIdentity<UserEntity, RoleEntity>()
-        .AddEntityFrameworkStores<BiContext>()
+      services.AddIdentity<UserEntity, Role>()
         .AddDefaultTokenProviders();
+      services.AddTransient<IUserStore<UserEntity>, UserStorage>();
+      services.AddTransient<IRoleStore<Role>, RoleStorage>();
       services.AddScoped<UserRepository>();
       services.Configure<IdentityOptions>(options => {
           // Password settings
-          // options.Password.RequireDigit = true;
-          // options.Password.RequiredLength = 8;
-          // options.Password.RequireNonAlphanumeric = false;
+          options.Password.RequireDigit = false;
+          options.Password.RequiredLength = 4;
+          options.Password.RequireNonAlphanumeric = false;
           options.Password.RequireUppercase = false;
           options.Password.RequireLowercase = false;
 

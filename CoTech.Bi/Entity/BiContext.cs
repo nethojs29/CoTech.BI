@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CoTech.Bi.Entity
 {
-    public partial class BiContext : IdentityDbContext<UserEntity, RoleEntity, long>
+    public partial class BiContext : DbContext
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
                 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("Server=192.168.1.190;User Id=bi;Password=bi-core;Database=bi-core");
+                optionsBuilder.UseMySql("Server=localhost;User Id=bi;Password=bi-core;Database=bi-core");
             }
         }
 

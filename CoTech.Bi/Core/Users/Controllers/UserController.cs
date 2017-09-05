@@ -31,8 +31,9 @@ namespace CoTech.Bi.Core.Users.Controllers {
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUserReq req){
-      var password = new Random().NextDouble().ToString();
+      var password = "benancio";
       var entity = req.toEntity();
+      Console.WriteLine($"{req.Name}, {password}");
       var result = await userManager.CreateAsync(entity, password);
       if(result.Succeeded) {
         return new CreatedResult($"/api/users/{entity.Id}", entity);
@@ -41,11 +42,14 @@ namespace CoTech.Bi.Core.Users.Controllers {
       }
     }
 
-    // public async Task<IActionResult> LogIn([FromBody] LogInReq req){
-    //   var result = await signInManager.PasswordSignInAsync(req.Email, req.Password, false, false);
-    //   if(result.Succeeded){
-    //     return new OkObjectResult(userManager.Toke)
-    //   }
-    // }
+    [HttpPost("login")]
+    public async Task<IActionResult> LogIn([FromBody] LogInReq req){
+      var result = await signInManager.PasswordSignInAsync(req.Email, req.Password, false, false);
+      if(result.Succeeded){
+        return new OkResult();
+      } else {
+        return new BadRequestResult();
+      }
+    }
   }
 }
