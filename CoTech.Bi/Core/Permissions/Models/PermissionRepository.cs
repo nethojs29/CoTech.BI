@@ -1,5 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Entity;
+using CoTech.Bi.Identity.DataAccess;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoTech.Bi.Core.Permissions.Model
@@ -16,8 +19,25 @@ namespace CoTech.Bi.Core.Permissions.Model
           this.context = context;
         }
 
-        public Task<PermissionEntity> GetUserPermissionInCompany(long userId, long companyId){
-          return db.FirstAsync(p => p.CompanyId == companyId && p.UserId == userId);
+        public Task<List<PermissionEntity>> GetUserPermissionsInCompany(long userId, long companyId){
+          return db.Where(p => p.UserId == userId && p.CompanyId == companyId).ToListAsync();
+        }
+
+        public Task<bool> IsUserRoot(long userId) {
+          return db.AnyAsync(p => p.UserId == userId && p.RoleId == (long)Role.Root);
+        }
+
+        public Task<bool> UserHasAtLeastOneRoleInCompany(long userId, long companyId, IEnumerable<long> roles) {
+          return db.Where(p => p.UserId == userId && p.CompanyId == companyId && roles.Contains(p.RoleId))
+            .AnyAsync();
+        }
+
+        public Task<bool> UserHasAtLeastOneRoleInCompanyOrIsRoot(long userId, long companyId, IEnumerable<long> roles){
+          return db.Where(p => p.UserId == userId && 
+              (p.RoleId == (long)Role.Root ||
+                  ( p.CompanyId == companyId && roles.Contains(p.RoleId) )
+              )
+          ).AnyAsync();
         }
     }
 }

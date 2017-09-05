@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
+using CoTech.Bi.Core.Permissions.Model;
 using CoTech.Bi.Core.Users.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -24,12 +25,13 @@ namespace CoTech.Bi.Core.Users.Controllers {
     }
 
     [HttpGet]
-    [RequiresPermission("Root")]
+    [RequiresRoot]
     public async Task<IActionResult> GetAll() {
       return new OkObjectResult(await userRepository.GetAll());
     }
 
     [HttpPost]
+    [RequiresRoot]
     public async Task<IActionResult> Create([FromBody] CreateUserReq req){
       var password = "benancio";
       var entity = req.toEntity();
@@ -46,6 +48,9 @@ namespace CoTech.Bi.Core.Users.Controllers {
     public async Task<IActionResult> LogIn([FromBody] LogInReq req){
       var result = await signInManager.PasswordSignInAsync(req.Email, req.Password, false, false);
       if(result.Succeeded){
+        var user = await userManager.FindByEmailAsync(req.Email);
+        var claims = await signInManager.CreateUserPrincipalAsync(user);
+        
         return new OkResult();
       } else {
         return new BadRequestResult();

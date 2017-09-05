@@ -6,11 +6,11 @@ namespace CoTech.Bi.Authorization
 {
     public class PermissionsAuthorizationRequirement : IAuthorizationRequirement
     {
-        public IEnumerable<string> RequiredPermissions { get; }
+        public IEnumerable<long> RequiredRoles { get; }
 
-        public PermissionsAuthorizationRequirement(IEnumerable<string> requiredPermissions)
+        public PermissionsAuthorizationRequirement(IEnumerable<long> requiredRoles)
         {
-            RequiredPermissions = requiredPermissions;
+            RequiredRoles = requiredRoles;
         }
     }
 }

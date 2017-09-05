@@ -48,7 +48,7 @@ namespace CoTech.Bi.Identity.DataAccess
 
     public Task<UserEntity> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
     {
-      return db.FirstOrDefaultAsync(u => u.Email == normalizedUserName);
+      return db.FirstOrDefaultAsync(u => u.Email == normalizedUserName.ToLower());
     }
 
     public Task<string> GetNormalizedUserNameAsync(UserEntity user, CancellationToken cancellationToken)
@@ -68,7 +68,7 @@ namespace CoTech.Bi.Identity.DataAccess
 
     public Task SetNormalizedUserNameAsync(UserEntity user, string normalizedName, CancellationToken cancellationToken)
     {
-      user.Email = normalizedName;
+      user.Email = normalizedName.ToLower();
       return Task.CompletedTask;
     }
 
@@ -125,7 +125,7 @@ namespace CoTech.Bi.Identity.DataAccess
 
     public async Task<UserEntity> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
     {
-      var user = await db.FirstOrDefaultAsync(u => u.Email == normalizedEmail);
+      var user = await db.FirstOrDefaultAsync(u => u.Email == normalizedEmail.ToLower());
       return user;
     }
 
@@ -136,7 +136,7 @@ namespace CoTech.Bi.Identity.DataAccess
 
     public Task SetNormalizedEmailAsync(UserEntity user, string normalizedEmail, CancellationToken cancellationToken)
     {
-      user.Email = normalizedEmail;
+      user.Email = normalizedEmail.ToLower();
       return Task.CompletedTask;
     }
 

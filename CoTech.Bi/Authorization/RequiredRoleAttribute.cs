@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,22 +11,22 @@ using CoTech.Bi.Core.Users.Models;
 
 namespace CoTech.Bi.Authorization
 {
-    public class RequiresPermissionAttribute : TypeFilterAttribute
+    public class RequiresRoleAttribute : TypeFilterAttribute
     {
-        public RequiresPermissionAttribute(params string[] permissions)
-          : base(typeof(RequiresPermissionAttributeImpl))
+        public RequiresRoleAttribute(params long[] permissions)
+          : base(typeof(RequiresRoleAttributeImpl))
         {
             Arguments = new[] { new PermissionsAuthorizationRequirement(permissions) };
         }
 
-        private class RequiresPermissionAttributeImpl : Attribute, IAsyncActionFilter
+        private class RequiresRoleAttributeImpl : Attribute, IAsyncActionFilter
         {
             private readonly ILogger _logger;
       private readonly UserManager<UserEntity> userManager;
       private readonly PermissionRepository permissionRepo;
             private readonly PermissionsAuthorizationRequirement _requiredPermissions;
 
-            public RequiresPermissionAttributeImpl(ILogger<RequiresPermissionAttribute> logger,
+            public RequiresRoleAttributeImpl(ILogger<RequiresRoleAttribute> logger,
                                             UserManager<UserEntity> userManager,
                                             PermissionRepository permissionRepo,
                                             PermissionsAuthorizationRequirement requiredPermissions)
@@ -39,20 +40,30 @@ namespace CoTech.Bi.Authorization
             public async Task OnActionExecutionAsync(ActionExecutingContext context,
                                                      ActionExecutionDelegate next)
             {
-                if(context.ActionArguments.ContainsKey("company")){
-                    var companyId = context.ActionArguments["company"] as long?;
-                    if (companyId.HasValue){
-                        var result = await permissionRepo.GetUserPermissionInCompany(
-                            Int64.Parse(userManager.GetUserId(context.HttpContext.User)), 
-                            companyId.Value);
-                        if (result == null) {
-                            context.Result = new ChallengeResult();
-                            return;
-                        }
-                    }
+                var userId = userManager.GetUserId(context.HttpContext.User);
+                if(userId == null){
+                  context.Result = new ChallengeResult();
+                  return;
+                }
+                if(!context.ActionArguments.ContainsKey("company")) {
+                    context.Result = new ChallengeResult();
+                    return;
+                }
+                var companyId = context.ActionArguments["company"] as long?;
+                if(!companyId.HasValue){
+                    context.Result = new ChallengeResult();
+                    return;
+                }
+                var hasRole = await permissionRepo.UserHasAtLeastOneRoleInCompanyOrIsRoot(
+                    Int64.Parse(userId),
+                    companyId.Value, 
+                    _requiredPermissions.RequiredRoles
+                );
+                if(!hasRole){
+                    context.Result = new ChallengeResult();
+                    return;
                 }
                 await next();
-
             }
         }
     }
