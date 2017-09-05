@@ -11,30 +11,22 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceRoot}/CoTech.Bi/bin/Debug/netcoreapp2.0/CoTech.Bi.dll",
-            "args": [],
+            "args": ["--environment=DEV"],
             "cwd": "${workspaceRoot}/CoTech.Bi",
             "stopAtEntry": false,
-            "internalConsoleOptions": "openOnSessionStart",
-            "launchBrowser": {
-                "enabled": true,
-                "args": "${auto-detect-url}",
-                "windows": {
-                    "command": "cmd.exe",
-                    "args": "/C start ${auto-detect-url}"
-                },
-                "osx": {
-                    "command": "open"
-                },
-                "linux": {
-                    "command": "xdg-open"
-                }
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceRoot}/Views"
-            }
+            "justMyCode": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": ".NET Core Launch (dev)",
+            "type": "coreclr",
+            "request": "launch",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "/usr/local/share/dotnet/dotnet",
+            "args": ["run"],
+            "cwd": "${workspaceRoot}/CoTech.Bi",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
         },
         {
             "name": ".NET Core Attach",

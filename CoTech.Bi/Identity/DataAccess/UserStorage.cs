@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -11,7 +12,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoTech.Bi.Identity.DataAccess
 {
-  public class UserStorage : IUserStore<UserEntity>, IUserPasswordStore<UserEntity>, IUserEmailStore<UserEntity>
+  public class UserStorage : IUserStore<UserEntity>, 
+                             IUserPasswordStore<UserEntity>, 
+                             IUserEmailStore<UserEntity>,
+                             IUserClaimStore<UserEntity>
   {
     private readonly BiContext context;
     private DbSet<UserEntity> db {
@@ -53,7 +57,7 @@ namespace CoTech.Bi.Identity.DataAccess
 
     public Task<string> GetNormalizedUserNameAsync(UserEntity user, CancellationToken cancellationToken)
     {
-      return Task.FromResult(user.Email);
+      return Task.FromResult(user.Email.ToLower());
     }
 
     public Task<string> GetUserIdAsync(UserEntity user, CancellationToken cancellationToken)
@@ -63,7 +67,7 @@ namespace CoTech.Bi.Identity.DataAccess
 
     public Task<string> GetUserNameAsync(UserEntity user, CancellationToken cancellationToken)
     {
-      return Task.FromResult(user.Name);
+      return Task.FromResult(user.Email);
     }
 
     public Task SetNormalizedUserNameAsync(UserEntity user, string normalizedName, CancellationToken cancellationToken)
@@ -74,7 +78,7 @@ namespace CoTech.Bi.Identity.DataAccess
 
     public Task SetUserNameAsync(UserEntity user, string userName, CancellationToken cancellationToken)
     {
-      user.Name = userName;
+      user.Email = userName;
       return Task.CompletedTask;
     }
 
@@ -172,6 +176,37 @@ namespace CoTech.Bi.Identity.DataAccess
       Dispose(true);
       // TODO: uncomment the following line if the finalizer is overridden above.
       // GC.SuppressFinalize(this);
+    }
+
+    public Task<IList<Claim>> GetClaimsAsync(UserEntity user, CancellationToken cancellationToken)
+    {
+      IList<Claim> claims = new List<Claim>();
+      claims.Add(new Claim(ClaimTypes.Name, user.Id.ToString()));
+      return Task.FromResult(claims);
+    }
+
+    public Task AddClaimsAsync(UserEntity user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+    {
+      return Task.CompletedTask;
+    }
+
+    public Task ReplaceClaimAsync(UserEntity user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+    {
+      return Task.CompletedTask;
+    }
+
+    public Task RemoveClaimsAsync(UserEntity user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+    {
+      return Task.CompletedTask;
+    }
+
+    public async Task<IList<UserEntity>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+    {
+      if(claim.Type != ClaimTypes.NameIdentifier) return null;
+      var id = Int64.Parse(claim.Value);
+      IList<UserEntity> users = new List<UserEntity>();
+      users.Add(await db.FindAsync(id));
+      return users;
     }
     #endregion
 

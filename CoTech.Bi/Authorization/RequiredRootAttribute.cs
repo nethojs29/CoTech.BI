@@ -8,6 +8,9 @@ using Microsoft.Extensions.Logging;
 using CoTech.Bi.Core.Permissions.Model;
 using Microsoft.AspNetCore.Identity;
 using CoTech.Bi.Core.Users.Models;
+using Microsoft.AspNetCore.Http.Headers;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace CoTech.Bi.Authorization
 {
@@ -36,14 +39,14 @@ namespace CoTech.Bi.Authorization
             public async Task OnActionExecutionAsync(ActionExecutingContext context,
                                                      ActionExecutionDelegate next)
             {
-                var userId = userManager.GetUserId(context.HttpContext.User);
-                if(userId == null){
-                  context.Result = new ChallengeResult();
+                var userId = context.UserId();
+                if(userId == -1){
+                  context.Result = new UnauthorizedResult();
                   return;
                 }
-                var isRoot = await permissionRepo.IsUserRoot(Int64.Parse(userId));
+                var isRoot = await permissionRepo.IsUserRoot(userId);
                 if(!isRoot){
-                    context.Result = new ChallengeResult();
+                    context.Result = new UnauthorizedResult();
                     return;
                 }
                 await next();

@@ -40,27 +40,27 @@ namespace CoTech.Bi.Authorization
             public async Task OnActionExecutionAsync(ActionExecutingContext context,
                                                      ActionExecutionDelegate next)
             {
-                var userId = userManager.GetUserId(context.HttpContext.User);
-                if(userId == null){
-                  context.Result = new ChallengeResult();
+                var userId = context.UserId();
+                if(userId == -1){
+                  context.Result = new UnauthorizedResult();
                   return;
                 }
                 if(!context.ActionArguments.ContainsKey("company")) {
-                    context.Result = new ChallengeResult();
+                    context.Result = new UnauthorizedResult();
                     return;
                 }
                 var companyId = context.ActionArguments["company"] as long?;
                 if(!companyId.HasValue){
-                    context.Result = new ChallengeResult();
+                    context.Result = new UnauthorizedResult();
                     return;
                 }
                 var hasRole = await permissionRepo.UserHasAtLeastOneRoleInCompanyOrIsRoot(
-                    Int64.Parse(userId),
+                    userId,
                     companyId.Value, 
                     _requiredPermissions.RequiredRoles
                 );
                 if(!hasRole){
-                    context.Result = new ChallengeResult();
+                    context.Result = new UnauthorizedResult();
                     return;
                 }
                 await next();

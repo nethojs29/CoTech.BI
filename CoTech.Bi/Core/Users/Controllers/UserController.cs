@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Core.Users.Controllers {
   [Route("api/users")]
-  public class UserController : Controller
+    public class UserController : Controller
   {
     private readonly UserManager<UserEntity> userManager;
     private readonly SignInManager<UserEntity> signInManager;
@@ -33,7 +33,7 @@ namespace CoTech.Bi.Core.Users.Controllers {
     [HttpPost]
     [RequiresRoot]
     public async Task<IActionResult> Create([FromBody] CreateUserReq req){
-      var password = "benancio";
+      var password = CreateRandomPassword(8);
       var entity = req.toEntity();
       Console.WriteLine($"{req.Name}, {password}");
       var result = await userManager.CreateAsync(entity, password);
@@ -44,17 +44,19 @@ namespace CoTech.Bi.Core.Users.Controllers {
       }
     }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> LogIn([FromBody] LogInReq req){
-      var result = await signInManager.PasswordSignInAsync(req.Email, req.Password, false, false);
-      if(result.Succeeded){
-        var user = await userManager.FindByEmailAsync(req.Email);
-        var claims = await signInManager.CreateUserPrincipalAsync(user);
-        
-        return new OkResult();
-      } else {
-        return new BadRequestResult();
+    private static string CreateRandomPassword(int passwordLength)
+    {
+      string allowedChars = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789";
+      char[] chars = new char[passwordLength];
+      Random rd = new Random();
+
+      for (int i = 0; i < passwordLength; i++)
+      {
+        chars[i] = allowedChars[rd.Next(0, allowedChars.Length)];
       }
+
+      return new string(chars);
     }
+
   }
 }
