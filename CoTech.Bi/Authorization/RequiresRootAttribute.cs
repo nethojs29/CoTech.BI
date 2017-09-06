@@ -27,7 +27,7 @@ namespace CoTech.Bi.Authorization
             private readonly UserManager<UserEntity> userManager;
             private readonly PermissionRepository permissionRepo;
 
-            public RequiresRootAttributeImpl(ILogger<RequiresRoleAttribute> logger,
+            public RequiresRootAttributeImpl(ILogger<RequiresImportantRoleAttribute> logger,
                                             UserManager<UserEntity> userManager,
                                             PermissionRepository permissionRepo)
             {

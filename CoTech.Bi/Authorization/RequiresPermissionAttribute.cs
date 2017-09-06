@@ -11,6 +11,7 @@ using CoTech.Bi.Core.Users.Models;
 using Microsoft.AspNetCore.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace CoTech.Bi.Authorization
 {
@@ -27,7 +28,7 @@ namespace CoTech.Bi.Authorization
             private readonly UserManager<UserEntity> userManager;
             private readonly PermissionRepository permissionRepo;
 
-            public RequiresPermissionAttributeImpl(ILogger<RequiresRoleAttribute> logger,
+            public RequiresPermissionAttributeImpl(ILogger<RequiresPermissionAttribute> logger,
                                             UserManager<UserEntity> userManager,
                                             PermissionRepository permissionRepo)
             {

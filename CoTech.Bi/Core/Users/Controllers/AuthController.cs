@@ -38,7 +38,7 @@ namespace CoTech.Bi.Core.Users.Controllers
 			_configurationRoot = configurationRoot;
 		}
 
-		[HttpPost("CreateToken")]
+		[HttpPost]
 		public async Task<IActionResult> CreateToken([FromBody] LogInReq model)
 		{
 			try

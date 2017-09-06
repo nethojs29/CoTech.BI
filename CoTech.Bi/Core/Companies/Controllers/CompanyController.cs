@@ -17,6 +17,10 @@ namespace CoTech.Bi.Core.Companies.Controllers
           this.permissionRepo = permissionRepo;
         }
 
+        /// <summary>
+        /// Obtiene todas las empresas
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [RequiresRoot]
         public async Task<IActionResult> GetAll(){
@@ -56,7 +60,7 @@ namespace CoTech.Bi.Core.Companies.Controllers
         }
 
         [HttpPut("{id}")]
-        [RequiresRole(Role.Super)]
+        [RequiresImportantRole(Role.Super)]
         public async Task<IActionResult> Update(long id, [FromBody] UpdateCompanyReq req) {
           var company = await companyRepo.WithId(id);
           if(req.Name != null) company.Name = req.Name;

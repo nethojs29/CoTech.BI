@@ -28,7 +28,7 @@ namespace CoTech.Bi.Core.Permissions.Model
         }
 
         public Task<bool> UserIsRoot(long userId) {
-          return db.AnyAsync(p => p.UserId == userId && p.RoleId == (long)Role.Root);
+          return db.AnyAsync(p => p.UserId == userId && p.RoleId == Role.Root);
         }
 
         public Task<bool> UserHasAtLeastOneRoleInCompany(long userId, long companyId, IEnumerable<long> roles, bool orRoot){
@@ -37,7 +37,7 @@ namespace CoTech.Bi.Core.Permissions.Model
             .AnyAsync();
           }
           return db.Where(p => p.UserId == userId && 
-              (p.RoleId == (long)Role.Root ||
+              (p.RoleId == Role.Root ||
                   ( p.CompanyId == companyId && roles.Contains(p.RoleId) )
               )
           ).AnyAsync();

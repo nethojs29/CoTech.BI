@@ -11,22 +11,22 @@ using CoTech.Bi.Core.Users.Models;
 
 namespace CoTech.Bi.Authorization
 {
-    public class RequiresRoleAttribute : TypeFilterAttribute
+    public class RequiresImportantRoleAttribute : TypeFilterAttribute
     {
-        public RequiresRoleAttribute(params long[] permissions)
-          : base(typeof(RequiresRoleAttributeImpl))
+        public RequiresImportantRoleAttribute(params long[] permissions)
+          : base(typeof(RequiresImportantRoleAttributeImpl))
         {
             Arguments = new[] { new PermissionsAuthorizationRequirement(permissions) };
         }
 
-        private class RequiresRoleAttributeImpl : Attribute, IAsyncActionFilter
+        private class RequiresImportantRoleAttributeImpl : Attribute, IAsyncActionFilter
         {
             private readonly ILogger _logger;
             private readonly UserManager<UserEntity> userManager;
             private readonly PermissionRepository permissionRepo;
             private readonly PermissionsAuthorizationRequirement _requiredPermissions;
 
-            public RequiresRoleAttributeImpl(ILogger<RequiresRoleAttribute> logger,
+            public RequiresImportantRoleAttributeImpl(ILogger<RequiresImportantRoleAttribute> logger,
                                             UserManager<UserEntity> userManager,
                                             PermissionRepository permissionRepo,
                                             PermissionsAuthorizationRequirement requiredPermissions)
@@ -54,9 +54,6 @@ namespace CoTech.Bi.Authorization
                     context.Result = new UnauthorizedResult();
                     return;
                 }
-                _requiredPermissions.RequiredRoles.Append(Role.Admin);
-                if(context.HttpContext.Request.Method == "GET")
-                  _requiredPermissions.RequiredRoles.Append(Role.Reader);
                 var hasRole = await permissionRepo.UserHasAtLeastOneRoleInCompany(
                     userId,
                     companyId.Value, 
