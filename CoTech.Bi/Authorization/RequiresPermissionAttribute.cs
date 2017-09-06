@@ -44,11 +44,11 @@ namespace CoTech.Bi.Authorization
                   context.Result = new UnauthorizedResult();
                   return;
                 }
-                if(!context.ActionArguments.ContainsKey("company")) {
+                if(context.ActionArguments.Count == 0) {
                     context.Result = new UnauthorizedResult();
                     return;
                 }
-                var companyId = context.ActionArguments["company"] as long?;
+                var companyId = context.ActionArguments.First().Value as long?;
                 if(!companyId.HasValue){
                     context.Result = new UnauthorizedResult();
                     return;

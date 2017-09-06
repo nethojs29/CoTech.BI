@@ -11,8 +11,8 @@ using System;
 namespace CoTech.Bi.Migrations
 {
     [DbContext(typeof(BiContext))]
-    [Migration("20170906005900_CompanyParent")]
-    partial class CompanyParent
+    [Migration("20170906215536_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,15 +26,23 @@ namespace CoTech.Bi.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Activity");
+                    b.Property<string>("Activity")
+                        .IsRequired();
 
-                    b.Property<string>("Name");
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
 
                     b.Property<int?>("Parent");
 
-                    b.Property<string>("Url");
+                    b.Property<string>("Url")
+                        .IsRequired();
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Url")
+                        .IsUnique();
 
                     b.ToTable("Companies");
                 });
@@ -60,17 +68,26 @@ namespace CoTech.Bi.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Email");
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<string>("Email")
+                        .IsRequired();
 
                     b.Property<bool>("EmailConfirmed");
 
-                    b.Property<string>("Lastname");
+                    b.Property<string>("Lastname")
+                        .IsRequired();
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .IsRequired();
 
-                    b.Property<string>("Password");
+                    b.Property<string>("Password")
+                        .IsRequired();
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });

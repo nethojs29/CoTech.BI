@@ -22,7 +22,9 @@ namespace CoTech.Bi.Core.Users
 
     public void ConfigureEntities(ModelBuilder modelBuilder)
     {
-      modelBuilder.Entity<UserEntity>().ToTable("Users");
+      modelBuilder.Entity<UserEntity>().ToTable("Users")
+        .HasIndex(u => u.Email)
+        .IsUnique();
     }
 
     public void ConfigureServices(IServiceCollection services)

@@ -11,6 +11,8 @@ namespace CoTech.Bi.Migrations
 {
     /// <summary>
     /// Esta clase no fue creada automáticamente.
+    /// Si se cambia la clase UserEntity, se puede eliminar este archivo y 
+    /// volver a poner el codigo en un migration vacío
     /// Mlp -Nan
     /// </summary>
     public partial class RootUsersSeed : Migration

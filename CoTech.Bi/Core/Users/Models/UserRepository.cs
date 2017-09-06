@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ namespace CoTech.Bi.Core.Users.Models
         }
 
         public Task<List<UserEntity>> GetAll() {
-          return db.ToListAsync();
+          return db.Where(u => !u.DeletedAt.HasValue).ToListAsync();
         }
     }
 }

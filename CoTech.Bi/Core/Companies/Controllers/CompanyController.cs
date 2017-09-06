@@ -23,13 +23,13 @@ namespace CoTech.Bi.Core.Companies.Controllers
           return new OkObjectResult(await companyRepo.GetAll());
         }
 
-        [HttpGet("{company}")]
+        [HttpGet("{id}")]
         [RequiresPermission]
-        public async Task<IActionResult> GetById(string id) {
+        public async Task<IActionResult> GetById(long id) {
           return new OkObjectResult(await companyRepo.WithId(id));
         }
 
-        [HttpGet("url={companyUrl}")]
+        [HttpGet("url={url}")]
         public async Task<IActionResult> GetByUrl(string url){
           var userId = HttpContext.UserId();
           if(userId == -1){
@@ -55,10 +55,29 @@ namespace CoTech.Bi.Core.Companies.Controllers
           return new CreatedResult($"/api/companies/${company.Id}", company);
         }
 
-        // [HttpPut("{id}")]
-        // [RequiresRole(Role.Super)]
-        // public async Task<IActionResult> Update([FromBody] UpdateCompanyReq req) {
-        //   var company
-        // }
+        [HttpPut("{id}")]
+        [RequiresRole(Role.Super)]
+        public async Task<IActionResult> Update(long id, [FromBody] UpdateCompanyReq req) {
+          var company = await companyRepo.WithId(id);
+          if(req.Name != null) company.Name = req.Name;
+          if(req.Activity != null) company.Activity = req.Activity;
+          if(req.Url != null){
+            var companyWithUrl = await companyRepo.WithUrl(req.Url);
+            if(companyWithUrl != null && companyWithUrl.Id == company.Id){
+              return new BadRequestObjectResult("url ya está en uso");
+            }
+            company.Url = req.Url;
+          }
+          await companyRepo.Update(company);
+          return new OkObjectResult(company);
+        }
+
+        [HttpDelete("{delete}")]
+        [RequiresRoot]
+        public async Task<IActionResult> Delete(long id){
+          var company = await companyRepo.WithId(id);
+          await companyRepo.Delete(company);
+          return new OkObjectResult(company);
+        }
     }
 }
