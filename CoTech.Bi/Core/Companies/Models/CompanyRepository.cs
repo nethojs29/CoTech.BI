@@ -21,6 +21,10 @@ namespace CoTech.Bi.Core.Companies.Models
           return db.ToListAsync();
         }
 
+        public Task<CompanyEntity> WithId(string id) {
+          return db.FindAsync(id);
+        }
+
         public Task<CompanyEntity> WithUrl(string url){
           return db.FirstOrDefaultAsync(c => c.Url == url);
         }

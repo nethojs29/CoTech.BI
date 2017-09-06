@@ -40,12 +40,13 @@ namespace CoTech.Bi.Authorization
             public async Task OnActionExecutionAsync(ActionExecutingContext context,
                                                      ActionExecutionDelegate next)
             {
-                var userId = context.UserId();
+                var userId = context.HttpContext.UserId();
                 if(userId == -1){
                   context.Result = new UnauthorizedResult();
                   return;
                 }
                 if(!context.ActionArguments.ContainsKey("company")) {
+                    Console.WriteLine("nombraste el parametro {company}?");
                     context.Result = new UnauthorizedResult();
                     return;
                 }

@@ -17,4 +17,11 @@ namespace CoTech.Bi.Core.Companies.Controllers
             };
         }
     }
+
+    public class UpdateCompanyReq : CompanyRequest {
+        public string Name { get; set; }
+        public string Activity { get; set; }
+        public string Url { get; set; }
+
+    }
 }

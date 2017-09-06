@@ -39,7 +39,7 @@ namespace CoTech.Bi.Authorization
             public async Task OnActionExecutionAsync(ActionExecutingContext context,
                                                      ActionExecutionDelegate next)
             {
-                var userId = context.UserId();
+                var userId = context.HttpContext.UserId();
                 if(userId == -1){
                   context.Result = new UnauthorizedResult();
                   return;
