@@ -16,6 +16,10 @@ using CoTech.Bi.Entity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Core.Permissions.Model;
+using Microsoft.AspNetCore.Identity;
+using CoTech.Bi.Identity.DataAccess;
 
 namespace CoTech.Bi
 {
@@ -35,18 +39,24 @@ namespace CoTech.Bi
         {
 			services.AddEntityFrameworkMySql();
             services.AddDbContext<BiContext>();
-			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
-                // options.Audience = "http://localhost:5001/"; // web host
-                // options.Authority = "http://localhost:5000/"; // api host
-                // options.RequireHttpsMetadata = false;
-                // options.TokenValidationParameters = new TokenValidationParameters()
-				// {
-				// 	ValidIssuer = Configuration["JwtSecurityToken:Issuer"],
-				// 	ValidAudience = Configuration["JwtSecurityToken:Audience"],
-				// 	ValidateIssuerSigningKey = true,
-				// 	IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSecurityToken:Key"])),
-				// 	ValidateLifetime = true
-				// };
+            services.AddIdentity<UserEntity, Role>()
+                .AddDefaultTokenProviders();
+            services.AddTransient<IUserStore<UserEntity>, UserStorage>();
+            services.AddTransient<IRoleStore<Role>, RoleStorage>();
+            services.Configure<IdentityOptions>(options => {
+                // Password settings
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 4;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+
+                // Lockout settings
+                // options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                // options.Lockout.MaxFailedAccessAttempts = 10;
+
+                // User settings
+                options.User.RequireUniqueEmail = true;
             });
             // requires using Microsoft.AspNetCore.Mvc;
             services.AddCors();

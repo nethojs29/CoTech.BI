@@ -54,10 +54,11 @@ namespace CoTech.Bi.Authorization
                     context.Result = new UnauthorizedResult();
                     return;
                 }
-                var hasRole = await permissionRepo.UserHasAtLeastOneRoleInCompanyOrIsRoot(
+                var hasRole = await permissionRepo.UserHasAtLeastOneRoleInCompany(
                     userId,
                     companyId.Value, 
-                    _requiredPermissions.RequiredRoles
+                    _requiredPermissions.RequiredRoles,
+                    true, true
                 );
                 if(!hasRole){
                     context.Result = new UnauthorizedResult();

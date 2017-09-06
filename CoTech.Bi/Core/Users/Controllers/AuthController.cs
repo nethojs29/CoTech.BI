@@ -39,7 +39,6 @@ namespace CoTech.Bi.Core.Users.Controllers
 		}
 
 		[HttpPost("CreateToken")]
-		[Route("token")]
 		public async Task<IActionResult> CreateToken([FromBody] LogInReq model)
 		{
 			try

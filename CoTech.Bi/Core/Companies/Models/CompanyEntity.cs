@@ -5,5 +5,6 @@ namespace CoTech.Bi.Core.Companies.Models
         public string Name { get; set; }
         public string Activity { get; set; }
         public string Url { get; set; }
+        public int? Parent { get; set; }
     }
 }

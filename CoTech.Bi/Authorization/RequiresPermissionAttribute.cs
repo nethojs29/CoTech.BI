@@ -14,20 +14,20 @@ using System.Security.Claims;
 
 namespace CoTech.Bi.Authorization
 {
-    public class RequiresRootAttribute : TypeFilterAttribute
+    public class RequiresPermissionAttribute : TypeFilterAttribute
     {
-        public RequiresRootAttribute()
-          : base(typeof(RequiresRootAttributeImpl))
+        public RequiresPermissionAttribute()
+          : base(typeof(RequiresPermissionAttributeImpl))
         {
         }
 
-        private class RequiresRootAttributeImpl : Attribute, IAsyncActionFilter
+        private class RequiresPermissionAttributeImpl : Attribute, IAsyncActionFilter
         {
             private readonly ILogger _logger;
             private readonly UserManager<UserEntity> userManager;
             private readonly PermissionRepository permissionRepo;
 
-            public RequiresRootAttributeImpl(ILogger<RequiresRoleAttribute> logger,
+            public RequiresPermissionAttributeImpl(ILogger<RequiresRoleAttribute> logger,
                                             UserManager<UserEntity> userManager,
                                             PermissionRepository permissionRepo)
             {
@@ -44,8 +44,17 @@ namespace CoTech.Bi.Authorization
                   context.Result = new UnauthorizedResult();
                   return;
                 }
-                var isRoot = await permissionRepo.IsUserRoot(userId);
-                if(!isRoot){
+                if(!context.ActionArguments.ContainsKey("company")) {
+                    context.Result = new UnauthorizedResult();
+                    return;
+                }
+                var companyId = context.ActionArguments["company"] as long?;
+                if(!companyId.HasValue){
+                    context.Result = new UnauthorizedResult();
+                    return;
+                }
+                var hasAnyRole = await permissionRepo.UserHasAnyRoleInCompany(userId, companyId.Value, true, true);
+                if(!hasAnyRole){
                     context.Result = new UnauthorizedResult();
                     return;
                 }

@@ -27,26 +27,7 @@ namespace CoTech.Bi.Core.Users
 
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddIdentity<UserEntity, Role>()
-        .AddDefaultTokenProviders();
-      services.AddTransient<IUserStore<UserEntity>, UserStorage>();
-      services.AddTransient<IRoleStore<Role>, RoleStorage>();
       services.AddScoped<UserRepository>();
-      services.Configure<IdentityOptions>(options => {
-          // Password settings
-          options.Password.RequireDigit = false;
-          options.Password.RequiredLength = 4;
-          options.Password.RequireNonAlphanumeric = false;
-          options.Password.RequireUppercase = false;
-          options.Password.RequireLowercase = false;
-
-          // Lockout settings
-          // options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-          // options.Lockout.MaxFailedAccessAttempts = 10;
-
-          // User settings
-          options.User.RequireUniqueEmail = true;
-      });
     }
   }
 }

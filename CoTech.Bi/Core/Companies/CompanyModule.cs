@@ -14,7 +14,9 @@ namespace CoTech.Bi.Core.Companies
 
     void IModule.ConfigureEntities(ModelBuilder modelBuilder)
     {
-      modelBuilder.Entity<CompanyEntity>().ToTable("Companies");
+      modelBuilder.Entity<CompanyEntity>().ToTable("Companies")
+          .HasIndex(c => c.Url)
+          .IsUnique();
     }
 
     void IModule.ConfigureServices(IServiceCollection services)
