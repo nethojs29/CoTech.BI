@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CoTech.Bi.Modules.RES.Models
+namespace CoTech.Bi.Modules.Wer.Models
 {
     public class WeekEntity
     {
