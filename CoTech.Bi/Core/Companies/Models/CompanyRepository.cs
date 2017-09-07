@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +20,11 @@ namespace CoTech.Bi.Core.Companies.Models
         }
 
         public Task<List<CompanyEntity>> GetAll() {
-          return db.ToListAsync();
+          return db.Where(c => !c.DeletedAt.HasValue).ToListAsync();
+        }
+
+        public Task<CompanyEntity> WithId(long id) {
+          return db.FindAsync(id);
         }
 
         public Task<CompanyEntity> WithUrl(string url){
@@ -27,6 +33,18 @@ namespace CoTech.Bi.Core.Companies.Models
 
         public async Task Create(CompanyEntity entity) {
           var entry = db.Add(entity);
+          await context.SaveChangesAsync();
+        }
+
+        public async Task Update(CompanyEntity entity){
+          var entry = db.Update(entity);
+          entry.Property(e => e.DeletedAt).IsModified = false;
+          await context.SaveChangesAsync();
+        }
+
+        public async Task Delete(CompanyEntity entity){
+          entity.DeletedAt = new DateTime();
+          db.Update(entity);
           await context.SaveChangesAsync();
         }
     }

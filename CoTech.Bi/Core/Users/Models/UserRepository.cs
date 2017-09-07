@@ -19,6 +19,7 @@ namespace CoTech.Bi.Core.Users.Models
           this.context = context;
         }
 
+<<<<<<< HEAD
         public List<UserResponse.UserNoPassRes> GetAll() {
             var user = db.ToList();
             return user.Select(usr =>
@@ -29,6 +30,10 @@ namespace CoTech.Bi.Core.Users.Models
                     usr.Lastname,
                     usr.Email);
             }).ToList();
+=======
+        public Task<List<UserEntity>> GetAll() {
+          return db.Where(u => !u.DeletedAt.HasValue).ToListAsync();
+>>>>>>> ead6e53eef003a0a020f5408186c97db43011bbc
         }
     }
 }

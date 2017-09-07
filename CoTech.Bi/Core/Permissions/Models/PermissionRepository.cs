@@ -28,7 +28,7 @@ namespace CoTech.Bi.Core.Permissions.Model
         }
 
         public Task<bool> UserIsRoot(long userId) {
-          return db.AnyAsync(p => p.UserId == userId && p.RoleId == (long)Role.Root);
+          return db.AnyAsync(p => p.UserId == userId && p.RoleId == Role.Root);
         }
 
         public Task<bool> UserHasAtLeastOneRoleInCompany(long userId, long companyId, IEnumerable<long> roles, bool orRoot){
@@ -37,7 +37,7 @@ namespace CoTech.Bi.Core.Permissions.Model
             .AnyAsync();
           }
           return db.Where(p => p.UserId == userId && 
-              (p.RoleId == (long)Role.Root ||
+              (p.RoleId == Role.Root ||
                   ( p.CompanyId == companyId && roles.Contains(p.RoleId) )
               )
           ).AnyAsync();
@@ -50,7 +50,7 @@ namespace CoTech.Bi.Core.Permissions.Model
           if(hasRole) return true;
           var company = await dbCompany.FindAsync(companyId);
           if(!company.Parent.HasValue) return false;
-          return await UserHasAtLeastOneRoleInCompany(userId, company.Parent.Value, roles, false, true); // ya sabemos que no es root
+          return await UserHasAtLeastOneRoleInCompany(userId, company.Parent.Value, new long[]{Role.Super}, false, true); // ya sabemos que no es root
         }
 
         public Task<bool> UserHasAnyRoleInCompany(long userId, long companyId, bool orRoot){
@@ -67,7 +67,7 @@ namespace CoTech.Bi.Core.Permissions.Model
           if(hasAnyRole) return true;
           var company = await dbCompany.FindAsync(companyId);
           if(!company.Parent.HasValue) return false;
-          return await UserHasAnyRoleInCompany(userId, company.Parent.Value, false, true);
+          return await UserHasAtLeastOneRoleInCompany(userId, company.Parent.Value, new long[]{Role.Super}, false, true);
         }
     }
 }

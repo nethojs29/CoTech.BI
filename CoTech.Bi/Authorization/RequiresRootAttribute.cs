@@ -27,7 +27,7 @@ namespace CoTech.Bi.Authorization
             private readonly UserManager<UserEntity> userManager;
             private readonly PermissionRepository permissionRepo;
 
-            public RequiresRootAttributeImpl(ILogger<RequiresRoleAttribute> logger,
+            public RequiresRootAttributeImpl(ILogger<RequiresImportantRoleAttribute> logger,
                                             UserManager<UserEntity> userManager,
                                             PermissionRepository permissionRepo)
             {
@@ -39,7 +39,7 @@ namespace CoTech.Bi.Authorization
             public async Task OnActionExecutionAsync(ActionExecutingContext context,
                                                      ActionExecutionDelegate next)
             {
-                var userId = context.UserId();
+                var userId = context.HttpContext.UserId();
                 if(userId == -1){
                   context.Result = new UnauthorizedResult();
                   return;

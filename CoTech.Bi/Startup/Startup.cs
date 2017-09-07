@@ -20,6 +20,9 @@ using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Core.Permissions.Model;
 using Microsoft.AspNetCore.Identity;
 using CoTech.Bi.Identity.DataAccess;
+using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.PlatformAbstractions;
+using System.IO;
 
 namespace CoTech.Bi
 {
@@ -59,6 +62,13 @@ namespace CoTech.Bi
                 options.User.RequireUniqueEmail = true;
             });
             // requires using Microsoft.AspNetCore.Mvc;
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Bi API", Version = "v1" });
+                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                var xmlPath = Path.Combine(basePath, "BiApi.xml"); 
+                c.IncludeXmlComments(xmlPath);  
+            });
             services.AddCors();
             services.AddSingleton<EventEmitter>();
             services.AddBiModules();
@@ -73,6 +83,11 @@ namespace CoTech.Bi
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Bi API V1");
+            });
             app.UseBiModules(env);
             app.UseMvc();
         }
