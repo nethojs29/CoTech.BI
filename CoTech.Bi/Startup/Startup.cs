@@ -67,7 +67,7 @@ namespace CoTech.Bi
                 c.SwaggerDoc("v1", new Info { Title = "Bi API", Version = "v1" });
                 var basePath = PlatformServices.Default.Application.ApplicationBasePath;
                 var xmlPath = Path.Combine(basePath, "BiApi.xml"); 
-                c.IncludeXmlComments(xmlPath);  
+                c.IncludeXmlComments(xmlPath);
             });
             services.AddCors();
             services.AddSingleton<EventEmitter>();

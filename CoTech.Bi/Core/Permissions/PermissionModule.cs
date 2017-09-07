@@ -15,6 +15,7 @@ namespace CoTech.Bi.Core.Permissions
     public void ConfigureEntities(ModelBuilder modelBuilder)
     {
       modelBuilder.Entity<PermissionEntity>().ToTable("Permissions");
+      modelBuilder.Entity<RootEntity>().ToTable("RootUsers");
     }
 
     public void ConfigureServices(IServiceCollection services)

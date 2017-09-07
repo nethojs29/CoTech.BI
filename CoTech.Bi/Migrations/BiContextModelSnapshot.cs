@@ -33,12 +33,14 @@ namespace CoTech.Bi.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<int?>("Parent");
+                    b.Property<long?>("ParentId");
 
                     b.Property<string>("Url")
                         .IsRequired();
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
 
                     b.HasIndex("Url")
                         .IsUnique();
@@ -51,7 +53,7 @@ namespace CoTech.Bi.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<long>("CompanyId");
+                    b.Property<long?>("CompanyId");
 
                     b.Property<long>("RoleId");
 
@@ -59,7 +61,25 @@ namespace CoTech.Bi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("UserId");
+
                     b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Core.Permissions.Model.RootEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RootUsers");
                 });
 
             modelBuilder.Entity("CoTech.Bi.Core.Users.Models.UserEntity", b =>
@@ -89,6 +109,33 @@ namespace CoTech.Bi.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Core.Companies.Models.CompanyEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentId");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Core.Permissions.Model.PermissionEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Core.Permissions.Model.RootEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

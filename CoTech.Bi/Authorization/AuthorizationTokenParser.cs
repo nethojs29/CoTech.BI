@@ -13,7 +13,7 @@ namespace CoTech.Bi.Authorization
             var userClaim = context.User.FindFirstValue("sub");
             if(userClaim != null) return Int64.Parse(userClaim);
             string authHeader = context.Request.Headers["Authorization"];
-            if(!authHeader.StartsWith("Bearer ")){
+            if(authHeader == null || !authHeader.StartsWith("Bearer ")){
                 return -1;
             }
             var token = authHeader.Substring(7);

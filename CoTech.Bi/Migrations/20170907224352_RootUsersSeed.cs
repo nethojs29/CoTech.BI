@@ -30,7 +30,7 @@ namespace CoTech.Bi.Migrations
         {
             using (var db = new BiContext()){
                 var dbUser = db.Set<UserEntity>();
-                var dbPermission = db.Set<PermissionEntity>();
+                var dbRoot = db.Set<RootEntity>();
                 var hasher = new PasswordHasher<UserEntity>();
                 
                 users.ForEach(u => {
@@ -40,10 +40,8 @@ namespace CoTech.Bi.Migrations
                 db.SaveChanges();
                 users.ForEach(u => {
                     var foundUser = dbUser.First(dbu => dbu.Email == u.Email);
-                    dbPermission.Add(new PermissionEntity {
-                        UserId = foundUser.Id,
-                        CompanyId = -1,
-                        RoleId = Role.Root
+                    dbRoot.Add(new RootEntity {
+                        UserId = foundUser.Id
                     });
                 });
                 db.SaveChanges();
