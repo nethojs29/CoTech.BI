@@ -58,7 +58,7 @@ namespace CoTech.Bi.Authorization
                     userId,
                     companyId.Value, 
                     _requiredPermissions.RequiredRoles,
-                    false, true
+                    true, true
                 );
                 if(!hasRole){
                     context.Result = new UnauthorizedResult();

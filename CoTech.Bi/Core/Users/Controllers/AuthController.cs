@@ -38,7 +38,13 @@ namespace CoTech.Bi.Core.Users.Controllers
 			_configurationRoot = configurationRoot;
 		}
 
+		/// <summary>
+		/// Iniciar sesión
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
 		[HttpPost]
+		[ProducesResponseType(typeof(AuthResponse), 200)]
 		public async Task<IActionResult> CreateToken([FromBody] LogInReq model)
 		{
 			try
@@ -50,14 +56,13 @@ namespace CoTech.Bi.Core.Users.Controllers
 				}
 				if (_passwordHasher.VerifyHashedPassword(user, user.Password, model.Password) == PasswordVerificationResult.Success)
 				{
-					var userClaims = await _userManager.GetClaimsAsync(user);
 
 					var claims = new[]
 					{
 						new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
 						new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 						new Claim(JwtRegisteredClaimNames.Email, user.Email)
-					}.Union(userClaims);
+					};
 
 					var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configurationRoot["JwtSecurityToken:Key"]));
 					var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
@@ -69,10 +74,10 @@ namespace CoTech.Bi.Core.Users.Controllers
 						expires: DateTime.UtcNow.AddMinutes(60),
 						signingCredentials: signingCredentials
 						);
-					return Ok(new 
-					{
-						token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
-						expiration = jwtSecurityToken.ValidTo
+					return Ok(new AuthResponse { 
+						Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+						Expiration = jwtSecurityToken.ValidTo,
+						User = user
 					});
 				}
 				return Unauthorized();

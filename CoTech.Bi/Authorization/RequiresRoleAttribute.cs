@@ -54,6 +54,7 @@ namespace CoTech.Bi.Authorization
                     context.Result = new UnauthorizedResult();
                     return;
                 }
+                _requiredPermissions.RequiredRoles.Append(Role.Super);
                 _requiredPermissions.RequiredRoles.Append(Role.Admin);
                 if(context.HttpContext.Request.Method == "GET")
                   _requiredPermissions.RequiredRoles.Append(Role.Reader);

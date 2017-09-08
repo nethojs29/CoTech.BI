@@ -68,5 +68,24 @@ namespace CoTech.Bi.Core.Permissions.Model
           if(!company.ParentId.HasValue) return false;
           return await UserHasAtLeastOneRoleInCompany(userId, company.ParentId.Value, new long[]{Role.Super}, false, true);
         }
+
+        public async Task Create(PermissionEntity entity) {
+          db.Add(entity);
+          await context.SaveChangesAsync();
+        }
+
+        public Task<PermissionEntity> FindOne(long companyId, long userId, long roleId) {
+          return db.FirstAsync(p => p.CompanyId == companyId && p.UserId == userId && p.RoleId == roleId);
+        }
+
+        public async Task Delete(PermissionEntity entity){
+          db.Remove(entity);
+          await context.SaveChangesAsync();
+        }
+
+        public async Task Revoke(List<PermissionEntity> entities) {
+          db.RemoveRange(entities);
+          await context.SaveChangesAsync();
+        }
     }
 }
