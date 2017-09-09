@@ -27,7 +27,7 @@ namespace CoTech.Bi.Core.Users.Controllers {
     [HttpGet]
     [RequiresRoot]
     public async Task<IActionResult> GetAll() {
-      return new OkObjectResult(await userRepository.GetAll());
+      return new OkObjectResult(userRepository.GetAll());
     }
 
     [HttpPost]
