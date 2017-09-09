@@ -7,10 +7,14 @@
     <DocumentationFile>bin\Debug\netcoreapp2.0\BiApi.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="Modules\Wer\Tasks" />
     <Folder Include="wwwroot\" />
     <Folder Include="Entities\" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Hangfire" Version="1.6.16" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.6.16" />
+    <PackageReference Include="Hangfire.MySql.NetCore" Version="1.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.0-rtm-10061" />
     <PackageReference Include="System.Reactive" Version="3.1.1" />

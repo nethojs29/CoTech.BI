@@ -27,6 +27,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
         
         [HttpGet("/pages/{page}")]
+        [RequiresLogin]
         public async Task<IActionResult> GetAll(int? page)
         {
             var weeks = await _weekRepository.getAll();

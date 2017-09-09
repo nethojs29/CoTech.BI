@@ -11,8 +11,8 @@ using System;
 namespace CoTech.Bi.Migrations
 {
     [DbContext(typeof(BiContext))]
-    [Migration("20170906215602_RootUsersSeed")]
-    partial class RootUsersSeed
+    [Migration("20170907203637_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -90,6 +90,59 @@ namespace CoTech.Bi.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.ReportEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("CompanyId");
+
+                    b.Property<string>("Financial");
+
+                    b.Property<string>("Observation");
+
+                    b.Property<string>("Operative");
+
+                    b.Property<long>("User");
+
+                    b.Property<long>("WeekId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("WeekId");
+
+                    b.ToTable("Wer_Reports");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.WeekEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("EndTime");
+
+                    b.Property<DateTime>("StartTime");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Wer_Weeks");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.ReportEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Modules.Wer.Models.WeekEntity", "Week")
+                        .WithMany()
+                        .HasForeignKey("WeekId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

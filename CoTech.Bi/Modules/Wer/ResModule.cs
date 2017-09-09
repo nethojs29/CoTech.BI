@@ -23,15 +23,7 @@ namespace CoTech.Bi.Modules.Wer
         {
             modelBuilder.Entity<WeekEntity>().ToTable("Wer_Weeks");
 
-            modelBuilder.Entity<ReportEntity>().ToTable("Wer_Reports")
-                .HasOne(r => r.Company)
-                .WithMany(c => null).HasForeignKey(r => r.CompanyId)
-                .HasConstraintName("FK_Reports_Companies");
-            
-            modelBuilder.Entity<ReportEntity>().ToTable("Wer_Reports")
-                .HasOne(r => r.Week)
-                .WithMany(w => null).HasForeignKey(r => r.WeekId)
-                .HasConstraintName("FK_Reports_Weeks");
+            modelBuilder.Entity<ReportEntity>().ToTable("Wer_Reports");
         }
     }
 }
