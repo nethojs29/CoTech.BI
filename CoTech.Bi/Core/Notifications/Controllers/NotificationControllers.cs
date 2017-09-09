@@ -9,6 +9,7 @@ using CoTech.Bi.Core.Notifications.Models;
 using CoTech.Bi.Rx;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace CoTech.Bi.Core.Notifications.Controllers
 {
@@ -39,9 +40,19 @@ namespace CoTech.Bi.Core.Notifications.Controllers
     public class NotificationSender : IObserver<NotificationEntity>
     {
 
+        JsonSerializerSettings jsonSettings;
         private WebSocket webSocket;
         public NotificationSender(WebSocket socket){
             this.webSocket = socket;
+            var contractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            };
+            jsonSettings = new JsonSerializerSettings
+            {
+                ContractResolver = contractResolver,
+                Formatting = Formatting.Indented
+            };
         }
         public void OnCompleted()
         {
@@ -55,13 +66,13 @@ namespace CoTech.Bi.Core.Notifications.Controllers
 
         public void OnNext(NotificationEntity value)
         {
-            SendNext(value).Start();
+            SendNext(value).Wait(1000);
         }
 
         public async Task SendNext(NotificationEntity entity){
-            Console.WriteLine($"notification {entity}");
           if(webSocket.State == WebSocketState.Open){
-              var json = JsonConvert.SerializeObject(entity);
+              
+              var json = JsonConvert.SerializeObject(new NotificationResponse(entity), jsonSettings);
               var bytes = Encoding.Unicode.GetBytes(json);
               var segment = new ArraySegment<byte>(bytes);
               await webSocket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);

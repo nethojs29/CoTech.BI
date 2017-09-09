@@ -1,12 +1,18 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Entity;
+using EntityFrameworkCore.Triggers;
 using Newtonsoft.Json;
 
 namespace CoTech.Bi.Core.Notifications.Models
 {
-    public class NotificationEntity
+    public class NotificationEntity : Trackable
     {
+        static NotificationEntity() {
+          Triggers<NotificationEntity>.Inserted += entry => Console.WriteLine(entry.Entity);
+        }
         public long Id { get; set; }
         public long SenderId { get; set; }
         public UserEntity Sender { get; set; }

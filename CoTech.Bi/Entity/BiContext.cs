@@ -3,6 +3,7 @@ using CoTech.Bi.Authorization;
 using CoTech.Bi.Core.Permissions.Model;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Loader;
+using EntityFrameworkCore.Triggers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoTech.Bi.Entity
 {
-    public partial class BiContext : DbContext
+    public partial class BiContext : DbContextWithTriggers
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
