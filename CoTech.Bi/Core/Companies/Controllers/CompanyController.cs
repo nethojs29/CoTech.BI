@@ -16,16 +16,21 @@ namespace CoTech.Bi.Core.Companies.Controllers
     {
         private readonly CompanyRepository companyRepo;
         private readonly PermissionRepository permissionRepo;
+        private readonly CompanyNotifier companyNotifier;
 
-        /// <summary>
-        /// Constructor injectable
-        /// </summary>
-        /// <param name="companyRepo"></param>
-        /// <param name="permissionRepo"></param>
-        public CompanyController(CompanyRepository companyRepo, PermissionRepository permissionRepo) {
+    /// <summary>
+    /// Constructor injectable
+    /// </summary>
+    /// <param name="companyRepo"></param>
+    /// <param name="permissionRepo"></param>
+    /// <param name="companyNotifier"></param>
+    public CompanyController(CompanyRepository companyRepo, 
+                                 PermissionRepository permissionRepo, 
+                                 CompanyNotifier companyNotifier) {
           this.companyRepo = companyRepo;
           this.permissionRepo = permissionRepo;
-        }
+          this.companyNotifier = companyNotifier;
+    }
 
         /// <summary>
         /// Obtiene todas las empresas
@@ -134,6 +139,7 @@ namespace CoTech.Bi.Core.Companies.Controllers
           }
           var company = req.ToEntity();
           await companyRepo.Create(company);
+          await companyNotifier.Created(company, HttpContext.UserId());
           return new CreatedResult($"/api/companies/${company.Id}", company);
         }
 

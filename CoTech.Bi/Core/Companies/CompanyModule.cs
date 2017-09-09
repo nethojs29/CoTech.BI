@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using CoTech.Bi.Core.Companies.Controllers;
 
 namespace CoTech.Bi.Core.Companies
 {
@@ -22,6 +23,7 @@ namespace CoTech.Bi.Core.Companies
     void IModule.ConfigureServices(IServiceCollection services)
     {
       services.AddScoped<CompanyRepository>();
+      services.AddScoped<CompanyNotifier>();
     }
   }
 }

@@ -21,5 +21,14 @@ namespace CoTech.Bi.Core.Users.Models
         public Task<List<UserEntity>> GetAll() {
           return db.Where(u => !u.DeletedAt.HasValue).ToListAsync();
         }
+
+        public Task<List<UserEntity>> InCompany(long companyId){
+          return db.Where(u => u.Permissions.Any(p => p.CompanyId == companyId))
+            .ToListAsync();
+        }
+
+        public Task<List<UserEntity>> GetRootUsers() {
+          return db.Where(u => u.Root != null).ToListAsync();
+        }
     }
 }
