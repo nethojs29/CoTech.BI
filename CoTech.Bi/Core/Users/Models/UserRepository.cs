@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoTech.Bi.Core.Users.Controllers;
 using CoTech.Bi.Entity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,8 +19,25 @@ namespace CoTech.Bi.Core.Users.Models
           this.context = context;
         }
 
-        public Task<List<UserEntity>> GetAll() {
-          return db.Where(u => !u.DeletedAt.HasValue).ToListAsync();
+        public List<UserResponse.UserNoPassRes> GetAll() {
+            var user = db.Where(u => !u.DeletedAt.HasValue).ToList();
+            return user.Select(usr =>
+            {
+                return new UserResponse.UserNoPassRes(
+                    usr.Id,
+                    usr.Name,
+                    usr.Lastname,
+                    usr.Email);
+            }).ToList();
+        }
+
+        public Task<List<UserEntity>> InCompany(long companyId){
+          return db.Where(u => u.Permissions.Any(p => p.CompanyId == companyId))
+            .ToListAsync();
+        }
+
+        public Task<List<UserEntity>> GetRootUsers() {
+          return db.Where(u => u.Root != null).ToListAsync();
         }
     }
 }

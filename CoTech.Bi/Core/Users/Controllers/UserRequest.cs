@@ -20,4 +20,20 @@ namespace CoTech.Bi.Core.Users.Controllers
     public string Email { get; set; }
     public string Password { get; set; }
   }
+
+  public class UserNoPassReq : IUserRequest
+  {
+    public long Id { get; set; }
+    public string Name { get; set; }
+    public string Lastname { get; set; }
+    public string Email { get; set; }
+
+    public UserNoPassReq(long Id,string Name,string Lastname,string Email)
+    {
+      this.Id = Id;
+      this.Name = Name;
+      this.Lastname = Lastname;
+      this.Email = Email;
+    }
+  }
 }
