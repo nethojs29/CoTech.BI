@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CoTech.Bi.Authorization
 {
-    public static class AuthorizationTokenParser {
+    public static class AuthorizationExtensions {
         public static long UserId(this HttpContext context){
             var userClaim = context.User.FindFirstValue("sub");
             if(userClaim != null) return Int64.Parse(userClaim);

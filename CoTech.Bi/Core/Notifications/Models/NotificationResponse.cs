@@ -1,6 +1,6 @@
 using CoTech.Bi.Core.Notifications.Models;
 
-namespace CoTech.Bi.Core.Notifications.Controllers
+namespace CoTech.Bi.Core.Notifications.Models
 {
     public class NotificationResponse
     {

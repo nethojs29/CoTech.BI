@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CoTech.Bi.Core.Permissions.Model;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Identity.DataAccess;
+using CoTech.Bi.Core.Users.Repositories;
 
 namespace CoTech.Bi.Core.Users
 {

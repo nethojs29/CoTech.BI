@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using CoTech.Bi.Core.Companies.Controllers;
+using CoTech.Bi.Core.Companies.Repositories;
+using CoTech.Bi.Core.Companies.Notifiers;
 
 namespace CoTech.Bi.Core.Companies
 {

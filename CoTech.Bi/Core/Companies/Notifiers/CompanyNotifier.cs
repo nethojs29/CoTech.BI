@@ -3,11 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Notifications.Models;
+using CoTech.Bi.Core.Notifications.Repositories;
 using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Repositories;
 using CoTech.Bi.Core.Users.Models;
-using CoTech.Bi.Rx;
+using CoTech.Bi.Core.Users.Repositories;
 
-namespace CoTech.Bi.Core.Companies.Controllers
+namespace CoTech.Bi.Core.Companies.Notifiers
 {
     public class CompanyNotifier {
         private readonly NotificationRepository notificationRepository;
@@ -32,16 +34,12 @@ namespace CoTech.Bi.Core.Companies.Controllers
             var notification = new NotificationEntity {
                 SenderId = creator,
                 Type = "CompanyCreated",
-                Body = new CompanyCreatedNotification { 
+                Body = new CompanyCreated { 
                   CompanyId = company.Id
                 },
                 Receivers = receivers
             };
             await notificationRepository.Create(notification);
         }
-    }
-
-    public class CompanyCreatedNotification {
-        public long CompanyId { get; set; }
     }
 }

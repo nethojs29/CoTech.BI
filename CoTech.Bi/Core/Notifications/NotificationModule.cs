@@ -1,4 +1,5 @@
 using CoTech.Bi.Core.Notifications.Models;
+using CoTech.Bi.Core.Notifications.Repositories;
 using CoTech.Bi.Loader;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CoTech.Bi.Core.Notifications.Models;
 using CoTech.Bi.Entity;
 using EntityFrameworkCore.Rx;
 using Microsoft.EntityFrameworkCore;
 
-namespace CoTech.Bi.Core.Notifications.Models
+namespace CoTech.Bi.Core.Notifications.Repositories
 {
     public class NotificationRepository
     {
