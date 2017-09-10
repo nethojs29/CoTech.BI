@@ -12,28 +12,32 @@ using Microsoft.AspNetCore.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using CoTech.Bi.Core.Permissions.Repositories;
 
 namespace CoTech.Bi.Authorization
 {
-    public class RequiresPermissionAttribute : TypeFilterAttribute
+    /// <summary>
+    /// Requiere al usuario que tenga cualquier rol en la empresa que se especifica en la ruta, o que sea root
+    /// </summary>
+    public class RequiresAnyRoleAttribute : TypeFilterAttribute
     {
-        public RequiresPermissionAttribute()
-          : base(typeof(RequiresPermissionAttributeImpl))
-        {
-        }
+        /// <summary>
+        /// Requiere al usuario que tenga cualquier rol en la empresa que se especifica en la ruta.
+        /// Un usuario root puede entrar a esta ruta
+        /// Un usuario con rol super en alguna empresa padre de la empresa especificada puede entrar
+        /// </summary>
+        public RequiresAnyRoleAttribute()
+          : base(typeof(RequiresAnyRoleAttributeImpl)) {}
 
-        private class RequiresPermissionAttributeImpl : Attribute, IAsyncActionFilter
+        private class RequiresAnyRoleAttributeImpl : Attribute, IAsyncActionFilter
         {
             private readonly ILogger _logger;
-            private readonly UserManager<UserEntity> userManager;
             private readonly PermissionRepository permissionRepo;
 
-            public RequiresPermissionAttributeImpl(ILogger<RequiresPermissionAttribute> logger,
-                                            UserManager<UserEntity> userManager,
+            public RequiresAnyRoleAttributeImpl(ILogger<RequiresAnyRoleAttribute> logger,
                                             PermissionRepository permissionRepo)
             {
                 _logger = logger;
-                this.userManager = userManager;
                 this.permissionRepo = permissionRepo;
             }
 

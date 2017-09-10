@@ -13,29 +13,29 @@ using System.Text;
 using System.Net;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Util;
+using CoTech.Bi.Core.Users.Repositories;
 
 namespace CoTech.Bi.Core.Users.Controllers
 {
 	[Route("api/auth")]
 	public class AuthController : Controller
     {
-		private readonly UserManager<UserEntity> _userManager;
-		private readonly SignInManager<UserEntity> _signInManager;
-		private readonly RoleManager<Role> _roleManager;
+		private readonly UserRepository _userRepository;
 		private IPasswordHasher<UserEntity> _passwordHasher;
-		private IConfiguration _configurationRoot;
+		private JwtTokenGenerator _jwtTokenGenerator;
 		private ILogger<AuthController> _logger;
 
 
-		public AuthController(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<Role> roleManager
-			, IPasswordHasher<UserEntity> passwordHasher, IConfiguration configurationRoot, ILogger<AuthController> logger)
+		public AuthController(UserRepository userRepository, 
+													IPasswordHasher<UserEntity> passwordHasher, 
+													JwtTokenGenerator jwtTokenGenerator, 
+													ILogger<AuthController> logger)
 		{
-			_userManager = userManager;
-			_signInManager = signInManager;
-			_roleManager = roleManager;
+			_userRepository = userRepository;
 			_logger = logger;
 			_passwordHasher = passwordHasher;
-			_configurationRoot = configurationRoot;
+			_jwtTokenGenerator = jwtTokenGenerator;
 		}
 
 		/// <summary>
@@ -49,38 +49,26 @@ namespace CoTech.Bi.Core.Users.Controllers
 		{
 			try
 			{
-				var user = await _userManager.FindByEmailAsync(model.Email);
-				if(user == null)
-				{
+				var user = await _userRepository.WithEmail(model.Email);
+				if(user == null) {
+					return NotFound("Usuario con email no existe");
+				}
+				if (_passwordHasher.VerifyHashedPassword(user, user.Password, model.Password) != PasswordVerificationResult.Success){
 					return Unauthorized();
 				}
-				if (_passwordHasher.VerifyHashedPassword(user, user.Password, model.Password) == PasswordVerificationResult.Success)
-				{
 
-					var claims = new[]
-					{
-						new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-						new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-						new Claim(JwtRegisteredClaimNames.Email, user.Email)
-					};
+				var claims = new[] {
+					new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+					new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+					new Claim(JwtRegisteredClaimNames.Email, user.Email)
+				};
+				var jwtSecurityToken = _jwtTokenGenerator.CreateToken(claims);
 
-					var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configurationRoot["JwtSecurityToken:Key"]));
-					var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
-
-					var jwtSecurityToken = new JwtSecurityToken(
-						issuer: _configurationRoot["JwtSecurityToken:Issuer"],
-						audience: _configurationRoot["JwtSecurityToken:Audience"],
-						claims: claims,
-						expires: DateTime.UtcNow.AddMinutes(60),
-						signingCredentials: signingCredentials
-						);
-					return Ok(new AuthResponse { 
-						Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
-						Expiration = jwtSecurityToken.ValidTo,
-						User = user
-					});
-				}
-				return Unauthorized();
+				return Ok(new AuthResponse { 
+					Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+					Expiration = jwtSecurityToken.ValidTo,
+					User = new UserResponse(user)
+				});
 			}
 			catch (Exception ex)
 			{

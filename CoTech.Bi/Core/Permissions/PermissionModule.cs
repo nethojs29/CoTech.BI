@@ -1,4 +1,5 @@
 using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Repositories;
 using CoTech.Bi.Loader;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

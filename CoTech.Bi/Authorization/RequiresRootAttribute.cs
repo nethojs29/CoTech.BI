@@ -11,6 +11,7 @@ using CoTech.Bi.Core.Users.Models;
 using Microsoft.AspNetCore.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using CoTech.Bi.Core.Permissions.Repositories;
 
 namespace CoTech.Bi.Authorization
 {
@@ -23,16 +24,10 @@ namespace CoTech.Bi.Authorization
 
         private class RequiresRootAttributeImpl : Attribute, IAsyncActionFilter
         {
-            private readonly ILogger _logger;
-            private readonly UserManager<UserEntity> userManager;
             private readonly PermissionRepository permissionRepo;
 
-            public RequiresRootAttributeImpl(ILogger<RequiresImportantRoleAttribute> logger,
-                                            UserManager<UserEntity> userManager,
-                                            PermissionRepository permissionRepo)
+            public RequiresRootAttributeImpl(PermissionRepository permissionRepo)
             {
-                _logger = logger;
-                this.userManager = userManager;
                 this.permissionRepo = permissionRepo;
             }
 

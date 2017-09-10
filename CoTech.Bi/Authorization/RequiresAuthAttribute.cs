@@ -14,21 +14,21 @@ using System.Security.Claims;
 
 namespace CoTech.Bi.Authorization
 {
-    public class RequiresLoginAttribute : TypeFilterAttribute
+    /// <summary>
+    /// Requiere que el usuario esté logeado (Authorization Header)
+    /// </summary>
+    public class RequiresAuthAttribute : TypeFilterAttribute
     {
-        public RequiresLoginAttribute()
-            : base(typeof(RequiresLoginAttributeImpl))
+        /// <summary>
+        /// Requiere que el usuario esté logeado (Authorization Header)
+        /// </summary>
+        public RequiresAuthAttribute()
+            : base(typeof(RequiresAuthAttributeImpl))
         {
         }
 
-        private class RequiresLoginAttributeImpl : Attribute, IAsyncActionFilter
+        private class RequiresAuthAttributeImpl : Attribute, IAsyncActionFilter
         {
-            private readonly UserManager<UserEntity> userManager;
-
-            public RequiresLoginAttributeImpl(UserManager<UserEntity> userManager)
-            {
-                this.userManager = userManager;
-            }
 
             public async Task OnActionExecutionAsync(ActionExecutingContext context,
                 ActionExecutionDelegate next)

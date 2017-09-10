@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Permissions.Model;
 using CoTech.Bi.Entity;
 using Microsoft.EntityFrameworkCore;
 
-namespace CoTech.Bi.Core.Companies.Models
+namespace CoTech.Bi.Core.Companies.Repositories
 {
     public class CompanyRepository
     {

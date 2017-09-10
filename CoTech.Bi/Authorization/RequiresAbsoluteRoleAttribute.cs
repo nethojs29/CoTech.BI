@@ -13,32 +13,34 @@ using CoTech.Bi.Core.Permissions.Repositories;
 namespace CoTech.Bi.Authorization
 {
     /// <summary>
-    /// Requiere al usuario tener alguno de los roles dados en la empresa especificada en la ruta.
+    /// Requiere al usuario tener alguno de los roles dados en la empresa especificada en la ruta
     /// </summary>
-    public class RequiresRoleAttribute : TypeFilterAttribute
+    public class RequiresAbsoluteRoleAttribute : TypeFilterAttribute
     {
         /// <summary>
-        /// Requiere al usuario tener alguno de los roles dados en la empresa especificada en la ruta.
-        /// Un usuario root puede entrar.
-        /// Un usuario con rol super en la empresa especificada o en alguna empresa padre de esta empresa puede entrar
-        /// Un usuario con rol admin en la empresa especificada puede entrar
-        /// Un usuario con rol reader en la empresa especificada puede entrar si el método de la ruta es GET
+        /// Requiere al usuario tener alguno de los roles dados en la empresa especificada en la ruta,
+        /// a diferencia de RequiresRoleAttribute, este no permite entrar a usuarios con roles SUPER,
+        /// ADMIN ni READER al menos que sean especificados.
+        /// Sin embargo, un usuario root si puede entrar
         /// </summary>
         /// <param name="permissions">Los roles que requiere el usuario</param>
-        public RequiresRoleAttribute(params long[] permissions)
-          : base(typeof(RequiresRoleAttributeImpl))
+        public RequiresAbsoluteRoleAttribute(params long[] permissions)
+          : base(typeof(RequiresAbsoluteRoleAttributeImpl))
         {
             Arguments = new[] { new PermissionsAuthorizationRequirement(permissions) };
         }
 
-        private class RequiresRoleAttributeImpl : Attribute, IAsyncActionFilter
+        private class RequiresAbsoluteRoleAttributeImpl : Attribute, IAsyncActionFilter
         {
+            private readonly ILogger _logger;
             private readonly PermissionRepository permissionRepo;
             private readonly PermissionsAuthorizationRequirement _requiredPermissions;
 
-            public RequiresRoleAttributeImpl(PermissionRepository permissionRepo,
+            public RequiresAbsoluteRoleAttributeImpl(ILogger<RequiresAbsoluteRoleAttribute> logger,
+                                            PermissionRepository permissionRepo,
                                             PermissionsAuthorizationRequirement requiredPermissions)
             {
+                _logger = logger;
                 this.permissionRepo = permissionRepo;
                 _requiredPermissions = requiredPermissions;
             }
@@ -60,10 +62,6 @@ namespace CoTech.Bi.Authorization
                     context.Result = new UnauthorizedResult();
                     return;
                 }
-                _requiredPermissions.RequiredRoles.Append(Role.Super);
-                _requiredPermissions.RequiredRoles.Append(Role.Admin);
-                if(context.HttpContext.Request.Method == "GET")
-                  _requiredPermissions.RequiredRoles.Append(Role.Reader);
                 var hasRole = await permissionRepo.UserHasAtLeastOneRoleInCompany(
                     userId,
                     companyId.Value, 
