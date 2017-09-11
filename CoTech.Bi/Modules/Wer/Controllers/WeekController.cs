@@ -5,6 +5,7 @@ using CoTech.Bi.Modules.Wer.Models;
 using  CoTech.Bi.Core.Permissions.Model;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Util;
+using CoTech.Bi.Core.Permissions.Repositories;
 
 namespace CoTech.Bi.Modules.Wer.Controllers
 {
@@ -27,7 +28,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
         
         [HttpGet("/pages/{page}")]
-        [RequiresLogin]
+        [RequiresAuth]
         public async Task<IActionResult> GetAll(int? page)
         {
             var weeks = await _weekRepository.getAll();

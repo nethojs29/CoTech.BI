@@ -1,4 +1,5 @@
 using CoTech.Bi.Core.Notifications.Models;
+using CoTech.Bi.Core.Notifications.Repositories;
 using CoTech.Bi.Loader;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,7 +17,8 @@ namespace CoTech.Bi.Core.Notifications
 
     public void ConfigureEntities(ModelBuilder modelBuilder)
     {
-      modelBuilder.Entity<NotificationEntity>().ToTable("Notifications");
+      modelBuilder.Entity<NotificationEntity>().ToTable("Notifications")
+        .Property("BodyJson").HasColumnName("Body");
       modelBuilder.Entity<ReceiverEntity>().ToTable("Notification_Receivers");
     }
 

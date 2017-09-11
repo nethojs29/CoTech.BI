@@ -3,7 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Core.Companies.Models;
+using CoTech.Bi.Core.Companies.Notifiers;
+using CoTech.Bi.Core.Companies.Repositories;
 using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Core.Companies.Controllers
@@ -85,7 +88,7 @@ namespace CoTech.Bi.Core.Companies.Controllers
         /// y no tiene ningun permiso en la empresa
         /// </response>
         [HttpGet("{id}")]
-        [RequiresPermission]
+        [RequiresAnyRole]
         [ProducesResponseType(typeof(CompanyResult), 200)]
         public async Task<IActionResult> GetById(long id) {
           return new OkObjectResult(await companyRepo.WithId(id));
@@ -110,7 +113,7 @@ namespace CoTech.Bi.Core.Companies.Controllers
         }
 
         [HttpGet("{id}/children")]
-        [RequiresImportantRole(Role.Super)]
+        [RequiresAbsoluteRole(Role.Super)]
         public async Task<IActionResult> GetCompanyChildren(long id) {
           var children = await companyRepo.ChildrenOf(id);
           return new OkObjectResult(children);
@@ -140,11 +143,11 @@ namespace CoTech.Bi.Core.Companies.Controllers
           var company = req.ToEntity();
           await companyRepo.Create(company);
           await companyNotifier.Created(company, HttpContext.UserId());
-          return new CreatedResult($"/api/companies/${company.Id}", company);
+          return new CreatedResult($"/api/companies/${company.Id}", new CompanyResult(company));
         }
 
         [HttpPut("{id}")]
-        [RequiresImportantRole(Role.Super)]
+        [RequiresAbsoluteRole(Role.Super)]
         public async Task<IActionResult> Update(long id, [FromBody] UpdateCompanyReq req) {
           var company = await companyRepo.WithId(id);
           if(req.Name != null) company.Name = req.Name;

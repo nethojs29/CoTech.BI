@@ -1,6 +1,6 @@
 using CoTech.Bi.Core.Companies.Models;
 
-namespace CoTech.Bi.Core.Companies.Controllers
+namespace CoTech.Bi.Core.Companies.Models
 {
     public interface CompanyRequest {}
 

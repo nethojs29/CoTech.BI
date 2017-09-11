@@ -1,12 +1,19 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Entity;
+using CoTech.Bi.Util;
+using EntityFrameworkCore.Triggers;
 using Newtonsoft.Json;
 
 namespace CoTech.Bi.Core.Notifications.Models
 {
-    public class NotificationEntity
+    public class NotificationEntity : Trackable
     {
+        static NotificationEntity() {
+          Triggers<NotificationEntity>.Inserted += entry => Console.WriteLine(entry.Entity);
+        }
         public long Id { get; set; }
         public long SenderId { get; set; }
         public UserEntity Sender { get; set; }
@@ -16,9 +23,9 @@ namespace CoTech.Bi.Core.Notifications.Models
         public object Body { get; set; }
         [Column("Body")]
         private string BodyJson {
-          get { return JsonConvert.SerializeObject(Body); }
+          get { return JsonConvert.SerializeObject(Body, JsonConverterOptions.JsonSettings); }
           set {
-            Body = string.IsNullOrEmpty(value) ? null : JsonConvert.DeserializeObject(value);
+            Body = string.IsNullOrEmpty(value) ? null : JsonConvert.DeserializeObject(value, JsonConverterOptions.JsonSettings);
           }
         }
     }

@@ -1,6 +1,6 @@
 using CoTech.Bi.Core.Users.Models;
 
-namespace CoTech.Bi.Core.Users.Controllers
+namespace CoTech.Bi.Core.Users.Models
 {
   public interface IUserRequest {}
 

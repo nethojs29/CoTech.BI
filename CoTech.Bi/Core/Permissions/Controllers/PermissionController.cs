@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
+using CoTech.Bi.Core.Permissions.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Core.Permissions.Controllers
@@ -15,7 +17,7 @@ namespace CoTech.Bi.Core.Permissions.Controllers
         }
 
         [HttpPost("{user}")]
-        [RequiresImportantRole(Role.Super, Role.Admin)]
+        [RequiresAbsoluteRole(Role.Super, Role.Admin)]
         [ProducesResponseType(typeof(PermissionResponse), 200)]
         public async Task<IActionResult> GivePermission(long company, long user, [FromBody] CreatePermissionReq req) {
             var permission = new PermissionEntity { CompanyId = company, UserId = user, RoleId = req.RoleId };
@@ -32,7 +34,7 @@ namespace CoTech.Bi.Core.Permissions.Controllers
         /// <returns></returns>
         /// <response code="200">Role eliminado</response>
         [HttpDelete("{user}/{role}")]
-        [RequiresImportantRole(Role.Super, Role.Admin)]
+        [RequiresAbsoluteRole(Role.Super, Role.Admin)]
         public async Task<IActionResult> RemoveRole(long company, long user, long role) {
             var permission = await permissionRepository.FindOne(company, user, role);
             if(permission == null){
@@ -43,7 +45,7 @@ namespace CoTech.Bi.Core.Permissions.Controllers
         }
 
         [HttpDelete("{user}")]
-        [RequiresImportantRole(Role.Super, Role.Admin)]
+        [RequiresAbsoluteRole(Role.Super, Role.Admin)]
         public async Task<IActionResult> RevokePermissions(long company, long user) {
             var permissions = await permissionRepository.GetUserPermissionsInCompany(user, company);
             if(permissions.Count == 0){

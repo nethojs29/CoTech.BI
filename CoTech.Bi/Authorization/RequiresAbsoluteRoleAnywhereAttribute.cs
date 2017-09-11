@@ -8,31 +8,37 @@ using Microsoft.Extensions.Logging;
 using CoTech.Bi.Core.Permissions.Model;
 using Microsoft.AspNetCore.Identity;
 using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Core.Permissions.Repositories;
 
 namespace CoTech.Bi.Authorization
 {
-    public class RequiresImportantRoleAttribute : TypeFilterAttribute
+    /// <summary>
+    /// Requiere al usuario tener alguno de los roles dados en cualquier empresa
+    /// </summary>
+    public class RequiresAbsoluteRoleAnywhereAttribute : TypeFilterAttribute
     {
-        public RequiresImportantRoleAttribute(params long[] permissions)
-          : base(typeof(RequiresImportantRoleAttributeImpl))
+        /// <summary>
+        /// Requiere al usuario tener alguno de los roles dados en cualquier empresa.
+        /// Un usuario root puede entrar
+        /// </summary>
+        /// <param name="permissions">Los roles que requiere el usuario</param>
+        public RequiresAbsoluteRoleAnywhereAttribute(params long[] permissions)
+          : base(typeof(RequiresAbsoluteRoleAnywhereAttributeImpl))
         {
             Arguments = new[] { new PermissionsAuthorizationRequirement(permissions) };
         }
 
-        private class RequiresImportantRoleAttributeImpl : Attribute, IAsyncActionFilter
+        private class RequiresAbsoluteRoleAnywhereAttributeImpl : Attribute, IAsyncActionFilter
         {
             private readonly ILogger _logger;
-            private readonly UserManager<UserEntity> userManager;
             private readonly PermissionRepository permissionRepo;
             private readonly PermissionsAuthorizationRequirement _requiredPermissions;
 
-            public RequiresImportantRoleAttributeImpl(ILogger<RequiresImportantRoleAttribute> logger,
-                                            UserManager<UserEntity> userManager,
+            public RequiresAbsoluteRoleAnywhereAttributeImpl(ILogger<RequiresAbsoluteRoleAnywhereAttribute> logger,
                                             PermissionRepository permissionRepo,
                                             PermissionsAuthorizationRequirement requiredPermissions)
             {
                 _logger = logger;
-                this.userManager = userManager;
                 this.permissionRepo = permissionRepo;
                 _requiredPermissions = requiredPermissions;
             }
@@ -45,20 +51,10 @@ namespace CoTech.Bi.Authorization
                   context.Result = new UnauthorizedResult();
                   return;
                 }
-                if(context.ActionArguments.Count == 0) {
-                    context.Result = new UnauthorizedResult();
-                    return;
-                }
-                var companyId = context.ActionArguments.First().Value as long?;
-                if(!companyId.HasValue){
-                    context.Result = new UnauthorizedResult();
-                    return;
-                }
-                var hasRole = await permissionRepo.UserHasAtLeastOneRoleInCompany(
+                var hasRole = await permissionRepo.UserHasAtLeastOneRoleAnywhere(
                     userId,
-                    companyId.Value, 
                     _requiredPermissions.RequiredRoles,
-                    true, true
+                    true
                 );
                 if(!hasRole){
                     context.Result = new UnauthorizedResult();

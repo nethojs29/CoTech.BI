@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using CoTech.Bi.Rx;
 using CoTech.Bi.Loader;
 using CoTech.Bi.Entity;
 using Microsoft.IdentityModel.Tokens;
@@ -72,7 +71,6 @@ namespace CoTech.Bi
                 c.IncludeXmlComments(xmlPath);
             });
             services.AddCors();
-            services.AddSingleton<EventEmitter>();
             services.AddBiModules();
             services.AddMvc();
             

@@ -1,6 +1,6 @@
 using CoTech.Bi.Core.Permissions.Model;
 
-namespace CoTech.Bi.Core.Permissions.Controllers
+namespace CoTech.Bi.Core.Permissions.Models
 {
     public class PermissionResponse
     {
