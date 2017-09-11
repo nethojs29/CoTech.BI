@@ -44,7 +44,7 @@ namespace CoTech.Bi.Core.Users.Controllers {
       }
     }
 
-    private static string CreateRandomPassword(int passwordLength)
+    public static string CreateRandomPassword(int passwordLength)
     {
       string allowedChars = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789";
       char[] chars = new char[passwordLength];

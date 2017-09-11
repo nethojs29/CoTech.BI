@@ -13,6 +13,7 @@ using System.Text;
 using System.Net;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Core.Permissions.Model;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace CoTech.Bi.Core.Users.Controllers
 {
@@ -25,10 +26,11 @@ namespace CoTech.Bi.Core.Users.Controllers
 		private IPasswordHasher<UserEntity> _passwordHasher;
 		private IConfiguration _configurationRoot;
 		private ILogger<AuthController> _logger;
+	    private UserRepository _userRepository;
 
 
 		public AuthController(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<Role> roleManager
-			, IPasswordHasher<UserEntity> passwordHasher, IConfiguration configurationRoot, ILogger<AuthController> logger)
+			, IPasswordHasher<UserEntity> passwordHasher, IConfiguration configurationRoot, ILogger<AuthController> logger, UserRepository userRepository)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
@@ -36,6 +38,7 @@ namespace CoTech.Bi.Core.Users.Controllers
 			_logger = logger;
 			_passwordHasher = passwordHasher;
 			_configurationRoot = configurationRoot;
+			_userRepository = userRepository;
 		}
 
 		/// <summary>
@@ -88,5 +91,23 @@ namespace CoTech.Bi.Core.Users.Controllers
 				return StatusCode((int)HttpStatusCode.InternalServerError, "error while creating token");
 			}
 		}
+
+	    [HttpPost("/reset")]
+	    public async Task<IActionResult> ResetPassword(ResetRequest request)
+	    {
+		    try
+		    {
+			    var user = await _userManager.FindByEmailAsync(request.email);
+			    var password = UserController.CreateRandomPassword(8);
+			    _passwordHasher.HashPassword(user, password);
+			    await _userRepository.UpdateUsers(user);
+			    return Ok();
+		    }
+		    catch (Exception e)
+		    {
+			    return new JsonResult(e.Data){StatusCode = 500};
+		    }
+
+	    }
 	}
 }
