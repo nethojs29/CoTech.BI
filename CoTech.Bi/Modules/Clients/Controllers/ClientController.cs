@@ -22,7 +22,7 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById([FromQuery] long id){
+        public async Task<IActionResult> GetById(long id){
             return new OkObjectResult(await clientRepo.withId(id));
         }
 
