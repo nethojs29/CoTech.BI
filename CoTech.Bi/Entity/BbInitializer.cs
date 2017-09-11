@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using CoTech.Bi.Core.Permissions.Model;
 using CoTech.Bi.Core.Users.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoTech.Bi.Entity
 {
@@ -14,6 +18,7 @@ namespace CoTech.Bi.Entity
     {
         private readonly BiContext _context;
         private readonly UserManager<UserEntity> _userManager;
+        private DbSet<RootEntity> _dbRoot;
 
         public DbInitializer(
             BiContext context,
@@ -21,6 +26,7 @@ namespace CoTech.Bi.Entity
         {
             _context = context;
             _userManager = userManager;
+            _dbRoot = _context.Set<RootEntity>();
         }
 
         //This example just creates an Administrator role and one Admin users
@@ -39,10 +45,26 @@ namespace CoTech.Bi.Entity
             */
 
             //Create the default Admin account and apply the Administrator role
-            string user = "lmoya@cotecnologias.com";
-            string password = "prueba123";
-            var userIdentityResult =_userManager.CreateAsync(new UserEntity() { Name = "Luis",Lastname = "Moya", Email = user, EmailConfirmed = true}, password).Result;
-            
+
+            if (!_context.Database.EnsureCreated())
+            {
+                var listUsers = new List<UserEntity>();
+                listUsers.Add(new UserEntity(){Name = "Luis",Lastname = "Moya", Email = "lmoya@cotecnologias.com", EmailConfirmed = true,Password = "prueba123"});
+
+                foreach (UserEntity item in listUsers)
+                {
+                    var userIdentityResult = _userManager.CreateAsync(item, item.Password).Result;
+                    if(userIdentityResult.Succeeded)
+                    {
+                        var counter = _dbRoot.Where(r => r.UserId == item.Id).ToList().Count;
+                        if(counter == 0)
+                        {
+                            _dbRoot.Add(new RootEntity() {User = item, UserId = item.Id});
+                            _context.SaveChanges();
+                        }
+                    }
+                }
+            }
         }
     }
 }
