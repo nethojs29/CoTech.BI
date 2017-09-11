@@ -22,6 +22,7 @@ using CoTech.Bi.Identity.DataAccess;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
+using CoTech.Bi.Util;
 
 namespace CoTech.Bi
 {
@@ -45,6 +46,7 @@ namespace CoTech.Bi
                 .AddDefaultTokenProviders();
             services.AddTransient<IUserStore<UserEntity>, UserStorage>();
             services.AddTransient<IRoleStore<Role>, RoleStorage>();
+            services.AddSingleton<JwtTokenGenerator>();
             services.Configure<IdentityOptions>(options => {
                 // Password settings
                 options.Password.RequireDigit = false;

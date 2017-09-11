@@ -35,7 +35,7 @@ namespace CoTech.Bi.Core.Users.Controllers {
       var entity = req.toEntity();
       var result = await userRepository.Create(entity, password);
       if(result.Succeeded) {
-        return new CreatedResult($"/api/users/{entity.Id}", entity);
+        return new CreatedResult($"/api/users/{entity.Id}", new UserResponse(entity));
       } else {
         return new BadRequestObjectResult(result.Errors);
       }
