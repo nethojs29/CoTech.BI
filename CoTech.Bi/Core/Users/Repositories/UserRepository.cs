@@ -30,6 +30,7 @@ namespace CoTech.Bi.Core.Users.Repositories
 
         public Task<List<UserEntity>> InCompany(long companyId){
           return db.Where(u => u.Permissions.Any(p => p.CompanyId == companyId))
+            .Include(u => u.Permissions)
             .ToListAsync();
         }
 
