@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Core.Permissions.Model;
 
 namespace CoTech.Bi.Entity
 {
     public interface IDbInitializer
     {
-        Task<IdentityResult> Initialize();
+        Task Initialize();
     }
     public class DbInitializer : IDbInitializer
     {
@@ -24,7 +25,7 @@ namespace CoTech.Bi.Entity
         }
 
         //This example just creates an Administrator role and one Admin users
-        public Task<IdentityResult> Initialize()
+        public async Task Initialize()
         {
             /*
             //create database schema if none exists
@@ -41,7 +42,14 @@ namespace CoTech.Bi.Entity
             //Create the default Admin account and apply the Administrator role
             string user = "lmoya@cotecnologias.com";
             string password = "prueba123";
-            return _userManager.CreateAsync(new UserEntity() { Name = "Luis",Lastname = "Moya", Email = user, EmailConfirmed = true}, password);
+
+            var newUser = new UserEntity { Name = "Luis",Lastname = "Moya", Email = user, EmailConfirmed = true};
+            await _userManager.CreateAsync(newUser, password);
+            var bdRoot = _context.Set<RootEntity>();
+            bdRoot.Add(new RootEntity{
+                UserId = newUser.Id
+            });
+            await _context.SaveChangesAsync();
             //await _userManager.AddToRoleAsync(await _userManager.FindByNameAsync(user), "Administrator");
         }
     }
