@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Modules.Wer.Models;
@@ -22,6 +23,14 @@ namespace CoTech.Bi.Modules.Wer.Models
         {
             return db.ToListAsync();
         }
-        
+
+        public void AddWeek()
+        {
+            var monday = DateTime.Now.AddDays(2);
+            var friday = DateTime.Now.AddDays(6);
+            db.Add(new WeekEntity(){StartTime = monday,EndTime = friday});
+            context.SaveChanges();
+        }
+
     }
 }
