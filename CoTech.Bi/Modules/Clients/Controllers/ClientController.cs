@@ -21,12 +21,23 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
             return new OkObjectResult(await clientRepo.getAll());
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById([FromQuery] long id){
+            return new OkObjectResult(await clientRepo.withId(id));
+        }
+
         [HttpPost]
         [RequiresRoot]
         public async Task<IActionResult> Create([FromBody] CreateClientReq req){
             var client = req.toEntity();
             await clientRepo.Create(client);
             return Created($"/api/clients/${client.Id}", client);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromQuery] long id, [FromBody] UpdateClientReq req){
+            var result = await clientRepo.Update(id, req);
+            return Ok(result);
         }
     }
 }
