@@ -43,7 +43,13 @@ namespace CoTech.Bi.Entity
             string user = "lmoya@cotecnologias.com";
             string password = "prueba123";
 
-            var newUser = new UserEntity { Name = "Luis",Lastname = "Moya", Email = user, EmailConfirmed = true, Id = 1};
+            var newUser = new UserEntity { 
+                Name = "Luis",
+                Lastname = "Moya", 
+                Email = user, 
+                EmailConfirmed = true,
+                Root = new RootEntity()
+            };
             var result = await _userManager.CreateAsync(newUser, password);
             var bdRoot = _context.Set<RootEntity>();
             bdRoot.Add(new RootEntity{

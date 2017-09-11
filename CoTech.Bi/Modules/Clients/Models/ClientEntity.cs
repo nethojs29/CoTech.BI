@@ -34,7 +34,6 @@ namespace CoTech.Bi.Modules.Clients.Models {
         public int Status{set; get;}
         [Required]
         public DateTime CreatedAt{set; get;}
-        [Required]
         public DateTime? DeletedAt{set; get;}
 
     }
