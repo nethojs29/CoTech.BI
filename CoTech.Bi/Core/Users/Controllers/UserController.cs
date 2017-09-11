@@ -40,6 +40,5 @@ namespace CoTech.Bi.Core.Users.Controllers {
         return new BadRequestObjectResult(result.Errors);
       }
     }
-
   }
 }

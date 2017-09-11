@@ -36,4 +36,14 @@ namespace CoTech.Bi.Core.Users.Models
       this.Email = Email;
     }
   }
+
+  public struct ResetRequest : IUserRequest
+  {
+    public string email { set; get; }
+
+    public ResetRequest(string email)
+    {
+      this.email = email;
+    }
+  }
 }

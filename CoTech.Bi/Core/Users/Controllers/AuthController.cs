@@ -26,7 +26,6 @@ namespace CoTech.Bi.Core.Users.Controllers
 		private JwtTokenGenerator _jwtTokenGenerator;
 		private ILogger<AuthController> _logger;
 
-
 		public AuthController(UserRepository userRepository, 
 													IPasswordHasher<UserEntity> passwordHasher, 
 													JwtTokenGenerator jwtTokenGenerator, 
@@ -76,5 +75,23 @@ namespace CoTech.Bi.Core.Users.Controllers
 				return StatusCode((int)HttpStatusCode.InternalServerError, "error while creating token");
 			}
 		}
+
+	    [HttpPost("/reset")]
+	    public async Task<IActionResult> ResetPassword(ResetRequest request)
+	    {
+		    try
+		    {
+			    var user = await _userRepository.WithEmail(request.email);
+			    var password = PasswordGenerator.CreateRandomPassword(8);
+			    user.Password = _passwordHasher.HashPassword(user, password);
+			    await _userRepository.Update(user);
+			    return Ok();
+		    }
+		    catch (Exception e)
+		    {
+			    return new JsonResult(e.Data){StatusCode = 500};
+		    }
+
+	    }
 	}
 }

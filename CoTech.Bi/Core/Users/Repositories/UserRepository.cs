@@ -55,5 +55,11 @@ namespace CoTech.Bi.Core.Users.Repositories
         public async Task<IdentityResult> Create(UserEntity entity, string password) {
           return await userManager.CreateAsync(entity, password);
         }
+
+      public Task<int> Update(UserEntity entity)
+      {
+        db.Update(entity);
+        return context.SaveChangesAsync();
+      }
     }
 }

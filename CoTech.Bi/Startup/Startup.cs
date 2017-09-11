@@ -62,6 +62,8 @@ namespace CoTech.Bi
                 // User settings
                 options.User.RequireUniqueEmail = true;
             });
+            
+            
             // requires using Microsoft.AspNetCore.Mvc;
             services.AddSwaggerGen(c =>
             {
@@ -73,10 +75,13 @@ namespace CoTech.Bi
             services.AddCors();
             services.AddBiModules();
             services.AddMvc();
+            
+            services.AddScoped<IDbInitializer, DbInitializer>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,IDbInitializer dbInitializer)
         {
             app.UseWebSockets();
             app.UseAuthentication();
@@ -89,8 +94,13 @@ namespace CoTech.Bi
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Bi API V1");
             });
+
+            
             app.UseBiModules(env);
             app.UseMvc();
+            
+            dbInitializer.Initialize().Wait();
+
         }
     }
 }
