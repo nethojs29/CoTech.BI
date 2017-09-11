@@ -78,7 +78,7 @@ namespace CoTech.Bi.Core.Users.Controllers
 		}
 
 	    [HttpPost("reset")]
-	    public async Task<IActionResult> ResetPassword(ResetRequest request)
+	    public async Task<IActionResult> ResetPassword([FromBody] ResetRequest request)
 	    {
 		    try
 		    {
@@ -95,13 +95,13 @@ namespace CoTech.Bi.Core.Users.Controllers
 				    }
 				    else
 				    {
-					    return new JsonResult("Error"){StatusCode = 500};
+					    return new JsonResult(new ResponseMail("Error al mandar correo",0,400)){StatusCode = 400};
 				    }
 				    
 			    }
 			    else
 			    {
-				    return new JsonResult("Error"){StatusCode = 500};
+				    return new JsonResult(new ResponseMail("Error al actualizar",0,404)){StatusCode = 404};
 			    }
 			    
 		    }

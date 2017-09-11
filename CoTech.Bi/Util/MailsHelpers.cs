@@ -20,7 +20,6 @@ namespace CoTech.Bi.Util
             var request = new RequestMail(list.ToArray(),"Asignación de contraseña",password);
             string passwordUrl = string.Format("http://resapi.cotecnologias.com/api/MailBiPass");
             HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Content-Type","application/json");
             string postBody = JsonConvert.SerializeObject(request);
             HttpResponseMessage response = client.PostAsync(passwordUrl, new StringContent(postBody, Encoding.UTF8, "application/json")).Result;
             if (response.StatusCode == HttpStatusCode.BadRequest)
@@ -32,14 +31,31 @@ namespace CoTech.Bi.Util
                 return true;
             }
         }
+        /*public static ResponseMail MailSender(string[] emails, string contentHtml,string subject)
+        {
+            var request = new RequestMail(emails,subject,contentHtml);
+            string urlMail = string.Format("http://resapi.cotecnologias.com/api/MailBi");
+            HttpClient client = new HttpClient();
+            string postBody = JsonConvert.SerializeObject(request);
+            HttpResponseMessage response = client.PostAsync(urlMail, new StringContent(postBody, Encoding.UTF8, "application/json")).Result;
+            if(response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                string content = await response.Content.ReadAsStringAsync();
+                return (ResponseMail) JsonConvert.DeserializeObject(content, typeof(ResponseMail));
+            }
+            else
+            {
+                return new ResponseMail("ok",null,null);
+            }
+        }*/
     }
     public class ResponseMail
     {
         public string message;
-        public int line;
-        public int code;
+        public int? line;
+        public int? code;
 
-        public ResponseMail(string message,int line,int code)
+        public ResponseMail(string message,int? line,int? code)
         {
             this.message = message;
             this.line = line;

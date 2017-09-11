@@ -22,7 +22,13 @@ using CoTech.Bi.Identity.DataAccess;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
+using System.Transactions;
+using CoTech.Bi.Modules.Wer.Models;
 using CoTech.Bi.Util;
+using Hangfire;
+using Hangfire.AspNetCore;
+using Hangfire.MySql;
+using Microsoft.Data.OData.Query.SemanticAst;
 
 namespace CoTech.Bi
 {
@@ -77,6 +83,8 @@ namespace CoTech.Bi
             services.AddMvc();
             
             services.AddScoped<IDbInitializer, DbInitializer>();
+            
+            services.AddHangfire(config => config.UseStorage(new MySqlStorage("Server=localhost;User Id=bi;Password=bi-core;Database=bi-core;Allow User Variables=True;")));
 
         }
 
@@ -94,12 +102,19 @@ namespace CoTech.Bi
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Bi API V1");
             });
-
+            app.UseHangfireDashboard();
+            app.UseHangfireServer();
             
             app.UseBiModules(env);
             app.UseMvc();
             
-            dbInitializer.Initialize().Wait();
+            dbInitializer.Initialize();
+            
+            
+
+            RecurringJob.AddOrUpdate("crear semanas",(WeekRepository repository)=>repository.AddWeek(),Cron.Weekly(DayOfWeek.Saturday));
+            
+            
 
         }
     }
