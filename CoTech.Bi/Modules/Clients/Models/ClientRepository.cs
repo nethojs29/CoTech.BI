@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -5,6 +6,7 @@ using CoTech.Bi.Core.Users.Controllers;
 using CoTech.Bi.Entity;
 using Microsoft.EntityFrameworkCore;
 using CoTech.Bi.Modules.Clients.Controllers;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace CoTech.Bi.Modules.Clients.Models{
     public class ClientRepository{
@@ -34,6 +36,12 @@ namespace CoTech.Bi.Modules.Clients.Models{
             var client = db.Find(id);
             context.Entry(client).CurrentValues.SetValues(entity);
             return context.SaveChangesAsync();
+        }
+
+        public async Task Delete(ClientEntity entity){
+            entity.DeletedAt = DateTime.Today;
+            db.Update(entity);
+            await context.SaveChangesAsync();
         }
 
 

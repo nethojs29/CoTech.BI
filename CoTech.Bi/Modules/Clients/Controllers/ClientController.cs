@@ -34,10 +34,17 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
             return Created($"/api/clients/${client.Id}", client);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromQuery] long id, [FromBody] UpdateClientReq req){
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(long id, [FromBody] UpdateClientReq req){
             var result = await clientRepo.Update(id, req);
             return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(long id){
+            var client = await clientRepo.withId(id);
+            await clientRepo.Delete(client);
+            return new OkObjectResult(client);
         }
     }
 }
