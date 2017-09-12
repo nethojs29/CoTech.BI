@@ -104,18 +104,17 @@ namespace CoTech.Bi
             });
             app.UseHangfireDashboard();
             app.UseHangfireServer();
-            
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+            );
             app.UseBiModules(env);
             app.UseMvc();
             
             dbInitializer.Initialize();
             
-            
-
-            RecurringJob.AddOrUpdate("crear semanas",(WeekRepository repository)=>repository.AddWeek(),Cron.Weekly(DayOfWeek.Saturday));
-            
-            
-
         }
     }
 }
