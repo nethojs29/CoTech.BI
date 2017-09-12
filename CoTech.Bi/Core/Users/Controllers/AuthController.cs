@@ -15,6 +15,7 @@ using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Core.Permissions.Model;
 using CoTech.Bi.Util;
 using CoTech.Bi.Core.Users.Repositories;
+using Newtonsoft.Json;
 
 namespace CoTech.Bi.Core.Users.Controllers
 {
@@ -25,7 +26,6 @@ namespace CoTech.Bi.Core.Users.Controllers
 		private IPasswordHasher<UserEntity> _passwordHasher;
 		private JwtTokenGenerator _jwtTokenGenerator;
 		private ILogger<AuthController> _logger;
-
 
 		public AuthController(UserRepository userRepository, 
 													IPasswordHasher<UserEntity> passwordHasher, 
@@ -76,5 +76,40 @@ namespace CoTech.Bi.Core.Users.Controllers
 				return StatusCode((int)HttpStatusCode.InternalServerError, "error while creating token");
 			}
 		}
+
+	    [HttpPost("reset")]
+	    public async Task<IActionResult> ResetPassword([FromBody] ResetRequest request)
+	    {
+		    try
+		    {
+			    var user = await _userRepository.WithEmail(request.email);
+			    var password = PasswordGenerator.CreateRandomPassword(8);
+			    user.Password = _passwordHasher.HashPassword(user, password);
+			    var result = await _userRepository.Update(user);
+			    if (result > 0)
+			    {
+				    bool response = MailsHelpers.MailPassword(user.Email,password);
+				    if (response)
+				    {
+					    return Ok();
+				    }
+				    else
+				    {
+					    return new JsonResult(new ResponseMail("Error al mandar correo",0,400)){StatusCode = 400};
+				    }
+				    
+			    }
+			    else
+			    {
+				    return new JsonResult(new ResponseMail("Error al actualizar",0,404)){StatusCode = 404};
+			    }
+			    
+		    }
+		    catch (Exception e)
+		    {
+			    return new JsonResult(e.Message){StatusCode = 500};
+		    }
+
+	    }
 	}
 }

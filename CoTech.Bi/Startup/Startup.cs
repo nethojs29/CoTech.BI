@@ -22,7 +22,13 @@ using CoTech.Bi.Identity.DataAccess;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
+using System.Transactions;
+using CoTech.Bi.Modules.Wer.Models;
 using CoTech.Bi.Util;
+using Hangfire;
+using Hangfire.AspNetCore;
+using Hangfire.MySql;
+using Microsoft.Data.OData.Query.SemanticAst;
 
 namespace CoTech.Bi
 {
@@ -62,6 +68,8 @@ namespace CoTech.Bi
                 // User settings
                 options.User.RequireUniqueEmail = true;
             });
+            
+            
             // requires using Microsoft.AspNetCore.Mvc;
             services.AddSwaggerGen(c =>
             {
@@ -73,10 +81,15 @@ namespace CoTech.Bi
             services.AddCors();
             services.AddBiModules();
             services.AddMvc();
+            
+            services.AddScoped<IDbInitializer, DbInitializer>();
+            
+            services.AddHangfire(config => config.UseStorage(new MySqlStorage("Server=localhost;User Id=bi;Password=bi-core;Database=bi-core;Allow User Variables=True;")));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,IDbInitializer dbInitializer)
         {
             app.UseWebSockets();
             app.UseAuthentication();
@@ -89,8 +102,20 @@ namespace CoTech.Bi
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Bi API V1");
             });
+            app.UseHangfireDashboard();
+            app.UseHangfireServer();
+            
             app.UseBiModules(env);
             app.UseMvc();
+            
+            dbInitializer.Initialize();
+            
+            
+
+            RecurringJob.AddOrUpdate("crear semanas",(WeekRepository repository)=>repository.AddWeek(),Cron.Weekly(DayOfWeek.Saturday));
+            
+            
+
         }
     }
 }

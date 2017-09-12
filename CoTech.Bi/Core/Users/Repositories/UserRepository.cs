@@ -30,6 +30,7 @@ namespace CoTech.Bi.Core.Users.Repositories
 
         public Task<List<UserEntity>> InCompany(long companyId){
           return db.Where(u => u.Permissions.Any(p => p.CompanyId == companyId))
+            .Include(u => u.Permissions)
             .ToListAsync();
         }
 
@@ -55,5 +56,11 @@ namespace CoTech.Bi.Core.Users.Repositories
         public async Task<IdentityResult> Create(UserEntity entity, string password) {
           return await userManager.CreateAsync(entity, password);
         }
+
+      public Task<int> Update(UserEntity entity)
+      {
+        db.Update(entity);
+        return context.SaveChangesAsync();
+      }
     }
 }

@@ -28,11 +28,12 @@ namespace CoTech.Bi.Core.Permissions.Controllers
             return Ok(users.Select(u => new UserResponse(u)));
         }
 
-        // [HttpGet("permissions")]
-        // [RequiresAbsoluteRole(Role.Super, Role.Admin, Role.Reader)]
-        // public async Task<IActionResult> GetUsersPermissions(long company) {
-        //     var permissions = await permissionRepository.Get
-        // }
+        [HttpGet("withPermissions")]
+        [RequiresAbsoluteRole(Role.Super, Role.Admin, Role.Reader)]
+        public async Task<IActionResult> GetWithUsersPermissions(long company) {
+            var users = await userRepository.InCompany(company);
+            return Ok(users.Select(u => new UserAndPermissions(u)));
+        }
 
         [HttpPost("{user}")]
         [RequiresAbsoluteRole(Role.Super, Role.Admin)]
