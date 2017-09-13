@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -90,7 +91,7 @@ namespace CoTech.Bi.Core.Companies.Controllers
         [HttpGet("{id}")]
         [RequiresAnyRole]
         [ProducesResponseType(typeof(CompanyResult), 200)]
-        public async Task<IActionResult> GetById(long id) {
+        public async Task<IActionResult> GetById(Guid id) {
           return new OkObjectResult(await companyRepo.WithId(id));
         }
 
@@ -98,14 +99,14 @@ namespace CoTech.Bi.Core.Companies.Controllers
         [ProducesResponseType(typeof(CompanyResult), 200)]
         public async Task<IActionResult> GetByUrl(string url){
           var userId = HttpContext.UserId();
-          if(userId == -1){
+          if(userId == null){
             return new UnauthorizedResult();
           }
           var company = await companyRepo.WithUrl(url);
           if(company == null){
             return new NotFoundResult();
           }
-          var hasAnyRole = await permissionRepo.UserHasAnyRoleInCompany(userId, company.Id, true, true);
+          var hasAnyRole = await permissionRepo.UserHasAnyRoleInCompany(userId.Value, company.Id, true, true);
           if(!hasAnyRole){
             return new UnauthorizedResult();
           }
@@ -114,7 +115,7 @@ namespace CoTech.Bi.Core.Companies.Controllers
 
         [HttpGet("{id}/children")]
         [RequiresAbsoluteRole(Role.Super)]
-        public async Task<IActionResult> GetCompanyChildren(long id) {
+        public async Task<IActionResult> GetCompanyChildren(Guid id) {
           var children = await companyRepo.ChildrenOf(id);
           return new OkObjectResult(children);
         }
@@ -123,10 +124,10 @@ namespace CoTech.Bi.Core.Companies.Controllers
         [ProducesResponseType(typeof(CompanyResult), 200)]
         public async Task<IActionResult> GetMyCompanies() {
           var userId = HttpContext.UserId();
-          if(userId == -1){
+          if(userId == null){
             return new UnauthorizedResult();
           }
-          var company = await companyRepo.GetUserCompanies(userId);
+          var company = await companyRepo.GetUserCompanies(userId.Value);
           if(company == null){
             return new NotFoundResult();
           }
@@ -140,15 +141,14 @@ namespace CoTech.Bi.Core.Companies.Controllers
           if(companyWithUrl != null){
             return new BadRequestResult();
           }
-          var company = req.ToEntity();
-          await companyRepo.Create(company);
-          await companyNotifier.Created(company, HttpContext.UserId());
+          var company = await companyRepo.Create(new CompanyCreatedEvt(req), HttpContext.UserId().Value);
+          // await companyNotifier.Created(company, HttpContext.UserId());
           return new CreatedResult($"/api/companies/${company.Id}", new CompanyResult(company));
         }
 
         [HttpPut("{id}")]
         [RequiresAbsoluteRole(Role.Super)]
-        public async Task<IActionResult> Update(long id, [FromBody] UpdateCompanyReq req) {
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCompanyReq req) {
           var company = await companyRepo.WithId(id);
           if(req.Name != null) company.Name = req.Name;
           if(req.Activity != null) company.Activity = req.Activity;
@@ -159,15 +159,16 @@ namespace CoTech.Bi.Core.Companies.Controllers
             }
             company.Url = req.Url;
           }
-          await companyRepo.Update(company);
+          var updateEvt = new CompanyUpdatedEvt(req);
+          await companyRepo.Update(updateEvt, HttpContext.UserId().Value);
           return new OkObjectResult(company);
         }
 
         [HttpDelete("{id}")]
         [RequiresRoot]
-        public async Task<IActionResult> Delete(long id){
+        public async Task<IActionResult> Delete(Guid id){
           var company = await companyRepo.WithId(id);
-          await companyRepo.Delete(company);
+          await companyRepo.Delete(new CompanyDeletedEvt { Id = id }, HttpContext.UserId().Value);
           return new OkObjectResult(company);
         }
     }

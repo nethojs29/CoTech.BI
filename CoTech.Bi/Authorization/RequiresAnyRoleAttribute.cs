@@ -45,7 +45,7 @@ namespace CoTech.Bi.Authorization
                                                      ActionExecutionDelegate next)
             {
                 var userId = context.HttpContext.UserId();
-                if(userId == -1){
+                if(userId == null){
                   context.Result = new UnauthorizedResult();
                   return;
                 }
@@ -53,12 +53,12 @@ namespace CoTech.Bi.Authorization
                     context.Result = new UnauthorizedResult();
                     return;
                 }
-                var companyId = context.ActionArguments.First().Value as long?;
+                var companyId = context.ActionArguments.First().Value as Guid?;
                 if(!companyId.HasValue){
                     context.Result = new UnauthorizedResult();
                     return;
                 }
-                var hasAnyRole = await permissionRepo.UserHasAnyRoleInCompany(userId, companyId.Value, true, true);
+                var hasAnyRole = await permissionRepo.UserHasAnyRoleInCompany(userId.Value, companyId.Value, true, true);
                 if(!hasAnyRole){
                     context.Result = new UnauthorizedResult();
                     return;

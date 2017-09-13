@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using CoTech.Bi.Core.Companies.Repositories;
 using CoTech.Bi.Core.Companies.Notifiers;
+using CoTech.Bi.Core.Companies.EventProcessors;
 
 namespace CoTech.Bi.Core.Companies
 {
@@ -25,6 +26,7 @@ namespace CoTech.Bi.Core.Companies
     {
       services.AddScoped<CompanyRepository>();
       services.AddScoped<CompanyNotifier>();
+      services.AddSingleton<CompanyEventProcessor>();
     }
   }
 }

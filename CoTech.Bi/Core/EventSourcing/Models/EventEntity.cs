@@ -9,7 +9,7 @@ namespace CoTech.Bi.Core.EventSourcing.Models
     public class EventEntity
     {
         public Guid Id { get; set; }
-        public long UserId {get; set; }
+        public Guid UserId {get; set; }
         public UserEntity User { get; set; }
         [NotMapped]
         public object Body { get; set; }

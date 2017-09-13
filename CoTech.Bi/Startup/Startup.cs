@@ -22,6 +22,7 @@ using CoTech.Bi.Identity.DataAccess;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
+using CoTech.Bi.Util;
 
 namespace CoTech.Bi
 {
@@ -39,6 +40,7 @@ namespace CoTech.Bi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<JwtTokenGenerator>();
 			services.AddEntityFrameworkMySql();
             services.AddDbContext<BiContext>();
             services.AddIdentity<UserEntity, Role>()

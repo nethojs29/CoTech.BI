@@ -8,7 +8,7 @@ namespace CoTech.Bi.Core.Users.Models
 {
     public class UserEntity
     {
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         [Required]
         public string Email { get; set; }
         [Required]

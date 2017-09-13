@@ -35,14 +35,14 @@ namespace CoTech.Bi.Core.Companies.Repositories
           return db.Where(c => !c.DeletedAt.HasValue).ToListAsync();
         }
 
-        public Task<List<CompanyEntity>> GetUserCompanies(long userId) {
+        public Task<List<CompanyEntity>> GetUserCompanies(Guid userId) {
           return dbPermissions.Where(p => p.UserId == userId)
             .Select(p => p.Company)
             .Distinct()
             .ToListAsync();
         }
 
-        public Task<CompanyEntity> WithId(long id) {
+        public Task<CompanyEntity> WithId(Guid id) {
           return db.FindAsync(id);
         }
 
@@ -50,29 +50,38 @@ namespace CoTech.Bi.Core.Companies.Repositories
           return db.FirstOrDefaultAsync(c => c.Url == url);
         }
 
-        public Task<List<CompanyEntity>> ChildrenOf(long id) {
+        public Task<List<CompanyEntity>> ChildrenOf(Guid id) {
           return db.Where(c => c.ParentId == id).ToListAsync();
         }
 
-        public async Task Create(CompanyCreatedEvt evt, long userId) {
+        public async Task<CompanyEntity> Create(CompanyCreatedEvt evt, Guid userId) {
           var evtEntity = new EventEntity {
             Id = Guid.NewGuid(),
             UserId = userId,
             Body = evt
           };
           await eventRepository.Create(evtEntity);
+          return await db.FirstAsync(c => c.Id == evt.Id);
         }
 
-        public async Task Update(CompanyEntity entity){
-          var entry = db.Update(entity);
-          entry.Property(e => e.DeletedAt).IsModified = false;
-          await context.SaveChangesAsync();
+        public async Task<CompanyEntity> Update(CompanyUpdatedEvt evt, Guid userId){
+          var evtEntity = new EventEntity {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            Body = evt
+          };
+          await eventRepository.Create(evtEntity);
+          return await db.FirstAsync(c => c.Id == evt.Id);
         }
 
-        public async Task Delete(CompanyEntity entity){
-          entity.DeletedAt = new DateTime();
-          db.Update(entity);
-          await context.SaveChangesAsync();
+        public async Task<CompanyEntity> Delete(CompanyDeletedEvt evt, Guid userId){
+          var evtEntity = new EventEntity {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            Body = evt
+          };
+          await eventRepository.Create(evtEntity);
+          return await db.FirstAsync(c => c.Id == evt.Id);
         }
     }
 }

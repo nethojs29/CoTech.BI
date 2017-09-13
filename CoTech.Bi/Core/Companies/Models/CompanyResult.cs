@@ -6,14 +6,14 @@ namespace CoTech.Bi.Core.Companies.Models
 {
     public class CompanyResult {
       [Required]
-      public long Id { get; set; }
+      public Guid Id { get; set; }
       [Required]
       public string Name { get; set; }
       [Required]
       public string Activity { get; set; }
       [Required]
       public string Url { get; set; }
-      public long? ParentId { get; set; }
+      public Guid? ParentId { get; set; }
       public DateTime? DeletedAt { get; set; }
 
       public CompanyResult(CompanyEntity entity){

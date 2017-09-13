@@ -15,8 +15,9 @@ namespace CoTech.Bi.Core.Companies.EventProcessors
         {
             eventObservable = DbObservable<BiContext>.FromInserting<EventEntity>()
                 .Where(entry => entry.Entity.Body is CompanyEvent);
-            eventObservable.Where(entry => entry.Entity.Body is CompanyCreatedEvt)
-                .Subscribe(onCreate);
+            eventObservable.Where(entry => 
+                entry.Entity.Body is CompanyCreatedEvt
+            ).Subscribe(onCreate);
         }
 
         private DbSet<CompanyEntity> getDb(IBeforeEntry<EventEntity, BiContext> entry){
@@ -24,6 +25,7 @@ namespace CoTech.Bi.Core.Companies.EventProcessors
         }
 
         private void onCreate(IBeforeEntry<EventEntity, BiContext> entry) {
+            Console.Write(entry);
             var db = getDb(entry);
             var eventBody = entry.Entity.Body as CompanyCreatedEvt;
             var companyEntity = new CompanyEntity {
@@ -32,6 +34,17 @@ namespace CoTech.Bi.Core.Companies.EventProcessors
                 Url = eventBody.Url
             };
             db.Add(companyEntity);
+            entry.Context.SaveChanges();
+        }
+
+        private void onUpdate(IBeforeEntry<EventEntity, BiContext> entry) {
+            var db = getDb(entry);
+            var eventBody = entry.Entity.Body as CompanyUpdatedEvt;
+            var companyEntity = db.Find(eventBody.Id);
+            if(eventBody.Name != null) companyEntity.Name = eventBody.Name;
+            if(eventBody.Activity != null) companyEntity.Activity = eventBody.Activity;
+            if(eventBody.Url != null) companyEntity.Url = eventBody.Url;
+            db.Update(companyEntity);
             entry.Context.SaveChanges();
         }
     }

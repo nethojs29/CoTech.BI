@@ -47,12 +47,12 @@ namespace CoTech.Bi.Authorization
                                                      ActionExecutionDelegate next)
             {
                 var userId = context.HttpContext.UserId();
-                if(userId == -1){
+                if(userId == null){
                   context.Result = new UnauthorizedResult();
                   return;
                 }
                 var hasRole = await permissionRepo.UserHasAtLeastOneRoleAnywhere(
-                    userId,
+                    userId.Value,
                     _requiredPermissions.RequiredRoles,
                     true
                 );

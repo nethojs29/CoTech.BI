@@ -5,7 +5,7 @@ namespace CoTech.Bi.Core.Users.Models
 {
     public class UserResponse
     {
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Lastname { get; set; }
         public string Email { get; set; }

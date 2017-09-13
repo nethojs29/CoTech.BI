@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace CoTech.Bi.Core.Users.Repositories
             return db.Where(u => !u.DeletedAt.HasValue).ToListAsync();
         }
 
-        public Task<List<UserEntity>> InCompany(long companyId){
+        public Task<List<UserEntity>> InCompany(Guid companyId){
           return db.Where(u => u.Permissions.Any(p => p.CompanyId == companyId))
             .ToListAsync();
         }

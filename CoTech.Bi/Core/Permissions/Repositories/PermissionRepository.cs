@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace CoTech.Bi.Core.Permissions.Repositories
           this.context = context;
         }
 
-        public Task<List<PermissionEntity>> GetUserPermissionsInCompany(long userId, long companyId){
+        public Task<List<PermissionEntity>> GetUserPermissionsInCompany(Guid userId, Guid companyId){
           return db.Where(p => p.UserId == userId && p.CompanyId == companyId).ToListAsync();
         }
 
@@ -36,7 +37,7 @@ namespace CoTech.Bi.Core.Permissions.Repositories
           await context.SaveChangesAsync();
         }
 
-        public Task<PermissionEntity> FindOne(long companyId, long userId, long roleId) {
+        public Task<PermissionEntity> FindOne(Guid companyId, Guid userId, long roleId) {
           return db.FirstAsync(p => p.CompanyId == companyId && p.UserId == userId && p.RoleId == roleId);
         }
 
@@ -52,11 +53,11 @@ namespace CoTech.Bi.Core.Permissions.Repositories
 
         #region Funciones booleanas para autorizacion
 
-        public Task<bool> UserIsRoot(long userId) {
+        public Task<bool> UserIsRoot(Guid userId) {
           return dbRoot.AnyAsync(p => p.UserId == userId);
         }
 
-        public async Task<bool> UserHasAtLeastOneRoleAnywhere(long userId, IEnumerable<long> roles, bool orRoot) {
+        public async Task<bool> UserHasAtLeastOneRoleAnywhere(Guid userId, IEnumerable<long> roles, bool orRoot) {
           var permissionQuery = db.Where(p => p.UserId == userId && roles.Contains(p.RoleId));
           if (orRoot) {
             if(await UserIsRoot(userId)) return true;
@@ -64,7 +65,7 @@ namespace CoTech.Bi.Core.Permissions.Repositories
           return await permissionQuery.AnyAsync();
         }
 
-        public async Task<bool> UserHasAtLeastOneRoleInCompany(long userId, long companyId, IEnumerable<long> roles, bool orIsRoot){
+        public async Task<bool> UserHasAtLeastOneRoleInCompany(Guid userId, Guid companyId, IEnumerable<long> roles, bool orIsRoot){
           var permissionQuery = db.Where(p => p.UserId == userId && p.CompanyId == companyId && roles.Contains(p.RoleId));
           if (orIsRoot) {
             if(await UserIsRoot(userId)) return true;
@@ -72,7 +73,7 @@ namespace CoTech.Bi.Core.Permissions.Repositories
           return await permissionQuery.AnyAsync();
         }
 
-        public async Task<bool> UserHasAtLeastOneRoleInCompany(long userId, long companyId, IEnumerable<long> roles, bool orIsRoot, bool orIsSuperInAncestor){
+        public async Task<bool> UserHasAtLeastOneRoleInCompany(Guid userId, Guid companyId, IEnumerable<long> roles, bool orIsRoot, bool orIsSuperInAncestor){
           var hasRole = await UserHasAtLeastOneRoleInCompany(userId, companyId, roles, orIsRoot);
           if(!orIsSuperInAncestor) return hasRole;
           if(hasRole) return true;
@@ -81,7 +82,7 @@ namespace CoTech.Bi.Core.Permissions.Repositories
           return await UserHasAtLeastOneRoleInCompany(userId, company.ParentId.Value, new long[]{Role.Super}, false, true); // ya sabemos que no es root
         }
 
-        public async Task<bool> UserHasAnyRoleInCompany(long userId, long companyId, bool orIsRoot){
+        public async Task<bool> UserHasAnyRoleInCompany(Guid userId, Guid companyId, bool orIsRoot){
           var permissionQuery = db.Where(p => p.UserId == userId && p.CompanyId == companyId);
           if (orIsRoot) {
             if(await UserIsRoot(userId)) return true;
@@ -89,7 +90,7 @@ namespace CoTech.Bi.Core.Permissions.Repositories
           return await permissionQuery.AnyAsync();
         }
 
-        public async Task<bool> UserHasAnyRoleInCompany(long userId, long companyId, bool orIsRoot, bool orIsSuperInAncestor){
+        public async Task<bool> UserHasAnyRoleInCompany(Guid userId, Guid companyId, bool orIsRoot, bool orIsSuperInAncestor){
           var hasAnyRole = await UserHasAnyRoleInCompany(userId, companyId, orIsRoot);
           if(!orIsSuperInAncestor) return hasAnyRole;
           if(hasAnyRole) return true;

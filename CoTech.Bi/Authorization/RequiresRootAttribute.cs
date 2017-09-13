@@ -35,11 +35,11 @@ namespace CoTech.Bi.Authorization
                                                      ActionExecutionDelegate next)
             {
                 var userId = context.HttpContext.UserId();
-                if(userId == -1){
+                if(userId == null){
                   context.Result = new UnauthorizedResult();
                   return;
                 }
-                var isRoot = await permissionRepo.UserIsRoot(userId);
+                var isRoot = await permissionRepo.UserIsRoot(userId.Value);
                 if(!isRoot){
                     context.Result = new UnauthorizedResult();
                     return;
