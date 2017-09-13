@@ -1,6 +1,8 @@
-﻿using CoTech.Bi.Loader;
+using CoTech.Bi.Loader;
 using CoTech.Bi.Modules.Wer.Models.Entities;
 using CoTech.Bi.Modules.Wer.Repositories;
+using System;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +14,7 @@ namespace CoTech.Bi.Modules.Wer
     {
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            //throw new System.NotImplementedException();
+            RecurringJob.AddOrUpdate("crear semanas",(WeekRepository repository)=>repository.AddWeek(),Cron.Weekly(DayOfWeek.Saturday));
         }
 
         public void ConfigureServices(IServiceCollection services)
