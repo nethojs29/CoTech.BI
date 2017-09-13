@@ -1,5 +1,6 @@
 ﻿using CoTech.Bi.Loader;
-using CoTech.Bi.Modules.Wer.Models;
+using CoTech.Bi.Modules.Wer.Models.Entities;
+using CoTech.Bi.Modules.Wer.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ namespace CoTech.Bi.Modules.Wer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<WeekRepository>();
+            services.AddScoped<ReportRepository>();
         }
 
         public void ConfigureEntities(ModelBuilder modelBuilder)

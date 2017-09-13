@@ -112,7 +112,6 @@ namespace CoTech.Bi
             
             
 
-            RecurringJob.AddOrUpdate("crear semanas",(WeekRepository repository)=>repository.AddWeek(),Cron.Weekly(DayOfWeek.Saturday));
             
             
 

@@ -1,7 +1,7 @@
 ﻿using  System;
 using CoTech.Bi.Core.Companies.Models;
 
-namespace CoTech.Bi.Modules.Wer.Models
+namespace CoTech.Bi.Modules.Wer.Models.Entities
 {
     public class ReportEntity
     {
