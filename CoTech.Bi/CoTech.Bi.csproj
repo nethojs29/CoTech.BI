@@ -7,8 +7,6 @@
     <DocumentationFile>bin\Debug\netcoreapp2.0\BiApi.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Modules\DinningRooms\Controllers" />
-    <Folder Include="Modules\DinningRooms\Models" />
     <Folder Include="Modules\Wer\Tasks" />
     <Folder Include="wwwroot\" />
     <Folder Include="Entities\" />

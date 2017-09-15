@@ -1,10 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
+using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Expenses.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Expenses.Controllers{
     [Route("api/expenses")]
-    public class ExpenseController{
+    public class ExpenseController : Controller{
         private readonly ExpenseRepository expenseRepo;
 
         public ExpenseController(ExpenseRepository expenseRepo){
