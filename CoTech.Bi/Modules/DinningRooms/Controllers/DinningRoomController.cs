@@ -37,9 +37,9 @@ namespace CoTech.Bi.Modules.DinningRooms.Controllers{
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id){
-            var provider = await dinningRepo.WithId(id);
-            await dinningRepo.Delete(provider);
-            return new OkObjectResult(provider);
+            var dinningRoom = await dinningRepo.WithId(id);
+            await dinningRepo.Delete(dinningRoom);
+            return new OkObjectResult(dinningRoom);
         }
     }
 }
