@@ -16,6 +16,7 @@ namespace CoTech.Bi.Modules.DinningRooms.Controllers{
         public long CompanyId{ set; get; }
 
         public DinningRoomEntity toEntity(long userId){
+            Console.WriteLine(userId);
             return new DinningRoomEntity {
                 Name = Name,
                 Address = Address,

@@ -28,13 +28,13 @@ namespace CoTech.Bi.Modules.Expenses.Controllers{
         public async Task<IActionResult> Create([FromBody] CreateExpenseReq req){
             var expense = req.toEntity();
             await expenseRepo.Create(expense);
-            return new OkObjectResult(expense);
+            return Created($"/api/expenses/${expense.Id}", expense);
         }
         
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(long id, [FromBody] UpdateExpenseReq req){
             var result = await expenseRepo.Update(id, req);
-            return new OkObjectResult(result);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]

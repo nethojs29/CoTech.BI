@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Expenses.Controllers{
     [Route("api/expenseTypes")]
-    public class ExpenseTypeController{
+    public class ExpenseTypeController :Controller {
         private readonly ExpenseTypeRepository expenseRepo;
 
         public ExpenseTypeController(ExpenseTypeRepository expenseRepo){
@@ -25,13 +25,13 @@ namespace CoTech.Bi.Modules.Expenses.Controllers{
         public async Task<IActionResult> Create([FromBody] CreateExpenseTypeReq req){
             var expense = req.toEntity();
             await expenseRepo.Create(expense);
-            return new OkObjectResult(expense);
+            return Created($"/api/expenses/${expense.Id}", expense);
         }
         
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(long id, [FromBody] UpdateExpenseTypeReq req){
             var result = await expenseRepo.Update(id, req);
-            return new OkObjectResult(result);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
