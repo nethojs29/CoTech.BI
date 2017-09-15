@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace CoTech.Bi.Core.Companies.Models
@@ -16,5 +17,7 @@ namespace CoTech.Bi.Core.Companies.Models
         public DateTime? DeletedAt { get; set; }
         public string PhotoUrl { get; set; }
         public string Color { get; set; }
+        
+        public List<CompanyEntity> Children { set; get; }
     }
 }

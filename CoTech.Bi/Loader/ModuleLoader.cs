@@ -2,8 +2,11 @@ using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Entity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,6 +45,11 @@ namespace CoTech.Bi.Loader
             return assembly.GetTypes()
                 .Where(x => x.GetInterface(typeof(T).Name) != null)
                 .ToList<Type>();
+        }
+
+        public static void BiInitialize(this BiContext biContext, UserManager<UserEntity> _manager)
+        {
+            modules.ForEach(item => item.ConfigureInitializer(biContext,_manager));
         }
     }
 }

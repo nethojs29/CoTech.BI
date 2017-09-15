@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CoTech.Bi.Core.Permissions.Model;
 using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Loader;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoTech.Bi.Entity
@@ -70,7 +71,8 @@ namespace CoTech.Bi.Entity
                             _context.SaveChanges();
                         }
                     }
-                }
+                } 
+                _context.BiInitialize(_userManager);
             }
         }
     }
