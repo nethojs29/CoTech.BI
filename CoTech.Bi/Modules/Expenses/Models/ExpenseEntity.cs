@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Modules.Providers.Models;
 
 namespace CoTech.Bi.Modules.Expenses.Models{
@@ -15,10 +16,13 @@ namespace CoTech.Bi.Modules.Expenses.Models{
         public string Observations{ set; get; }
         public string ImageUrl{ set; get; }
         
-        public long ProviderId{ set; get; }
+        public long? ProviderId{ set; get; }
         public ProviderEntity Provider{ set; get; }
+        [Required]
         public long ExpenseGroupId{ set; get; }
-        public ExpenseGroupEntity Group{ set; get; }
+        public ExpenseGroupEntity ExpenseGroup{ set; get; }
+        public long CompanyId{ set; get; }
+        public CompanyEntity Company{ set; get; }
         
         public DateTime CreatedAt{ set; get; }
         public DateTime? DeletedAt{ set; get; }
