@@ -37,7 +37,7 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
             return Ok(result);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}/approve")]
         public async Task<IActionResult> Approve(long id, [FromBody] ApproveRequisitionReq req){
             var requisition = await requisitionRepo.WithId(id);
             if (req.MotiveSurplus != null) requisition.MotiveSurplus = req.MotiveSurplus;
@@ -47,10 +47,14 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
             return new OkObjectResult(requisition);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}/comprobate")]
         public async Task<IActionResult> Comprobate(long id, [FromBody] ComprobateRequisitionReq req){
             var requisition = await requisitionRepo.WithId(id);
-            //meter datos de comprobación
+            //No sé cómo subir archivos (8
+            requisition.Refund = req.Refund;
+            requisition.ComprobateDate = DateTime.Now;
+            requisition.ComprobateUserId = HttpContext.UserId();
+            
             return new OkObjectResult(requisition);
         }
 
