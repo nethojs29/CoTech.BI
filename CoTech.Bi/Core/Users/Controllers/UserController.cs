@@ -35,7 +35,11 @@ namespace CoTech.Bi.Core.Users.Controllers {
       var entity = req.toEntity();
       var result = await userRepository.Create(entity, password);
       if(result.Succeeded) {
-        return new CreatedResult($"/api/users/{entity.Id}", new UserResponse(entity));
+        var sent = MailsHelpers.MailPassword(req.Email, password);
+        if(sent)
+          return new CreatedResult($"/api/users/{entity.Id}", new UserResponse(entity));
+        else
+          return StatusCode(500);
       } else {
         return new BadRequestObjectResult(result.Errors);
       }

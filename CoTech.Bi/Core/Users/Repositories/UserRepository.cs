@@ -38,6 +38,10 @@ namespace CoTech.Bi.Core.Users.Repositories
           return db.Where(u => u.Root != null).ToListAsync();
         }
 
+        public Task<UserEntity> WithId(long id) {
+          return db.FindAsync(id);
+        }
+
         /// <summary>
         /// Regresa el usuario, si existe, asociado con el correo dado
         /// </summary>

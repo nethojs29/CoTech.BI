@@ -31,6 +31,10 @@ namespace CoTech.Bi.Core.Permissions.Repositories
           return db.Where(p => p.UserId == userId && p.CompanyId == companyId).ToListAsync();
         }
 
+        public Task<List<PermissionEntity>> GetUserPermissions(long userId) {
+          return db.Where(p => p.UserId == userId).ToListAsync();
+        }
+
         public async Task Create(PermissionEntity entity) {
           db.Add(entity);
           await context.SaveChangesAsync();
