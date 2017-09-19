@@ -39,5 +39,19 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             return PaginateList<WeekEntity>.CreateAsync(weeks, page ?? 1, 54);
         }
 
+        public Task<WeekEntity> Current()
+        {
+            return db.OrderByDescending(w => w.EndTime).FirstAsync();
+        }
+
+        public bool Exist(long? id)
+        {
+            if (id != null)
+            {
+                 return db.Where(w => w.Id == id).Count() > 0 ? true: false;
+            }
+            return false;
+        }
+
     }
 }

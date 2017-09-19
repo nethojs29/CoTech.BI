@@ -1,8 +1,11 @@
 using CoTech.Bi.Core.Permissions.Model;
 using CoTech.Bi.Core.Permissions.Repositories;
+using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Entity;
 using CoTech.Bi.Loader;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +20,11 @@ namespace CoTech.Bi.Core.Permissions
     {
       modelBuilder.Entity<PermissionEntity>().ToTable("Permissions");
       modelBuilder.Entity<RootEntity>().ToTable("RootUsers");
+    }
+
+    public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
+    {
+      
     }
 
     public void ConfigureServices(IServiceCollection services)

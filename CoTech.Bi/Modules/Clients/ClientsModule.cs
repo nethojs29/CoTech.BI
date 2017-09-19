@@ -23,6 +23,10 @@ namespace CoTech.Bi.Modules.Clients {
             modelBuilder.Entity<ClientEntity>().ToTable("Clients");
         }
 
+        public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
+        {
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ClientRepository>();

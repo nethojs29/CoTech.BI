@@ -2,9 +2,12 @@ using CoTech.Bi.Loader;
 using CoTech.Bi.Modules.Wer.Models.Entities;
 using CoTech.Bi.Modules.Wer.Repositories;
 using System;
+using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Entity;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,6 +31,12 @@ namespace CoTech.Bi.Modules.Wer
             modelBuilder.Entity<WeekEntity>().ToTable("Wer_Weeks");
 
             modelBuilder.Entity<ReportEntity>().ToTable("Wer_Reports");
+            
+        }
+
+        public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
+        {
+            
         }
     }
 }
