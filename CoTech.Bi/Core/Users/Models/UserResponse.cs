@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using CoTech.Bi.Core.Companies.Models;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Users.Models;
 
 namespace CoTech.Bi.Core.Users.Models
@@ -23,5 +26,8 @@ namespace CoTech.Bi.Core.Users.Models
       public string Token { get; set; }
       public DateTime Expiration { get; set;}
       public UserResponse User { get; set;}
+      public bool IAmRoot { get; set; }
+      public List<PermissionResponse> Permissions { get; set; }
+      public List<CompanyResult> Companies { get; set; }
     }
 }

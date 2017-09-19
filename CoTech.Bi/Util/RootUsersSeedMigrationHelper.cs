@@ -5,7 +5,7 @@ using CoTech.Bi.Entity;
 using CoTech.Bi.Core.Users.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 
 namespace CoTech.Bi.Util
 {

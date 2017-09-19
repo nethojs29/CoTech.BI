@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -5,7 +6,7 @@ using CoTech.Bi.Authorization;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Companies.Notifiers;
 using CoTech.Bi.Core.Companies.Repositories;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Permissions.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -98,14 +99,14 @@ namespace CoTech.Bi.Core.Companies.Controllers
         [ProducesResponseType(typeof(CompanyResult), 200)]
         public async Task<IActionResult> GetByUrl(string url){
           var userId = HttpContext.UserId();
-          if(userId == -1){
+          if(userId == null){
             return new UnauthorizedResult();
           }
           var company = await companyRepo.WithUrl(url);
           if(company == null){
             return new NotFoundResult();
           }
-          var hasAnyRole = await permissionRepo.UserHasAnyRoleInCompany(userId, company.Id, true, true);
+          var hasAnyRole = await permissionRepo.UserHasAnyRoleInCompany(userId.Value, company.Id, true, true);
           if(!hasAnyRole){
             return new UnauthorizedResult();
           }
@@ -123,10 +124,10 @@ namespace CoTech.Bi.Core.Companies.Controllers
         [ProducesResponseType(typeof(CompanyResult), 200)]
         public async Task<IActionResult> GetMyCompanies() {
           var userId = HttpContext.UserId();
-          if(userId == -1){
+          if(userId == null){
             return new UnauthorizedResult();
           }
-          var company = await companyRepo.GetUserCompanies(userId);
+          var company = await companyRepo.GetUserCompanies(userId.Value);
           if(company == null){
             return new NotFoundResult();
           }
@@ -136,38 +137,24 @@ namespace CoTech.Bi.Core.Companies.Controllers
         [HttpPost]
         [RequiresRoot]
         public async Task<IActionResult> Create([FromBody] CreateCompanyReq req){
-          var companyWithUrl = await companyRepo.WithUrl(req.Url);
-          if(companyWithUrl != null){
-            return new BadRequestResult();
-          }
-          var company = req.ToEntity();
-          await companyRepo.Create(company);
-          await companyNotifier.Created(company, HttpContext.UserId());
+          var cmd = new CreateCompanyCmd(req, HttpContext.UserId().Value);
+          var company = await companyRepo.Create(cmd);
           return new CreatedResult($"/api/companies/${company.Id}", new CompanyResult(company));
         }
 
         [HttpPut("{id}")]
         [RequiresAbsoluteRole(Role.Super)]
         public async Task<IActionResult> Update(long id, [FromBody] UpdateCompanyReq req) {
-          var company = await companyRepo.WithId(id);
-          if(req.Name != null) company.Name = req.Name;
-          if(req.Activity != null) company.Activity = req.Activity;
-          if(req.Url != null){
-            var companyWithUrl = await companyRepo.WithUrl(req.Url);
-            if(companyWithUrl != null && companyWithUrl.Id == company.Id){
-              return new BadRequestObjectResult("url ya está en uso");
-            }
-            company.Url = req.Url;
-          }
-          await companyRepo.Update(company);
+          var updateCmd = new UpdateCompanyCmd(id, req, HttpContext.UserId().Value);
+          var company = await companyRepo.Update(updateCmd);
           return new OkObjectResult(company);
         }
 
         [HttpDelete("{id}")]
         [RequiresRoot]
         public async Task<IActionResult> Delete(long id){
-          var company = await companyRepo.WithId(id);
-          await companyRepo.Delete(company);
+          var cmd = new DeleteCompanyCmd(id, HttpContext.UserId().Value);
+          var company = await companyRepo.Delete(cmd);
           return new OkObjectResult(company);
         }
     }

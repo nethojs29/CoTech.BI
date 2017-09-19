@@ -27,7 +27,7 @@ namespace CoTech.Bi.Core.Notifications.Controllers
         public async Task GetMyNotifications(){
             if(HttpContext.WebSockets.IsWebSocketRequest){
                 var socket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-                var userId = HttpContext.UserId();
+                var userId = HttpContext.UserId().Value;
                 var notificationObs = notificationRepository.UserNotifications(userId);
                 var sender = new NotificationSender(socket);
                 notificationObs.Subscribe(sender);
