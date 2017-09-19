@@ -2,8 +2,11 @@ using CoTech.Bi.Loader;
 using CoTech.Bi.Modules.Wer.Models.Entities;
 using CoTech.Bi.Modules.Wer.Repositories;
 using System;
+using CoTech.Bi.Core.Companies.Models;
+using CoTech.Bi.Core.Permissions.Model;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Entity;
+using CoTech.Bi.Modules.Wer.Initialize;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,9 +37,9 @@ namespace CoTech.Bi.Modules.Wer
             
         }
 
-        public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
+        public void ConfigureInitializer(BiContext _context, UserManager<UserEntity> userManager)
         {
-            
+            new InitializeModule(_context, userManager);
         }
     }
 }

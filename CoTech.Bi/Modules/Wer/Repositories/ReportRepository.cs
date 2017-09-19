@@ -173,10 +173,23 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             if (company != null)
             {
                 var users = dbUsersEntities
-                    .Where(u => u.Permissions.Any(p => p.CompanyId == idCompany && (p.RoleId > 600 && p.RoleId < 700)))
-                    .Include(u => u.Permissions.Where(p => p.RoleId > 600 && p.RoleId < 700)).ToList();
+                    .Where(u => u.Permissions.Where(p => p.RoleId > 600 && p.RoleId < 700).Any(p => p.CompanyId == idCompany))
+                    .Include(u => u.Permissions).ToList();
                 var userAndPermission = users.Select(u => new UserAndPermissions(u, u.Permissions)).ToList();
-                list.Add(new CompanyResponse(){company = company, Users = userAndPermission});
+                list.Add(new CompanyResponse()
+                {
+                    company = new CompanyEntity()
+                    {
+                        Id = company.Id,
+                        Name = company.Name,
+                        Color = company.Color,
+                        Activity = company.Activity,
+                        Url = company.Url,
+                        PhotoUrl = company.PhotoUrl,
+                        ParentId = company.ParentId
+                    },
+                    Users = userAndPermission
+                });
                 foreach (CompanyEntity child in company.Children)
                 {
                     var returned = this.GetCompaniesRecursive(child.Id);
