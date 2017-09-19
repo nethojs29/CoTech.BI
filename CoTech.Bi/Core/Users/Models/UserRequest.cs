@@ -36,4 +36,9 @@ namespace CoTech.Bi.Core.Users.Models
       this.Email = Email;
     }
   }
+
+  public class ResetRequest : IUserRequest
+  {
+    public string email { set; get; }
+  }
 }

@@ -29,6 +29,10 @@ namespace CoTech.Bi.Core.Users
         .IsUnique();
     }
 
+    public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
+    {
+    }
+
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddScoped<UserRepository>();

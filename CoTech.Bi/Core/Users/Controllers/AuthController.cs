@@ -15,6 +15,13 @@ using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Util;
 using CoTech.Bi.Core.Users.Repositories;
+using Newtonsoft.Json;
+using CoTech.Bi.Core.Permissions.Repositories;
+using CoTech.Bi.Core.Companies.Repositories;
+using CoTech.Bi.Core.Permissions.Models;
+using CoTech.Bi.Core.Companies.Models;
+using System.Collections.Generic;
+using CoTech.Bi.Authorization;
 
 namespace CoTech.Bi.Core.Users.Controllers
 {
@@ -22,18 +29,23 @@ namespace CoTech.Bi.Core.Users.Controllers
 	public class AuthController : Controller
     {
 		private readonly UserRepository _userRepository;
-		private IPasswordHasher<UserEntity> _passwordHasher;
+    private readonly PermissionRepository permissionRepository;
+    private readonly CompanyRepository companyRepository;
+    private IPasswordHasher<UserEntity> _passwordHasher;
 		private JwtTokenGenerator _jwtTokenGenerator;
 		private ILogger<AuthController> _logger;
 
-
-		public AuthController(UserRepository userRepository, 
+		public AuthController(UserRepository userRepository,
+													PermissionRepository permissionRepository,
+													CompanyRepository companyRepository,
 													IPasswordHasher<UserEntity> passwordHasher, 
 													JwtTokenGenerator jwtTokenGenerator, 
 													ILogger<AuthController> logger)
 		{
 			_userRepository = userRepository;
-			_logger = logger;
+      this.permissionRepository = permissionRepository;
+      this.companyRepository = companyRepository;
+      _logger = logger;
 			_passwordHasher = passwordHasher;
 			_jwtTokenGenerator = jwtTokenGenerator;
 		}
@@ -67,7 +79,10 @@ namespace CoTech.Bi.Core.Users.Controllers
 				return Ok(new AuthResponse { 
 					Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
 					Expiration = jwtSecurityToken.ValidTo,
-					User = new UserResponse(user)
+					User = new UserResponse(user),
+					IAmRoot = await permissionRepository.UserIsRoot(user.Id),
+					Permissions = (await permissionRepository.GetUserPermissions(user.Id)).Select(p => new PermissionResponse(p)).ToList(),
+					Companies = (await companyRepository.GetUserCompanies(user.Id)).Select(c => new CompanyResult(c)).ToList()
 				});
 			}
 			catch (Exception ex)
@@ -76,5 +91,52 @@ namespace CoTech.Bi.Core.Users.Controllers
 				return StatusCode((int)HttpStatusCode.InternalServerError, "error while creating token");
 			}
 		}
+
+		[HttpGet]
+		[RequiresAuth]
+		public async Task<IActionResult> GetMyInfo() {
+			var userId = HttpContext.UserId().Value;
+			return Ok(new AuthResponse {
+					User = new UserResponse(await _userRepository.WithId(userId)),
+					IAmRoot = await permissionRepository.UserIsRoot(userId),
+					Permissions = (await permissionRepository.GetUserPermissions(userId)).Select(p => new PermissionResponse(p)).ToList(),
+					Companies = (await companyRepository.GetUserCompanies(userId)).Select(c => new CompanyResult(c)).ToList()
+				});
+		}
+
+	    [HttpPost("reset")]
+	    public async Task<IActionResult> ResetPassword([FromBody] ResetRequest request)
+	    {
+		    try
+		    {
+			    var user = await _userRepository.WithEmail(request.email);
+			    var password = PasswordGenerator.CreateRandomPassword(8);
+			    user.Password = _passwordHasher.HashPassword(user, password);
+			    var result = await _userRepository.Update(user);
+			    if (result > 0)
+			    {
+				    bool response = MailsHelpers.MailPassword(user.Email,password);
+				    if (response)
+				    {
+					    return Ok();
+				    }
+				    else
+				    {
+					    return new JsonResult(new ResponseMail("Error al mandar correo",0,400)){StatusCode = 400};
+				    }
+				    
+			    }
+			    else
+			    {
+				    return new JsonResult(new ResponseMail("Error al actualizar",0,404)){StatusCode = 404};
+			    }
+			    
+		    }
+		    catch (Exception e)
+		    {
+			    return new JsonResult(e.Message){StatusCode = 500};
+		    }
+
+	    }
 	}
 }

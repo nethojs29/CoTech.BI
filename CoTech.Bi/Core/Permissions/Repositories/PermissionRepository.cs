@@ -49,6 +49,9 @@ namespace CoTech.Bi.Core.Permissions.Repositories
           var insertions = await eventRepository.Create(evt);
           return insertions > 0;
         }
+        public Task<List<PermissionEntity>> GetUserPermissions(long userId) {
+          return db.Where(p => p.UserId == userId).ToListAsync();
+        }
         public Task<List<PermissionEntity>> GetUserPermissionsInCompany(long userId, long companyId){
           return db.Where(p => p.UserId == userId && p.CompanyId == companyId).ToListAsync();
         }

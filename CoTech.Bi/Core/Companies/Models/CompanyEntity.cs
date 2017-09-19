@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CoTech.Bi.Core.EventSourcing.Models;
@@ -20,5 +21,7 @@ namespace CoTech.Bi.Core.Companies.Models
         public DateTime? DeletedAt { get; set; }
         public string PhotoUrl { get; set; }
         public string Color { get; set; }
+        
+        public List<CompanyEntity> Children { set; get; }
     }
 }

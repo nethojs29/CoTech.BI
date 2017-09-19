@@ -16,7 +16,7 @@ namespace CoTech.Bi.Core.Permissions.Models
     public GivePermissionCmd(long companyId, long userId, CreatePermissionReq req, long user2Id) {
       UserId = userId;
       CompanyId = companyId;
-      RoleId = req.RoleId;
+      RoleId = req.RoleId.Value;
       User2Id = user2Id;
     }
 

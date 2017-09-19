@@ -36,11 +36,16 @@ namespace CoTech.Bi.Core.Users.Repositories
 
         public Task<List<UserEntity>> InCompany(long companyId){
           return db.Where(u => u.Permissions.Any(p => p.CompanyId == companyId))
+            .Include(u => u.Permissions)
             .ToListAsync();
         }
 
         public Task<List<UserEntity>> GetRootUsers() {
           return db.Where(u => u.Root != null).ToListAsync();
+        }
+
+        public Task<UserEntity> WithId(long id) {
+          return db.FindAsync(id);
         }
 
         /// <summary>
@@ -67,5 +72,11 @@ namespace CoTech.Bi.Core.Users.Repositories
           await eventRepository.Create(evt);
           return user;
         }
+
+      public Task<int> Update(UserEntity entity)
+      {
+        db.Update(entity);
+        return context.SaveChangesAsync();
+      }
     }
 }

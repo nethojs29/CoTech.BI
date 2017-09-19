@@ -34,11 +34,14 @@ namespace CoTech.Bi.Core.Users.Controllers {
       var cmd = new CreateUserCmd(req, HttpContext.UserId().Value);
       var entity = await userRepository.Create(cmd);
       if(entity != null) {
-        return Created($"/api/users/{entity.Id}", entity);
+        var sent = MailsHelpers.MailPassword(req.Email, cmd.Password);
+        if(sent)
+          return Created($"/api/users/{entity.Id}", new UserResponse(entity));
+        else
+          return StatusCode(500);
       } else {
         return BadRequest();
       }
     }
-
   }
 }

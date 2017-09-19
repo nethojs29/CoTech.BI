@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CoTech.Bi.Modules.Wer.Models;
@@ -6,6 +7,7 @@ using  CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Util;
 using CoTech.Bi.Core.Permissions.Repositories;
+using CoTech.Bi.Modules.Wer.Repositories;
 
 namespace CoTech.Bi.Modules.Wer.Controllers
 {
@@ -27,16 +29,20 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             this._permissionRepository = permissionRepository;
         }
         
-        [HttpGet("/pages/{page}")]
+        [HttpGet("pages/{page}")]
         [RequiresAuth]
         public async Task<IActionResult> GetAll(int? page)
         {
-            var weeks = await _weekRepository.getAll();
-            var returnValue = await PaginateList<WeekEntity>.CreateAsync(weeks
-                .OrderByDescending(wk => wk.EndTime)
-                .ToList()
-                .AsQueryable(), page ?? 1, 54);
-            return new OkObjectResult(returnValue);
+            try
+            {
+                var returnValue = await _weekRepository.paginateWeeks(page);
+                
+                return new OkObjectResult(returnValue);
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {error = e.Message}){StatusCode = 500};
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -23,6 +24,9 @@ namespace CoTech.Bi.Authorization
             }
             try {
                 var readToken = tokenHandler.ReadJwtToken(token);
+                DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+                var expiration = origin + new TimeSpan(0, 0, readToken.Payload.Exp ?? 0);
+                if(expiration < DateTime.UtcNow) throw new Exception("Token expired");
                 var claimsIdentity = new ClaimsIdentity(readToken.Claims);
                 context.User.AddIdentity(claimsIdentity);
                 return Int64.Parse(readToken.Subject);

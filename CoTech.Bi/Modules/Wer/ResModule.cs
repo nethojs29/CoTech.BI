@@ -1,7 +1,13 @@
-﻿using CoTech.Bi.Loader;
-using CoTech.Bi.Modules.Wer.Models;
+using CoTech.Bi.Loader;
+using CoTech.Bi.Modules.Wer.Models.Entities;
+using CoTech.Bi.Modules.Wer.Repositories;
+using System;
+using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Entity;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,12 +17,13 @@ namespace CoTech.Bi.Modules.Wer
     {
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            //throw new System.NotImplementedException();
+            RecurringJob.AddOrUpdate("crear semanas",(WeekRepository repository)=>repository.AddWeek(),Cron.Weekly(DayOfWeek.Saturday));
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<WeekRepository>();
+            services.AddScoped<ReportRepository>();
         }
 
         public void ConfigureEntities(ModelBuilder modelBuilder)
@@ -24,6 +31,12 @@ namespace CoTech.Bi.Modules.Wer
             modelBuilder.Entity<WeekEntity>().ToTable("Wer_Weeks");
 
             modelBuilder.Entity<ReportEntity>().ToTable("Wer_Reports");
+            
+        }
+
+        public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
+        {
+            
         }
     }
 }

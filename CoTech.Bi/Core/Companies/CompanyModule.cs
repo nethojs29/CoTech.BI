@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using CoTech.Bi.Core.Companies.Repositories;
 using CoTech.Bi.Core.Companies.Notifiers;
 using CoTech.Bi.Core.Companies.EventProcessors;
+using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Entity;
+using Microsoft.AspNetCore.Identity;
 
 namespace CoTech.Bi.Core.Companies
 {
@@ -20,6 +23,11 @@ namespace CoTech.Bi.Core.Companies
       modelBuilder.Entity<CompanyEntity>().ToTable("Companies")
           .HasIndex(c => c.Url)
           .IsUnique();
+    }
+
+    public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
+    {
+      
     }
 
     void IModule.ConfigureServices(IServiceCollection services)

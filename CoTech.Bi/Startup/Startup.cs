@@ -23,6 +23,12 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
 using CoTech.Bi.Util;
+using System.Transactions;
+using CoTech.Bi.Modules.Wer.Models;
+using Hangfire;
+using Hangfire.AspNetCore;
+using Hangfire.MySql;
+using Microsoft.Data.OData.Query.SemanticAst;
 
 namespace CoTech.Bi
 {
@@ -47,6 +53,7 @@ namespace CoTech.Bi
                 .AddDefaultTokenProviders();
             services.AddTransient<IUserStore<UserEntity>, UserStorage>();
             services.AddTransient<IRoleStore<Role>, RoleStorage>();
+            services.AddSingleton<JwtTokenGenerator>();
             services.Configure<IdentityOptions>(options => {
                 // Password settings
                 options.Password.RequireDigit = false;
@@ -62,6 +69,8 @@ namespace CoTech.Bi
                 // User settings
                 options.User.RequireUniqueEmail = true;
             });
+            
+            
             // requires using Microsoft.AspNetCore.Mvc;
             services.AddSwaggerGen(c =>
             {
@@ -73,10 +82,15 @@ namespace CoTech.Bi
             services.AddCors();
             services.AddBiModules();
             services.AddMvc();
+            
+            services.AddScoped<IDbInitializer, DbInitializer>();
+            
+            services.AddHangfire(config => config.UseStorage(new MySqlStorage("Server=localhost;User Id=bi;Password=bi-core;Database=bi-core;Allow User Variables=True;")));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,IDbInitializer dbInitializer)
         {
             app.UseWebSockets();
             app.UseAuthentication();
@@ -89,8 +103,18 @@ namespace CoTech.Bi
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Bi API V1");
             });
+            app.UseHangfireDashboard();
+            app.UseHangfireServer();
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+            );
             app.UseBiModules(env);
             app.UseMvc();
+            
+            dbInitializer.Initialize();
         }
     }
 }
