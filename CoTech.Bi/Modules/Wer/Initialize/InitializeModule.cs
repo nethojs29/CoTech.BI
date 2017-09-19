@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CoTech.Bi.Core.Companies.Models;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Entity;
 using Microsoft.AspNetCore.Identity;

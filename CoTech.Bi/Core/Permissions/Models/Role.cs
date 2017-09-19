@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace CoTech.Bi.Core.Permissions.Model
+namespace CoTech.Bi.Core.Permissions.Models
 {
     public class Role
     {

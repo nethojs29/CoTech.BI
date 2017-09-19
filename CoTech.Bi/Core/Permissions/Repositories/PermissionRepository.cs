@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Core.Companies.Models;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.EventSourcing.Models;
+using CoTech.Bi.Core.EventSourcing.Repositories;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Identity.DataAccess;
 using Microsoft.EntityFrameworkCore;
@@ -21,34 +24,42 @@ namespace CoTech.Bi.Core.Permissions.Repositories
         private DbSet<CompanyEntity> dbCompany {
           get { return context.Set<CompanyEntity>(); }
         }
+        private EventRepository eventRepository;
 
-        public PermissionRepository(BiContext context)
+        public PermissionRepository(BiContext context, EventRepository eventRepo)
         {
           this.context = context;
+          this.eventRepository = eventRepo;
         }
 
+        public async Task<PermissionEntity> Create(GivePermissionCmd cmd) {
+          var evtEntity = PermissionGivenEvt.MakeEventEntity(cmd);
+          var insertions = await eventRepository.Create(evtEntity);
+          if(insertions == 0) return null;
+          return await db.FirstAsync(p => p.CreatorEventId == evtEntity.Id);
+        }
+        public async Task<bool> Delete(RemoveRoleCmd cmd){
+          var evt = RoleRemovedEvt.MakeEventEntity(cmd);
+          var insertions = await eventRepository.Create(evt);
+          return insertions > 0;
+        }
+
+        public async Task<bool> Revoke(RevokePermissionsCmd cmd) {
+          var evt = PermissionsRevokedEvt.MakeEventEntity(cmd);
+          var insertions = await eventRepository.Create(evt);
+          return insertions > 0;
+        }
+        public Task<List<PermissionEntity>> GetUserPermissions(long userId) {
+          return db.Where(p => p.UserId == userId).ToListAsync();
+        }
         public Task<List<PermissionEntity>> GetUserPermissionsInCompany(long userId, long companyId){
           return db.Where(p => p.UserId == userId && p.CompanyId == companyId).ToListAsync();
-        }
-
-        public async Task Create(PermissionEntity entity) {
-          db.Add(entity);
-          await context.SaveChangesAsync();
         }
 
         public Task<PermissionEntity> FindOne(long companyId, long userId, long roleId) {
           return db.FirstAsync(p => p.CompanyId == companyId && p.UserId == userId && p.RoleId == roleId);
         }
 
-        public async Task Delete(PermissionEntity entity){
-          db.Remove(entity);
-          await context.SaveChangesAsync();
-        }
-
-        public async Task Revoke(List<PermissionEntity> entities) {
-          db.RemoveRange(entities);
-          await context.SaveChangesAsync();
-        }
 
         #region Funciones booleanas para autorizacion
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Companies.Repositories;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -175,7 +175,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 var users = dbUsersEntities
                     .Where(u => u.Permissions.Where(p => p.RoleId > 600 && p.RoleId < 700).Any(p => p.CompanyId == idCompany))
                     .Include(u => u.Permissions).ToList();
-                var userAndPermission = users.Select(u => new UserAndPermissions(u, u.Permissions)).ToList();
+                List<WerUserAndPermissions> userAndPermission = users.Select(u => new WerUserAndPermissions(u)).ToList();
                 list.Add(new CompanyResponse()
                 {
                     company = new CompanyEntity()

@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Core.Companies.Models;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.EventSourcing.Models;
+using CoTech.Bi.Core.EventSourcing.Repositories;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Entity;
+using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoTech.Bi.Core.Companies.Repositories
@@ -12,6 +16,8 @@ namespace CoTech.Bi.Core.Companies.Repositories
     public class CompanyRepository
     {
         private readonly BiContext context;
+        private readonly EventRepository eventRepository;
+
         private DbSet<CompanyEntity> db {
           get { return context.Set<CompanyEntity>(); }
         }
@@ -19,9 +25,10 @@ namespace CoTech.Bi.Core.Companies.Repositories
           get { return context.Set<PermissionEntity>(); }
         }
 
-        public CompanyRepository(BiContext context)
+        public CompanyRepository(BiContext context, EventRepository eventRepository)
         {
           this.context = context;
+          this.eventRepository = eventRepository;
         }
 
         public Task<List<CompanyEntity>> GetAll() {
@@ -47,21 +54,23 @@ namespace CoTech.Bi.Core.Companies.Repositories
           return db.Where(c => c.ParentId == id).ToListAsync();
         }
 
-        public async Task Create(CompanyEntity entity) {
-          var entry = db.Add(entity);
-          await context.SaveChangesAsync();
+        public async Task<CompanyEntity> Create(CreateCompanyCmd cmd) {
+          var evtEntity = CompanyCreatedEvt.MakeEventEntity(cmd);
+          var insertions = await eventRepository.Create(evtEntity);
+          if(insertions == 0) return null;
+          return await db.FirstAsync(c => c.CreatorEventId == evtEntity.Id);
         }
 
-        public async Task Update(CompanyEntity entity){
-          var entry = db.Update(entity);
-          entry.Property(e => e.DeletedAt).IsModified = false;
-          await context.SaveChangesAsync();
+        public async Task<CompanyEntity> Update(UpdateCompanyCmd cmd){
+          var evt = CompanyUpdatedEvt.MakeEventEntity(cmd);
+          var insertions = await eventRepository.Create(evt);
+          return await db.FirstAsync(c => c.Id == evt.Id);
         }
 
-        public async Task Delete(CompanyEntity entity){
-          entity.DeletedAt = new DateTime();
-          db.Update(entity);
-          await context.SaveChangesAsync();
+        public async Task<CompanyEntity> Delete(DeleteCompanyCmd cmd){
+          var evt = CompanyDeletedEvt.MakeEventEntity(cmd);
+          var insertions = await eventRepository.Create(evt);
+          return await db.FirstAsync(c => c.Id == evt.Id);
         }
     }
 }
