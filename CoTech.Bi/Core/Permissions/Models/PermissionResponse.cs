@@ -1,6 +1,7 @@
+using System;
+using CoTech.Bi.Core.Permissions.Models;
 using System.Collections.Generic;
 using System.Linq;
-using CoTech.Bi.Core.Permissions.Model;
 using CoTech.Bi.Core.Users.Models;
 
 namespace CoTech.Bi.Core.Permissions.Models

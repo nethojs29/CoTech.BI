@@ -12,7 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Net;
 using CoTech.Bi.Core.Users.Models;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Util;
 using CoTech.Bi.Core.Users.Repositories;
 using Newtonsoft.Json;
@@ -95,7 +95,7 @@ namespace CoTech.Bi.Core.Users.Controllers
 		[HttpGet]
 		[RequiresAuth]
 		public async Task<IActionResult> GetMyInfo() {
-			var userId = HttpContext.UserId();
+			var userId = HttpContext.UserId().Value;
 			return Ok(new AuthResponse {
 					User = new UserResponse(await _userRepository.WithId(userId)),
 					IAmRoot = await permissionRepository.UserIsRoot(userId),
