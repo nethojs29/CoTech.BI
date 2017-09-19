@@ -50,7 +50,14 @@ namespace CoTech.Bi.Entity
             if (!_context.Database.EnsureCreated())
             {
                 var listUsers = new List<UserEntity>();
-                listUsers.Add(new UserEntity(){Name = "Luis",Lastname = "Moya", Email = "lmoya@cotecnologias.com", EmailConfirmed = true,Password = "prueba123"});
+                listUsers.Add(new UserEntity()
+                {
+                    Name = "Luis",
+                    Lastname = "Moya",
+                    Email = "lmoya@cotecnologias.com",
+                    EmailConfirmed = true,
+                    Password = "prueba123"
+                });
                 listUsers.Add(new UserEntity {
                     Name = "Roberto",
                     Lastname = "Montaño",

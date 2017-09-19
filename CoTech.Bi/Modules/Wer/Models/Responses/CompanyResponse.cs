@@ -14,9 +14,8 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
 
     public class WerUserAndPermissions {
         public UserResponse User { get; set; }
-        public List<PermissionResponse> Permissions { get; set; }
 
-        public WerUserAndPermissions(UserEntity entity,List<PermissionEntity> permissionUSer)
+        public WerUserAndPermissions(UserEntity entity)
         {
             User = new UserResponse(new UserEntity()
             {
@@ -25,7 +24,6 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
                 Name = entity.Name,
                 Lastname = entity.Lastname,
             });
-            Permissions = permissionUSer.Select(p => new PermissionResponse(p)).ToList();
         }
     }
 }
