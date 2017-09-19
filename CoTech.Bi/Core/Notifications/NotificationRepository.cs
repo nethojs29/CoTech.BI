@@ -23,7 +23,7 @@ namespace CoTech.Bi.Core.Notifications.Repositories
             this.context = context;
         }
 
-        public IObservable<NotificationEntity> UserNotifications(Guid userId) {
+        public IObservable<NotificationEntity> UserNotifications(long userId) {
             
             var obs = Observable.Create<NotificationEntity>(async observable => {
                 var myNotifs = await db.Where(n => 

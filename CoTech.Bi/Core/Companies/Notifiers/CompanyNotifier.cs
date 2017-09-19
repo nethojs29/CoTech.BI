@@ -6,7 +6,7 @@ using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.EventSourcing.Models;
 using CoTech.Bi.Core.Notifications.Models;
 using CoTech.Bi.Core.Notifications.Repositories;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Permissions.Repositories;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Core.Users.Repositories;

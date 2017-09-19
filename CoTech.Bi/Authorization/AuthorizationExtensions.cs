@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace CoTech.Bi.Authorization
 {
     public static class AuthorizationExtensions {
-        public static Guid? UserId(this HttpContext context){
+        public static long? UserId(this HttpContext context){
             var userClaim = context.User.FindFirstValue("sub");
-            if(userClaim != null) return new Guid(userClaim);
+            if(userClaim != null) return Int64.Parse(userClaim);
             string authHeader = context.Request.Headers["Authorization"];
             if(authHeader == null || !authHeader.StartsWith("Bearer ")){
                 return null;
@@ -25,7 +25,7 @@ namespace CoTech.Bi.Authorization
                 var readToken = tokenHandler.ReadJwtToken(token);
                 var claimsIdentity = new ClaimsIdentity(readToken.Claims);
                 context.User.AddIdentity(claimsIdentity);
-                return new Guid(readToken.Subject);
+                return Int64.Parse(readToken.Subject);
             } catch(Exception){
                 return null;
             }

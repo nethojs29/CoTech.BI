@@ -1,4 +1,5 @@
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.EventProcessors;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Permissions.Repositories;
 using CoTech.Bi.Loader;
 using Microsoft.AspNetCore.Builder;
@@ -22,6 +23,7 @@ namespace CoTech.Bi.Core.Permissions
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddScoped<PermissionRepository>();
+      services.AddSingleton(new PermissionEventProcessor());
     }
   }
 }

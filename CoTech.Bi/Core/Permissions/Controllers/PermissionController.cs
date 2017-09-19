@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Permissions.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -20,9 +20,9 @@ namespace CoTech.Bi.Core.Permissions.Controllers
         [HttpPost("{user}")]
         [RequiresAbsoluteRole(Role.Super, Role.Admin)]
         [ProducesResponseType(typeof(PermissionResponse), 200)]
-        public async Task<IActionResult> GivePermission(Guid company, Guid user, [FromBody] CreatePermissionReq req) {
-            var permission = new PermissionEntity { CompanyId = company, UserId = user, RoleId = req.RoleId };
-            await permissionRepository.Create(permission);
+        public async Task<IActionResult> GivePermission(long company, long user, [FromBody] CreatePermissionReq req) {
+            var evt = new GivePermissionCmd(company, HttpContext.UserId().Value, req, user);
+            var permission = await permissionRepository.Create(evt);
             return Ok(new PermissionResponse(permission));
         }
 
@@ -36,24 +36,22 @@ namespace CoTech.Bi.Core.Permissions.Controllers
         /// <response code="200">Role eliminado</response>
         [HttpDelete("{user}/{role}")]
         [RequiresAbsoluteRole(Role.Super, Role.Admin)]
-        public async Task<IActionResult> RemoveRole(Guid company, Guid user, long role) {
-            var permission = await permissionRepository.FindOne(company, user, role);
-            if(permission == null){
-                return NotFound();
-            }
-            await permissionRepository.Delete(permission);
-            return Ok();
+        public async Task<IActionResult> RemoveRole(long company, long user, long role) {
+            var cmd = new RemoveRoleCmd(company, HttpContext.UserId().Value, role, user);
+            var ok = await permissionRepository.Delete(cmd);
+            if(ok)
+                return Ok();
+            return BadRequest();
         }
 
         [HttpDelete("{user}")]
         [RequiresAbsoluteRole(Role.Super, Role.Admin)]
-        public async Task<IActionResult> RevokePermissions(Guid company, Guid user) {
-            var permissions = await permissionRepository.GetUserPermissionsInCompany(user, company);
-            if(permissions.Count == 0){
-                return NotFound();
-            }
-            await permissionRepository.Revoke(permissions);
-            return Ok();
+        public async Task<IActionResult> RevokePermissions(long company, long user) {
+            var cmd = new RevokePermissionsCmd(company, HttpContext.UserId().Value, user);
+            var ok = await permissionRepository.Revoke(cmd);
+            if(ok)
+                return Ok();
+            return BadRequest();
         }
     }
 }

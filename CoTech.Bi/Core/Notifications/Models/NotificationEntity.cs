@@ -14,8 +14,8 @@ namespace CoTech.Bi.Core.Notifications.Models
         static NotificationEntity() {
           Triggers<NotificationEntity>.Inserted += entry => Console.WriteLine(entry.Entity);
         }
-        public Guid Id { get; set; }
-        public Guid SenderId { get; set; }
+        public long Id { get; set; }
+        public long SenderId { get; set; }
         public UserEntity Sender { get; set; }
         public List<ReceiverEntity> Receivers { get; set; }
         [NotMapped]
@@ -33,9 +33,9 @@ namespace CoTech.Bi.Core.Notifications.Models
     /// Tabla de muchos a muchos User-Notification solo para receptores, no emisores
     /// </summary>
     public class ReceiverEntity {
-      public Guid Id { get; set; }
-      public Guid NotificationId { get; set; }
-      public Guid UserId { get; set; }
+      public long Id { get; set; }
+      public long NotificationId { get; set; }
+      public long UserId { get; set; }
       public NotificationEntity Notification { get; set; }
       public UserEntity User { get; set; }
       public bool Read { get; set; }

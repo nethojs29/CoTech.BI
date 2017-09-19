@@ -20,9 +20,15 @@ namespace CoTech.Bi.Core.EventSourcing.Repositories
             this.evtObs = DbObservable<BiContext>.FromInserting<EventEntity>();
         }
 
-        public async Task Create(EventEntity entity) {
+        public async Task<int> Create(EventEntity entity) {
             db.Add(entity);
-            await context.SaveChangesAsync();
+            return await context.SaveChangesAsync();
+        }
+
+        public async Task<EventEntity> Create(long userId, object body) {
+            var entity = new EventEntity{UserId = userId, Body = body};
+            await Create(entity);
+            return entity;
         }
     }
 }

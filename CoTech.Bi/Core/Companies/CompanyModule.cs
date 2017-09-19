@@ -26,7 +26,7 @@ namespace CoTech.Bi.Core.Companies
     {
       services.AddScoped<CompanyRepository>();
       services.AddScoped<CompanyNotifier>();
-      services.AddSingleton<CompanyEventProcessor>();
+      services.AddSingleton(new CompanyEventProcessor());
     }
   }
 }

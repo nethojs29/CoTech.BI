@@ -5,8 +5,8 @@ namespace CoTech.Bi.Core.Notifications.Models
 {
     public class NotificationResponse
     {
-        public Guid Id { get; set; }
-        public Guid SenderId { get; set; }
+        public long Id { get; set; }
+        public long SenderId { get; set; }
         public object Body { get; set; }
 
         public NotificationResponse(NotificationEntity entity){

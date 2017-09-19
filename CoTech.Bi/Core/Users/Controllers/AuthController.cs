@@ -12,7 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Net;
 using CoTech.Bi.Core.Users.Models;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Util;
 using CoTech.Bi.Core.Users.Repositories;
 

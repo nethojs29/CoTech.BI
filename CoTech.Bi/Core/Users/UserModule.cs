@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Identity.DataAccess;
 using CoTech.Bi.Core.Users.Repositories;
+using CoTech.Bi.Core.Users.EventProcessors;
 
 namespace CoTech.Bi.Core.Users
 {
@@ -31,6 +32,7 @@ namespace CoTech.Bi.Core.Users
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddScoped<UserRepository>();
+      services.AddSingleton(new UserEventProcessor());
     }
   }
 }

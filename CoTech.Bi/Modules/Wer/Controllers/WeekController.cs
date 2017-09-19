@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CoTech.Bi.Modules.Wer.Models;
-using  CoTech.Bi.Core.Permissions.Model;
+using  CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Util;
 using CoTech.Bi.Core.Permissions.Repositories;

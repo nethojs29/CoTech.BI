@@ -16,7 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using CoTech.Bi.Core.Users.Models;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using Microsoft.AspNetCore.Identity;
 using CoTech.Bi.Identity.DataAccess;
 using Swashbuckle.AspNetCore.Swagger;

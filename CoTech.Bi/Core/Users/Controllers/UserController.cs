@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Core.Users.Repositories;
 using CoTech.Bi.Util;
@@ -31,13 +31,12 @@ namespace CoTech.Bi.Core.Users.Controllers {
     [HttpPost]
     [RequiresRoot]
     public async Task<IActionResult> Create([FromBody] CreateUserReq req){
-      var password = PasswordGenerator.CreateRandomPassword(8);
-      var entity = req.toEntity();
-      var result = await userRepository.Create(entity, password);
-      if(result.Succeeded) {
-        return new CreatedResult($"/api/users/{entity.Id}", entity);
+      var cmd = new CreateUserCmd(req, HttpContext.UserId().Value);
+      var entity = await userRepository.Create(cmd);
+      if(entity != null) {
+        return Created($"/api/users/{entity.Id}", entity);
       } else {
-        return new BadRequestObjectResult(result.Errors);
+        return BadRequest();
       }
     }
 
