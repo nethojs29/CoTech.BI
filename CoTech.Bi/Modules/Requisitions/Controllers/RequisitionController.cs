@@ -43,6 +43,7 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
             if (req.MotiveSurplus != null) requisition.MotiveSurplus = req.MotiveSurplus;
             requisition.ApproveUserId = HttpContext.UserId();
             requisition.ApproveDate = DateTime.Now;
+            requisition.Status = 2;
             await requisitionRepo.Approve(requisition);
             return new OkObjectResult(requisition);
         }

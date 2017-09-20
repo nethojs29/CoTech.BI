@@ -13,6 +13,7 @@ namespace CoTech.Bi.Modules.Expenses.Controllers{
         public long ProviderId{ set; get; }
         public long ExpenseGroupId{ set; get; }
         public long CompanyId{ set; get; }
+        public long RequisitionId{ set; get; }
 
         public ExpenseEntity toEntity(){
             return new ExpenseEntity {
@@ -22,6 +23,7 @@ namespace CoTech.Bi.Modules.Expenses.Controllers{
                 Observations = Observations,
                 ImageUrl = ImageUrl,
                 ExpenseGroupId = ExpenseGroupId,
+                RequisitionId = RequisitionId,
                 CompanyId = CompanyId,
                 CreatedAt = DateTime.Now
             };
