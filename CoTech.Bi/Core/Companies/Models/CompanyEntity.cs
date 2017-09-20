@@ -8,9 +8,9 @@ namespace CoTech.Bi.Core.Companies.Models
 {
     public class CompanyEntity {
         public long Id { get; set; }
-        [Required]
         public long? CreatorEventId { get; set; }
         public EventEntity CreatorEvent { get; set; }
+        [Required]
         public string Name { get; set; }
         [Required]
         public string Activity { get; set; }
