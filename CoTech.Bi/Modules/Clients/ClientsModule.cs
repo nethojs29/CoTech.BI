@@ -14,6 +14,9 @@ using CoTech.Bi.Modules.Clients.Models;
 namespace CoTech.Bi.Modules.Clients {
     public class ClientModule : IModule
     {
+        public long Id {
+            get { return 7; }
+        }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
         }

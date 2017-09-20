@@ -139,7 +139,7 @@ namespace CoTech.Bi.Core.Companies.Controllers
         public async Task<IActionResult> Create([FromBody] CreateCompanyReq req){
           var cmd = new CreateCompanyCmd(req, HttpContext.UserId().Value);
           var company = await companyRepo.Create(cmd);
-          return new CreatedResult($"/api/companies/${company.Id}", new CompanyResult(company));
+          return Created($"/api/companies/${company.Id}", new CompanyResult(company));
         }
 
         [HttpPut("{id}")]
@@ -147,7 +147,31 @@ namespace CoTech.Bi.Core.Companies.Controllers
         public async Task<IActionResult> Update(long id, [FromBody] UpdateCompanyReq req) {
           var updateCmd = new UpdateCompanyCmd(id, req, HttpContext.UserId().Value);
           var company = await companyRepo.Update(updateCmd);
-          return new OkObjectResult(company);
+          return Ok(company);
+        }
+
+        [HttpPost("{id}/modules/{moduleId}")]
+        [RequiresRoot]
+        public async Task<IActionResult> AddModule(long id, long moduleId) {
+          var addModCmd = new AddModuleCmd(id, moduleId, HttpContext.UserId().Value);
+          var added = await companyRepo.AddModule(addModCmd);
+          if(added) {
+            return NoContent();
+          } else {
+            return BadRequest();
+          }
+        }
+
+        [HttpDelete("{id}/modules/{moduleId}")]
+        [RequiresRoot]
+        public async Task<IActionResult> RemoveModule(long id, long moduleId) {
+          var removeModCmd = new RemoveModuleCmd(id, moduleId, HttpContext.UserId().Value);
+          var removed = await companyRepo.RemoveModule(removeModCmd);
+          if(removed) {
+            return NoContent();
+          } else {
+            return BadRequest();
+          }
         }
 
         [HttpDelete("{id}")]
@@ -155,7 +179,7 @@ namespace CoTech.Bi.Core.Companies.Controllers
         public async Task<IActionResult> Delete(long id){
           var cmd = new DeleteCompanyCmd(id, HttpContext.UserId().Value);
           var company = await companyRepo.Delete(cmd);
-          return new OkObjectResult(company);
+          return Ok(company);
         }
     }
 }

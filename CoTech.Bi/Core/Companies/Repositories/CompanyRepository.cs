@@ -32,26 +32,32 @@ namespace CoTech.Bi.Core.Companies.Repositories
         }
 
         public Task<List<CompanyEntity>> GetAll() {
-          return db.Where(c => !c.DeletedAt.HasValue).ToListAsync();
+          return db.Where(c => !c.DeletedAt.HasValue)
+            .Include(c => c.Modules).ToListAsync();
         }
 
         public Task<List<CompanyEntity>> GetUserCompanies(long userId) {
           return dbPermissions.Where(p => p.UserId == userId)
             .Select(p => p.Company)
+            .Include(c => c.Modules)
             .Distinct()
             .ToListAsync();
         }
 
         public Task<CompanyEntity> WithId(long id) {
-          return db.FindAsync(id);
+          return db.Include(c => c.Modules)
+            .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public Task<CompanyEntity> WithUrl(string url){
-          return db.FirstOrDefaultAsync(c => c.Url == url);
+          return db.Include(c => c.Modules)
+            .FirstOrDefaultAsync(c => c.Url == url);
         }
 
         public Task<List<CompanyEntity>> ChildrenOf(long id) {
-          return db.Where(c => c.ParentId == id).ToListAsync();
+          return db.Where(c => c.ParentId == id)
+            .Include(c => c.Modules)
+            .ToListAsync();
         }
 
         public async Task<CompanyEntity> Create(CreateCompanyCmd cmd) {
@@ -65,6 +71,18 @@ namespace CoTech.Bi.Core.Companies.Repositories
           var evt = CompanyUpdatedEvt.MakeEventEntity(cmd);
           var insertions = await eventRepository.Create(evt);
           return await db.FirstAsync(c => c.Id == evt.Id);
+        }
+
+        public async Task<bool> AddModule(AddModuleCmd cmd) {
+          var evt = ModuleAddedEvt.MakeEventEntity(cmd);
+          var insertions = await eventRepository.Create(evt);
+          return insertions > 0;
+        }
+
+        public async Task<bool> RemoveModule(RemoveModuleCmd cmd) {
+          var evt = ModuleRemovedEvt.MakeEventEntity(cmd);
+          var insertions = await eventRepository.Create(evt);
+          return insertions > 0;
         }
 
         public async Task<CompanyEntity> Delete(DeleteCompanyCmd cmd){
