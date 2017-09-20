@@ -14,7 +14,7 @@ namespace CoTech.Bi.Core.Notifications
   public class NotificationModule : IModule
   {
     public long Id {
-      get { return 5; }
+      get { return -5; }
     }
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {

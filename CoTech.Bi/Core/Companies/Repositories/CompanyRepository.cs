@@ -39,20 +39,25 @@ namespace CoTech.Bi.Core.Companies.Repositories
         public Task<List<CompanyEntity>> GetUserCompanies(long userId) {
           return dbPermissions.Where(p => p.UserId == userId)
             .Select(p => p.Company)
+            .Include(c => c.Modules)
             .Distinct()
             .ToListAsync();
         }
 
         public Task<CompanyEntity> WithId(long id) {
-          return db.FindAsync(id);
+          return db.Include(c => c.Modules)
+            .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public Task<CompanyEntity> WithUrl(string url){
-          return db.FirstOrDefaultAsync(c => c.Url == url);
+          return db.Include(c => c.Modules)
+            .FirstOrDefaultAsync(c => c.Url == url);
         }
 
         public Task<List<CompanyEntity>> ChildrenOf(long id) {
-          return db.Where(c => c.ParentId == id).ToListAsync();
+          return db.Where(c => c.ParentId == id)
+            .Include(c => c.Modules)
+            .ToListAsync();
         }
 
         public async Task<CompanyEntity> Create(CreateCompanyCmd cmd) {
