@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using CoTech.Bi.Core.Companies.Models;
 
 namespace CoTech.Bi.Core.Companies.Models
@@ -15,6 +17,7 @@ namespace CoTech.Bi.Core.Companies.Models
       public string Url { get; set; }
       public long? ParentId { get; set; }
       public DateTime? DeletedAt { get; set; }
+      public List<long> Modules { get; set; }
 
       public CompanyResult(CompanyEntity entity){
         Id = entity.Id;
@@ -23,6 +26,9 @@ namespace CoTech.Bi.Core.Companies.Models
         Url = entity.Url;
         ParentId = entity.ParentId;
         DeletedAt = entity.DeletedAt;
+        if(entity.Modules != null) {
+          Modules = entity.Modules.Select(m => m.ModuleId).ToList();
+        }
       }
       
     }

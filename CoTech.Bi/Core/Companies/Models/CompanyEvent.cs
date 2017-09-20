@@ -45,6 +45,36 @@ namespace CoTech.Bi.Core.Companies.Models
         }
     }
 
+    public class ModuleAddedEvt : CompanyEvent {
+        public long Id {get; set; }
+        public long ModuleId { get; set; }
+        public ModuleAddedEvt(AddModuleCmd cmd) {
+            Id = cmd.Id;
+            ModuleId = cmd.ModuleId;
+        }
+        public static EventEntity MakeEventEntity(AddModuleCmd cmd) {
+            return new EventEntity {
+                UserId = cmd.Id,
+                Body = new ModuleAddedEvt(cmd)
+            };
+        }
+    }
+
+    public class ModuleRemovedEvt : CompanyEvent {
+        public long Id { get; set; }
+        public long ModuleId { get; set; }
+        public ModuleRemovedEvt(RemoveModuleCmd cmd) {
+            Id = cmd.Id;
+            ModuleId = cmd.ModuleId;
+        }
+        public static EventEntity MakeEventEntity(RemoveModuleCmd cmd) {
+            return new EventEntity {
+                UserId = cmd.Id,
+                Body = new ModuleRemovedEvt(cmd)
+            };
+        }
+    }
+
     public class CompanyDeletedEvt : CompanyEvent {
         public long Id { get; set; }
         public CompanyDeletedEvt(DeleteCompanyCmd cmd)

@@ -34,6 +34,26 @@ namespace CoTech.Bi.Core.Companies.Models
 
   }
 
+  public class AddModuleCmd : CompanyCommand {
+    public long Id { get; set; }
+    public long ModuleId { get; set; }
+    public AddModuleCmd(long id, long moduleId, long userId) {
+      UserId = userId;
+      Id = id;
+      ModuleId = moduleId;
+    }
+  }
+
+  public class RemoveModuleCmd : CompanyCommand {
+    public long Id { get; set; }
+    public long ModuleId { get; set; }
+    public RemoveModuleCmd(long id, long moduleId, long userId) {
+      UserId = userId;
+      Id = id;
+      ModuleId = moduleId;
+    }
+  }
+
   public class DeleteCompanyCmd : CompanyCommand {
     public long Id { get; set; }
     public DeleteCompanyCmd(long id, long userId) {
