@@ -26,6 +26,7 @@ namespace CoTech.Bi.Modules.Wer
         {
             services.AddScoped<WeekRepository>();
             services.AddScoped<ReportRepository>();
+            services.AddScoped<FilesRepository>();
         }
 
         public void ConfigureEntities(ModelBuilder modelBuilder)
@@ -33,6 +34,8 @@ namespace CoTech.Bi.Modules.Wer
             modelBuilder.Entity<WeekEntity>().ToTable("Wer_Weeks");
 
             modelBuilder.Entity<ReportEntity>().ToTable("Wer_Reports");
+            
+            modelBuilder.Entity<FileEntity>().ToTable("Wer_File");
             
         }
 

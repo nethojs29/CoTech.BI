@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Wer.Models;
+using CoTech.Bi.Modules.Wer.Models.Entities;
 using CoTech.Bi.Modules.Wer.Models.Requests;
 using CoTech.Bi.Modules.Wer.Repositories;
+using CoTech.Bi.Util;
 using Microsoft.AspNetCore.Http;
+using CoTech.Bi.Authorization;
 using Microsoft.Azure.KeyVault.Models;
 
 namespace CoTech.Bi.Modules.Wer.Controllers
@@ -19,13 +22,17 @@ namespace CoTech.Bi.Modules.Wer.Controllers
     {
 
         private readonly ReportRepository _reportRepository;
+        
+        private readonly FilesRepository _filesRepository;
 
-        public ReportController(ReportRepository reportRepository)
+        public ReportController(ReportRepository reportRepository,FilesRepository filesRepository)
         {
             this._reportRepository = reportRepository;
+            this._filesRepository = filesRepository;
         }
 
         [HttpGet("companies/all")]
+        [RequiresRole(WerRoles.Ceo)]
         public async Task<IActionResult> getAllCompanies(long idCompany)
         {
             try
@@ -98,7 +105,11 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             {
                 if (formFile != null)
                 {
-                    var directory = Directory.GetCurrentDirectory();
+                    var directory = Directory.GetCurrentDirectory()+ "/storage/wer/";
+                    if (!Directory.Exists(directory))
+                    {
+                        Directory.CreateDirectory(directory);
+                    }
                     var filePath = directory + Guid.NewGuid() + Path.GetExtension(formFile.FileName);
                     if (formFile.Length > 0)
                     {
@@ -107,7 +118,22 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                             await formFile.CopyToAsync(stream);
                         }
                     }
-                    return Ok(new { count = formFile.Length, formFile.ContentType});
+                    var file = await _filesRepository.CreateFile(new FileEntity()
+                    {
+                        Mime = MimeReader.GetMimeType(Path.GetExtension(formFile.FileName)),
+                        Name = formFile.FileName,
+                        Uri = filePath,
+                        ReportId = idReport
+                    });
+                    if (file != null)
+                    {
+                        return new ObjectResult(file){StatusCode = 201};
+                    }
+                    else
+                    {
+                        System.IO.File.Delete(filePath);
+                        return StatusCode(500);
+                    } 
                 }else 
                     return new BadRequestResult();
             }
