@@ -16,7 +16,7 @@ namespace CoTech.Bi.Core.Companies
   public class CompanyModule : IModule
   {
     public long Id { 
-      get { return 2; } 
+      get { return -2; } 
     }
     void IModule.Configure(IApplicationBuilder app, IHostingEnvironment env)
     {}

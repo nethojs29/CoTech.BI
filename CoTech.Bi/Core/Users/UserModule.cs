@@ -18,7 +18,7 @@ namespace CoTech.Bi.Core.Users
   public class UserModule : IModule
   {
     public long Id {
-      get { return 1; }
+      get { return -1; }
     }
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {

@@ -14,7 +14,7 @@ namespace CoTech.Bi.Core.EventSourcing
   public class EventModule : IModule
   {
     public long Id {
-      get { return 4; }
+      get { return -4; }
     }
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
