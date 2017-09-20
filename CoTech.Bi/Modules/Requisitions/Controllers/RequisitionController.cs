@@ -26,7 +26,7 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateRequisitionReq req){
-            var requisition =req.toEntity(HttpContext.UserId());
+            var requisition =req.toEntity(HttpContext.UserId().Value);
             await requisitionRepo.Create(requisition);
             return Created($"/api/requisitions/${requisition.Id}", requisition);
         }

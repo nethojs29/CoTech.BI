@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Modules.Clients.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

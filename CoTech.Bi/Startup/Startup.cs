@@ -16,15 +16,15 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using CoTech.Bi.Core.Users.Models;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using Microsoft.AspNetCore.Identity;
 using CoTech.Bi.Identity.DataAccess;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
+using CoTech.Bi.Util;
 using System.Transactions;
 using CoTech.Bi.Modules.Wer.Models;
-using CoTech.Bi.Util;
 using Hangfire;
 using Hangfire.AspNetCore;
 using Hangfire.MySql;
@@ -46,6 +46,7 @@ namespace CoTech.Bi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<JwtTokenGenerator>();
 			services.AddEntityFrameworkMySql();
             services.AddDbContext<BiContext>();
             services.AddIdentity<UserEntity, Role>()
@@ -104,18 +105,16 @@ namespace CoTech.Bi
             });
             app.UseHangfireDashboard();
             app.UseHangfireServer();
-            
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+            );
             app.UseBiModules(env);
             app.UseMvc();
             
             dbInitializer.Initialize();
-            
-            
-
-            RecurringJob.AddOrUpdate("crear semanas",(WeekRepository repository)=>repository.AddWeek(),Cron.Weekly(DayOfWeek.Saturday));
-            
-            
-
         }
     }
 }

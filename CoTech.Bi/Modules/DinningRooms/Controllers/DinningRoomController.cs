@@ -24,7 +24,7 @@ namespace CoTech.Bi.Modules.DinningRooms.Controllers{
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateDinningRoomReq req){
-            var dinningRoom = req.toEntity(HttpContext.UserId());
+            var dinningRoom = req.toEntity(HttpContext.UserId().Value);
             await dinningRepo.Create(dinningRoom);
             return Created($"/api/dinningRooms/${dinningRoom.Id}", dinningRoom);
         }

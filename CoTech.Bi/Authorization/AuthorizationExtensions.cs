@@ -10,17 +10,17 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace CoTech.Bi.Authorization
 {
     public static class AuthorizationExtensions {
-        public static long UserId(this HttpContext context){
+        public static long? UserId(this HttpContext context){
             var userClaim = context.User.FindFirstValue("sub");
             if(userClaim != null) return Int64.Parse(userClaim);
             string authHeader = context.Request.Headers["Authorization"];
             if(authHeader == null || !authHeader.StartsWith("Bearer ")){
-                return -1;
+                return null;
             }
             var token = authHeader.Substring(7);
             var tokenHandler = new JwtSecurityTokenHandler();
             if(!tokenHandler.CanReadToken(token)){
-                return -1;
+                return null;
             }
             try {
                 var readToken = tokenHandler.ReadJwtToken(token);
@@ -31,7 +31,7 @@ namespace CoTech.Bi.Authorization
                 context.User.AddIdentity(claimsIdentity);
                 return Int64.Parse(readToken.Subject);
             } catch(Exception){
-                return -1;
+                return null;
             }
         }
 

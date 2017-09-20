@@ -7,15 +7,19 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Identity.DataAccess;
 using CoTech.Bi.Core.Users.Repositories;
+using CoTech.Bi.Core.Users.EventProcessors;
 
 namespace CoTech.Bi.Core.Users
 {
   public class UserModule : IModule
   {
+    public long Id {
+      get { return -1; }
+    }
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
 
@@ -28,9 +32,14 @@ namespace CoTech.Bi.Core.Users
         .IsUnique();
     }
 
+    public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
+    {
+    }
+
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddScoped<UserRepository>();
+      services.AddSingleton(new UserEventProcessor());
     }
   }
 }

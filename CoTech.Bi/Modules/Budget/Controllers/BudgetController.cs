@@ -42,7 +42,7 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateBudgetReq req){
-            var budget = req.toEntity(HttpContext.UserId());
+            var budget = req.toEntity(HttpContext.UserId().Value);
             await budgetRepo.Create(budget);
             return Created($"/api/budgets/${budget.Id}", budget);
         }

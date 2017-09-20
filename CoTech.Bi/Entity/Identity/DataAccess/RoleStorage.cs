@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace CoTech.Bi.Identity.DataAccess

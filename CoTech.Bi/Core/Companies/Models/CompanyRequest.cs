@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using CoTech.Bi.Core.Companies.Models;
 
 namespace CoTech.Bi.Core.Companies.Models

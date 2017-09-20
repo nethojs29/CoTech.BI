@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using Microsoft.AspNetCore.Identity;
 using CoTech.Bi.Core.Users.Models;
 using Microsoft.AspNetCore.Http.Headers;
@@ -45,7 +45,7 @@ namespace CoTech.Bi.Authorization
                                                      ActionExecutionDelegate next)
             {
                 var userId = context.HttpContext.UserId();
-                if(userId == -1){
+                if(userId == null){
                   context.Result = new UnauthorizedResult();
                   return;
                 }
@@ -58,7 +58,7 @@ namespace CoTech.Bi.Authorization
                     context.Result = new UnauthorizedResult();
                     return;
                 }
-                var hasAnyRole = await permissionRepo.UserHasAnyRoleInCompany(userId, companyId.Value, true, true);
+                var hasAnyRole = await permissionRepo.UserHasAnyRoleInCompany(userId.Value, companyId.Value, true, true);
                 if(!hasAnyRole){
                     context.Result = new UnauthorizedResult();
                     return;

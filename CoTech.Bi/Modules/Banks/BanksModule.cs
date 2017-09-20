@@ -14,6 +14,8 @@ using CoTech.Bi.Modules.Banks.Models;
 namespace CoTech.Bi.Modules.Clients {
     public class BankModule : IModule
     {
+        public long Id{ get { return 8; } }
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
         }
@@ -21,6 +23,9 @@ namespace CoTech.Bi.Modules.Clients {
         public void ConfigureEntities(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BankEntity>().ToTable("Banks");
+        }
+
+        public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager){
         }
 
         public void ConfigureServices(IServiceCollection services)

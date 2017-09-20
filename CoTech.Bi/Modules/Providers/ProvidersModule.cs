@@ -14,6 +14,8 @@ using CoTech.Bi.Modules.Providers.Models;
 
 namespace CoTech.Bi.Modules.Providers{
     public class ProviderModule : IModule{
+        public long Id{ get { return 12; } }
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env){
             
         }
@@ -24,6 +26,9 @@ namespace CoTech.Bi.Modules.Providers{
 
         public void ConfigureEntities(ModelBuilder modelBuilder){
             modelBuilder.Entity<ProviderEntity>().ToTable("Providers");
+        }
+
+        public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager){
         }
     }
 }

@@ -14,6 +14,9 @@ using CoTech.Bi.Modules.Clients.Models;
 namespace CoTech.Bi.Modules.Clients {
     public class ClientModule : IModule
     {
+        public long Id {
+            get { return 7; }
+        }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
         }
@@ -21,6 +24,10 @@ namespace CoTech.Bi.Modules.Clients {
         public void ConfigureEntities(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ClientEntity>().ToTable("Clients");
+        }
+
+        public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
+        {
         }
 
         public void ConfigureServices(IServiceCollection services)

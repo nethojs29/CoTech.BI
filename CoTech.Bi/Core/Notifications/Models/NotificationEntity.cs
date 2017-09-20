@@ -17,15 +17,14 @@ namespace CoTech.Bi.Core.Notifications.Models
         public long Id { get; set; }
         public long SenderId { get; set; }
         public UserEntity Sender { get; set; }
-        public string Type { get; set; }
         public List<ReceiverEntity> Receivers { get; set; }
         [NotMapped]
         public object Body { get; set; }
         [Column("Body")]
         private string BodyJson {
-          get { return JsonConvert.SerializeObject(Body, JsonConverterOptions.JsonSettings); }
+          get { return JsonConvert.SerializeObject(Body, JsonConverterOptions.JsonTypedSettings); }
           set {
-            Body = string.IsNullOrEmpty(value) ? null : JsonConvert.DeserializeObject(value, JsonConverterOptions.JsonSettings);
+            Body = string.IsNullOrEmpty(value) ? null : JsonConvert.DeserializeObject(value, JsonConverterOptions.JsonTypedSettings);
           }
         }
     }

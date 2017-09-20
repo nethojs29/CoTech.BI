@@ -1,6 +1,6 @@
 ﻿using System;
 using CoTech.Bi.Authorization;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Loader;
 using EntityFrameworkCore.Triggers;

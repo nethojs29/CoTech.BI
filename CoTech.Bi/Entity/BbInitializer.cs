@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CoTech.Bi.Core.Permissions.Model;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Loader;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoTech.Bi.Entity
@@ -47,7 +48,21 @@ namespace CoTech.Bi.Entity
             if (!_context.Database.EnsureCreated())
             {
                 var listUsers = new List<UserEntity>();
-                listUsers.Add(new UserEntity(){Name = "Luis",Lastname = "Moya", Email = "lmoya@cotecnologias.com", EmailConfirmed = true,Password = "prueba123"});
+                listUsers.Add(new UserEntity()
+                {
+                    Name = "Luis",
+                    Lastname = "Moya",
+                    Email = "lmoya@cotecnologias.com",
+                    EmailConfirmed = true,
+                    Password = "prueba123"
+                });
+                listUsers.Add(new UserEntity {
+                    Name = "Roberto",
+                    Lastname = "Montaño",
+                    Email = "lmontano@cotecnologias.com",
+                    EmailConfirmed = true,
+                    Password = "benancio"
+                });
 
                 foreach (UserEntity item in listUsers)
                 {
@@ -61,7 +76,8 @@ namespace CoTech.Bi.Entity
                             _context.SaveChanges();
                         }
                     }
-                }
+                } 
+                _context.BiInitialize(_userManager);
             }
         }
     }
