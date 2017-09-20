@@ -15,6 +15,9 @@ namespace CoTech.Bi.Modules.Wer
 {
     public class WerModule: IModule
     {
+        public long Id {
+            get { return 6; }
+        }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             RecurringJob.AddOrUpdate("crear semanas",(WeekRepository repository)=>repository.AddWeek(),Cron.Weekly(DayOfWeek.Saturday));

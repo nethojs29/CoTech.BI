@@ -32,7 +32,8 @@ namespace CoTech.Bi.Core.Companies.Repositories
         }
 
         public Task<List<CompanyEntity>> GetAll() {
-          return db.Where(c => !c.DeletedAt.HasValue).ToListAsync();
+          return db.Where(c => !c.DeletedAt.HasValue)
+            .Include(c => c.Modules).ToListAsync();
         }
 
         public Task<List<CompanyEntity>> GetUserCompanies(long userId) {
@@ -65,6 +66,18 @@ namespace CoTech.Bi.Core.Companies.Repositories
           var evt = CompanyUpdatedEvt.MakeEventEntity(cmd);
           var insertions = await eventRepository.Create(evt);
           return await db.FirstAsync(c => c.Id == evt.Id);
+        }
+
+        public async Task<bool> AddModule(AddModuleCmd cmd) {
+          var evt = ModuleAddedEvt.MakeEventEntity(cmd);
+          var insertions = await eventRepository.Create(evt);
+          return insertions > 0;
+        }
+
+        public async Task<bool> RemoveModule(RemoveModuleCmd cmd) {
+          var evt = ModuleRemovedEvt.MakeEventEntity(cmd);
+          var insertions = await eventRepository.Create(evt);
+          return insertions > 0;
         }
 
         public async Task<CompanyEntity> Delete(DeleteCompanyCmd cmd){
