@@ -6,22 +6,22 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
     public interface RequisitionRequest{}
 
     public class CreateRequisitionReq : RequisitionRequest{
-        public DateTime ApplicationDate{ set; get; }
-        public string PaymentMethod{ set; get; }
         public long ResponsableId{ set; get; }
-        public float Total{ set; get; }
         public long CompanyId{ set; get; }
+        public long? LenderId{ set; get; }
+        public long? BankId{ set; get; }
 
         public RequisitionEntity toEntity(long creatorId){
             Console.WriteLine(creatorId);
             return new RequisitionEntity {
-                ApplicationDate = ApplicationDate,
-                PaymentMethod = PaymentMethod,
+                ApplicationDate = DateTime.Now,
                 ResponsableId = ResponsableId,
-                Total = Total,
                 CompanyId = CompanyId,
                 CreatorId = creatorId,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                Status = 1,
+                LenderId = LenderId,
+                BankId = BankId
             };
         }
     }
@@ -30,7 +30,6 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
         public DateTime ApplicationDate{ set; get; }
         public string PaymentMethod{ set; get; }
         public long ResponsableId{ set; get; }
-        public float Total{ set; get; }
         public int Status{ set; get; }
 
         public RequisitionEntity toEntity(){
@@ -38,7 +37,6 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
                 ApplicationDate = ApplicationDate,
                 PaymentMethod = PaymentMethod,
                 ResponsableId = ResponsableId,
-                Total = Total,
                 Status = Status
             };
         }
@@ -49,11 +47,6 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
     }
 
     public class ComprobateRequisitionReq : RequisitionRequest{
-        public DateTime ApplicationDate{ set; get; }
-        public string PaymentMethod{ set; get; }
-        public long ResponsableId{ set; get; }
-        public float Total{ set; get; }
-        public int Status{ set; get; }
         public long ComprobateUserId{ set; get; }
         public DateTime ComprobateDate = DateTime.Now;
         public string ComprobateFileUrl{ set; get; }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Data.Common;
+using System.IO;
 using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Requisitions.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Requisitions.Controllers{
@@ -49,14 +51,36 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
         }
 
         [HttpPut("{id}/comprobate")]
-        public async Task<IActionResult> Comprobate(long id, [FromBody] ComprobateRequisitionReq req){
+        public async Task<IActionResult> Comprobate(long id, [FromBody] ComprobateRequisitionReq req,
+            [FromForm(Name = "file")] IFormFile formFile){
             var requisition = await requisitionRepo.WithId(id);
             //No sé cómo subir archivos (8
-            requisition.Refund = req.Refund;
-            requisition.ComprobateDate = DateTime.Now;
-            requisition.ComprobateUserId = HttpContext.UserId();
+
+            try {
+                if (formFile != null) {
+                    var directory = Directory.GetCurrentDirectory();
+                    var filePath = directory + Guid.NewGuid() + Path.GetExtension(formFile.FileName);
+                    if (formFile.Length > 0) {
+                        using (var stream = new FileStream(filePath, FileMode.Create)) {
+                            await formFile.CopyToAsync(stream);
+                        }
+                    }
+                    requisition.Refund = req.Refund;
+                    requisition.ComprobateFileUrl = filePath;
+                    requisition.ComprobateDate = DateTime.Now;
+                    requisition.ComprobateUserId = HttpContext.UserId();
             
-            return new OkObjectResult(requisition);
+                    return new OkObjectResult(requisition);        
+                } else {
+                    return new BadRequestResult();
+                }
+            }
+            catch (Exception exception) {
+                Console.WriteLine(exception);
+                return StatusCode(500);
+            }
+            
+            
         }
 
         [HttpDelete("{id}")]
