@@ -16,17 +16,18 @@ namespace CoTech.Bi.Loader
 
         private static List<IModule> modules = new List<IModule>();
 
-        
-
         public static void LoadModules() {
-          Assembly consoleAssembly = Assembly.GetExecutingAssembly();
-          List<Type> moduleTypes = GetTypesByInterface<IModule>(consoleAssembly);
-
-          foreach(Type moduleType in moduleTypes)
-          {
-              IModule module = Activator.CreateInstance(moduleType) as IModule;
-              modules.Add(module);
-          }
+            Assembly consoleAssembly = Assembly.GetExecutingAssembly();
+            List<Type> moduleTypes = GetTypesByInterface<IModule>(consoleAssembly);
+            foreach(Type moduleType in moduleTypes)
+            {
+                IModule module = Activator.CreateInstance(moduleType) as IModule;
+                var moduleWithSameId = modules.Find(m => m.Id == module.Id);
+                if(moduleWithSameId != null) {
+                    throw new Exception($"Id de módulo repetido. {moduleWithSameId.GetType().Name}, {moduleType.Name}({module.Id})");
+                }
+                modules.Add(module);
+            }
         }
         public static void UseBiModules(this IApplicationBuilder app, IHostingEnvironment env){
             modules.ForEach(m => m.Configure(app, env));

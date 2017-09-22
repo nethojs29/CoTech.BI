@@ -36,10 +36,8 @@ namespace CoTech.Bi.Entity
             /*
             //create database schema if none exists
             _context.Database.EnsureCreated();
-
             //If there is already an Administrator role, abort
             if (_context.Roles.Any(r => r.Name == "Administrator")) return;
-
             //Create the Administartor Role
             await _roleManager.CreateAsync(new IdentityRole("Administrator"));
             

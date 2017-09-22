@@ -24,6 +24,9 @@ namespace CoTech.Bi.Core.Companies.EventProcessors
                 .Where(entry => entry.Entity.Body is CompanyUpdatedEvt)
                 .Subscribe(onUpdate);
             eventObservable
+                .Where(entry => entry.Entity.Body is ModuleAddedEvt)
+                .Subscribe(onAddModule);
+            eventObservable
                 .Where(entry => entry.Entity.Body is CompanyDeletedEvt)
                 .Subscribe(onDelete);
         }
@@ -47,13 +50,37 @@ namespace CoTech.Bi.Core.Companies.EventProcessors
             if(eventBody.Name != null) companyEntity.Name = eventBody.Name;
             if(eventBody.Activity != null) companyEntity.Activity = eventBody.Activity;
             if(eventBody.Url != null) {
-                if(db.Where(c => c.Url == eventBody.Url).Count() != 0) {
+                if(db.Count(c => c.Url == eventBody.Url) != 0) {
                     entry.Cancel = true;
                     return;
                 }
                 companyEntity.Url = eventBody.Url;
             }
             db.Update(companyEntity);
+        }
+
+        private void onAddModule(IBeforeEntry<EventEntity, BiContext> entry) {
+            var db = entry.Context.Set<CompanyToModule>();
+            var eventBody = entry.Entity.Body as ModuleAddedEvt;
+            if(db.Count(cm => cm.CompanyId == eventBody.Id && cm.ModuleId == eventBody.ModuleId) != 0) {
+                entry.Cancel = true;
+                return;
+            }
+            db.Add(new CompanyToModule {
+                CompanyId = eventBody.Id,
+                ModuleId = eventBody.ModuleId
+            });
+        }
+
+        private void onRemoveModule(IBeforeEntry<EventEntity, BiContext> entry) {
+            var db = entry.Context.Set<CompanyToModule>();
+            var eventBody = entry.Entity.Body as ModuleRemovedEvt;
+            var ctm = db.First(cm => cm.CompanyId == eventBody.Id && cm.ModuleId == eventBody.ModuleId);
+            if(ctm == null) {
+                entry.Cancel = true;
+                return;
+            }
+            db.Remove(ctm);
         }
 
         private void onDelete(IBeforeEntry<EventEntity, BiContext> entry) {

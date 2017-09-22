@@ -17,6 +17,9 @@ namespace CoTech.Bi.Modules.Wer
 {
     public class WerModule: IModule
     {
+        public long Id {
+            get { return 6; }
+        }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             RecurringJob.AddOrUpdate("crear semanas",(WeekRepository repository)=>repository.AddWeek(),Cron.Weekly(DayOfWeek.Saturday));
@@ -26,6 +29,7 @@ namespace CoTech.Bi.Modules.Wer
         {
             services.AddScoped<WeekRepository>();
             services.AddScoped<ReportRepository>();
+            services.AddScoped<FilesRepository>();
         }
 
         public void ConfigureEntities(ModelBuilder modelBuilder)
@@ -33,6 +37,8 @@ namespace CoTech.Bi.Modules.Wer
             modelBuilder.Entity<WeekEntity>().ToTable("Wer_Weeks");
 
             modelBuilder.Entity<ReportEntity>().ToTable("Wer_Reports");
+            
+            modelBuilder.Entity<FileEntity>().ToTable("Wer_File");
             
         }
 

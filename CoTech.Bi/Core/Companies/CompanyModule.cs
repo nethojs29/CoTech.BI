@@ -15,6 +15,9 @@ namespace CoTech.Bi.Core.Companies
 {
   public class CompanyModule : IModule
   {
+    public long Id { 
+      get { return -2; } 
+    }
     void IModule.Configure(IApplicationBuilder app, IHostingEnvironment env)
     {}
 
@@ -23,6 +26,7 @@ namespace CoTech.Bi.Core.Companies
       modelBuilder.Entity<CompanyEntity>().ToTable("Companies")
           .HasIndex(c => c.Url)
           .IsUnique();
+      modelBuilder.Entity<CompanyToModule>().ToTable("Company_Has_Modules");
     }
 
     public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)

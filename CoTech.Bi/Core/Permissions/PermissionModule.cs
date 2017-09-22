@@ -14,6 +14,9 @@ namespace CoTech.Bi.Core.Permissions
 {
   public class PermissionModule : IModule
   {
+    public long Id {
+      get { return -3; }
+    }
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {}
 
