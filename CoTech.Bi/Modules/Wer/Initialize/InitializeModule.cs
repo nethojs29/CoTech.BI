@@ -834,7 +834,7 @@ namespace CoTech.Bi.Modules.Wer.Initialize
                 Lastname= "Cota",
                 EmailConfirmed = true,
                 Name="Rogelio",
-                Email="rogelioota@hotmail.com",
+                Email="rogeliocota@hotmail.com",
                 Password="rcota",
             });
             users.Add(new UserEntity(){
