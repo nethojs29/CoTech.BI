@@ -52,6 +52,11 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             get { return this.context.Set<CompanyEntity>(); }
         }
 
+        private DbSet<SeenReportsEntity> dbSeenReportsEntities
+        {
+            get { return this.context.Set<SeenReportsEntity>(); }
+        }
+
         private WeekRepository _weekRepository;
 
         private CompanyRepository _companyRepository;
@@ -60,6 +65,36 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             this.context = context;
             this._weekRepository = repository;
             this._companyRepository = companyRepository;
+        }
+
+        public async Task<ReportEntity> SearchOrCreate(long idCompany, long idUser, long idWeek,long idCreator)
+        {
+            var report = await db.Where(r => r.WeekId == idWeek && r.UserId == idUser && r.CompanyId == idCompany)
+                .FirstOrDefaultAsync();
+            if (report == null)
+            {
+                report = new ReportEntity()
+                {
+                    CompanyId = idCompany,
+                    UserId = idUser,
+                    WeekId = idWeek
+                };
+                db.Add(report);
+                context.SaveChanges();
+            }
+            if(report != null)
+                if (report.Id > 0 && !report.Seen.Exists(s => s.User.Id == idCreator))
+                {
+                    dbSeenReportsEntities.Add(new SeenReportsEntity()
+                    {
+                        Report = report,
+                        UserId = idCreator
+                    });
+                    context.SaveChanges();
+                    report = db.Find(report.Id);
+                    return report;
+                }
+            return report;
         }
 
         public Task<List<ReportEntity>> getAll()
@@ -92,6 +127,13 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 CompanyId = request.CompanyId,
                 WeekId = request.WeekId
             };
+            var Seen = new List<SeenReportsEntity>();
+            Seen.Add(new SeenReportsEntity()
+            {
+                UserId = request.UserId,
+                Report = report
+            });
+            report.Seen = Seen;
             db.Add(report);
             await context.SaveChangesAsync();
             return report;

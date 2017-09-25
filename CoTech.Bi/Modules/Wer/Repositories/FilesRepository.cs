@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Modules.Wer.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.ExpressionVisitors.Internal;
 
 namespace CoTech.Bi.Modules.Wer.Repositories
 {
@@ -31,9 +32,14 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             {
                 _dbFiles.Add(file);
                 await _context.SaveChangesAsync();
-                return entity;
+                return new FileEntity(){Mime = file.Mime, Id = file.Id, ReportId = file.ReportId, Name = file.Name};
             }
             return null;
+        }
+
+        public Task<FileEntity> ById(long id)
+        {
+            return _dbFiles.FindAsync(id);
         }
         
     }

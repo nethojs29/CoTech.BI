@@ -17,6 +17,7 @@ namespace CoTech.Bi.Core.Companies.Models
       public string Url { get; set; }
       public long? ParentId { get; set; }
       public DateTime? DeletedAt { get; set; }
+      public string Color { get; set; }
       public List<long> Modules { get; set; }
 
       public CompanyResult(CompanyEntity entity){
@@ -26,6 +27,7 @@ namespace CoTech.Bi.Core.Companies.Models
         Url = entity.Url;
         ParentId = entity.ParentId;
         DeletedAt = entity.DeletedAt;
+        Color = entity.Color;
         if(entity.Modules != null) {
           Modules = entity.Modules.Select(m => m.ModuleId).ToList();
         }

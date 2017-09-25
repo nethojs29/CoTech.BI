@@ -18,6 +18,7 @@ using Microsoft.Azure.KeyVault.Models;
 namespace CoTech.Bi.Modules.Wer.Controllers
 {
     [Route("/api/companies/{idCompany}/res")]
+    [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
     public class ReportController : Controller
     {
 
@@ -31,8 +32,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             this._filesRepository = filesRepository;
         }
 
-        [HttpGet("companies/all")]
-        [RequiresRole(WerRoles.Ceo)]
+        [HttpGet("companies")]
         public async Task<IActionResult> getAllCompanies(long idCompany)
         {
             try
@@ -44,6 +44,27 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             {
                 return new ObjectResult(new {error = e.Message}){StatusCode = 500};
             }
+        }
+        [HttpGet("reports/search/{idUser}/{idWeek}")]
+        public async Task<IActionResult> SearchOrCreate(long idCompany, long idUser, long idWeek)
+        {
+            try
+            {
+                var idCreator = HttpContext.UserId();
+                if (idCreator != null)
+                {
+                    var report =
+                        await _reportRepository.SearchOrCreate(idCompany, idUser, idWeek,
+                            long.Parse(idCreator.ToString()));
+                    return new OkObjectResult(report);
+                }
+                return new ObjectResult(new {error = "no se pudo crear reporte"}){StatusCode = 500};
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {error = e.Message}){StatusCode = 500};
+            }
+            
         }
         
         [HttpGet("reports/week/{idWeek}")]
@@ -59,6 +80,8 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
             
         }
+
+        
 
         [HttpGet("reports/user/{idUser}")]
         public async Task<IActionResult> byUser(int? idUser)
@@ -94,6 +117,29 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             catch (Exception e)
             {
                 return new ObjectResult(new {error = e.Message}){StatusCode = 500};
+            }
+        }
+
+        [HttpGet("reports/{idReport}/files/{idFile}")]
+        public async Task<IActionResult> DownloadFileReport([FromQuery(Name = "idFile")] long idFile)
+        {
+            try
+            {
+                var fileEntity = await _filesRepository.ById(idFile);
+                if (fileEntity != null)
+                {
+                    var stream = System.IO.File.ReadAllBytes(fileEntity.Uri);
+                    var response = File(stream, fileEntity.Mime);
+                    return response;
+                }
+                else
+                {
+                    return StatusCode(500);
+                }
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {message = e.Message}){StatusCode = 500};
             }
         }
 
