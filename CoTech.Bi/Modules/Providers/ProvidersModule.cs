@@ -11,6 +11,7 @@ using CoTech.Bi.Entity;
 using CoTech.Bi.Identity.DataAccess;
 using CoTech.Bi.Modules.Clients.Models;
 using CoTech.Bi.Modules.Providers.Models;
+using System.Collections.Generic;
 
 namespace CoTech.Bi.Modules.Providers{
     public class ProviderModule : IModule{
@@ -29,6 +30,11 @@ namespace CoTech.Bi.Modules.Providers{
         }
 
         public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager){
+        }
+
+        public List<ISeed> ConfigureSeeds(BiContext context)
+        {
+            return new List<ISeed>();
         }
     }
 }

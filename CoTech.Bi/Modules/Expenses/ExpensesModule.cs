@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Loader;
@@ -26,6 +27,11 @@ namespace CoTech.Bi.Modules.Expenses{
         }
 
         public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager){
+        }
+
+        public List<ISeed> ConfigureSeeds(BiContext context)
+        {
+            return new List<ISeed>();
         }
     }
 }
