@@ -83,14 +83,14 @@ namespace CoTech.Bi
             services.AddBiModules();
             services.AddMvc();
             
-            services.AddScoped<IDbInitializer, DbInitializer>();
+            // services.AddScoped<IDbInitializer, DbInitializer>();
             
             services.AddHangfire(config => config.UseStorage(new MySqlStorage("Server=localhost;User Id=bi;Password=bi-core;Database=bi-core;Allow User Variables=True;")));
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env,IDbInitializer dbInitializer)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseWebSockets();
             app.UseAuthentication();
@@ -114,7 +114,7 @@ namespace CoTech.Bi
             app.UseBiModules(env);
             app.UseMvc();
             
-            dbInitializer.Initialize();
+            // dbInitializer.Initialize();
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Entity;
 using Microsoft.AspNetCore.Builder;
@@ -20,5 +21,6 @@ namespace CoTech.Bi.Loader
         void ConfigureServices(IServiceCollection services);
         void ConfigureEntities(ModelBuilder modelBuilder);
         void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager);
+        List<ISeed> ConfigureSeeds(BiContext context);
     }
 }

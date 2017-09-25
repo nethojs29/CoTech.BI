@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Identity.DataAccess;
 using CoTech.Bi.Modules.Clients.Models;
+using System.Collections.Generic;
 
 namespace CoTech.Bi.Modules.Clients {
     public class ClientModule : IModule
@@ -33,6 +34,11 @@ namespace CoTech.Bi.Modules.Clients {
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ClientRepository>();
+        }
+
+        public List<ISeed> ConfigureSeeds(BiContext context)
+        {
+            return new List<ISeed>();
         }
     }
 }
