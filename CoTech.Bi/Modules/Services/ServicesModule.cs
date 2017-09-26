@@ -1,4 +1,5 @@
-﻿using CoTech.Bi.Core.Users.Models;
+﻿using System.Collections.Generic;
+using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Loader;
 using CoTech.Bi.Modules.Services.Models;
@@ -24,5 +25,9 @@ namespace CoTech.Bi.Modules.Services{
         }
 
         public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager){}
+        
+        public List<ISeed> ConfigureSeeds(BiContext context){
+            return new List<ISeed>();
+        }
     }
 }
