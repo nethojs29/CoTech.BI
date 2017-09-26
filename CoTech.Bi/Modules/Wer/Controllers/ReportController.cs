@@ -31,7 +31,6 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             this._reportRepository = reportRepository;
             this._filesRepository = filesRepository;
         }
-
         [HttpGet("companies")]
         public async Task<IActionResult> getAllCompanies(long idCompany)
         {
