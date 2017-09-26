@@ -27,6 +27,7 @@ namespace CoTech.Bi.Core.Companies
           .HasIndex(c => c.Url)
           .IsUnique();
       modelBuilder.Entity<CompanyToModule>().ToTable("Company_Has_Modules");
+      modelBuilder.Entity<DepartmentEntity>().ToTable("Departments");
     }
 
     public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
@@ -38,6 +39,7 @@ namespace CoTech.Bi.Core.Companies
     {
       services.AddScoped<CompanyRepository>();
       services.AddScoped<CompanyNotifier>();
+      services.AddScoped<DepartmentRepository>();
       services.AddSingleton(new CompanyEventProcessor());
     }
   }
