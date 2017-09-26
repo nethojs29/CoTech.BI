@@ -542,11 +542,15 @@ namespace CoTech.Bi.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Extension");
+
                     b.Property<string>("Mime");
 
                     b.Property<string>("Name");
 
                     b.Property<long>("ReportId");
+
+                    b.Property<int>("Type");
 
                     b.Property<string>("Uri");
 
@@ -555,6 +559,70 @@ namespace CoTech.Bi.Migrations
                     b.HasIndex("ReportId");
 
                     b.ToTable("Wer_File");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.GroupEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Category");
+
+                    b.Property<long>("CompanyId");
+
+                    b.Property<long>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Wer_Groups");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.MessageEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<long>("GroupId");
+
+                    b.Property<string>("Message");
+
+                    b.Property<long>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Wer_Messages");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.PartyEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateIn");
+
+                    b.Property<DateTime?>("DateOut");
+
+                    b.Property<long>("GroupId");
+
+                    b.Property<long>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PartyEntity");
                 });
 
             modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.ReportEntity", b =>
@@ -583,6 +651,46 @@ namespace CoTech.Bi.Migrations
                     b.HasIndex("WeekId");
 
                     b.ToTable("Wer_Reports");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.SeenMessagesEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("MessageId");
+
+                    b.Property<DateTime>("SeenAt");
+
+                    b.Property<long>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MessageId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Wer_Seen_Messages");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.SeenReportsEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("ReportId");
+
+                    b.Property<DateTime>("SeenAt");
+
+                    b.Property<long>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReportId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Wer_Seen_Reports");
                 });
 
             modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.WeekEntity", b =>
@@ -803,8 +911,47 @@ namespace CoTech.Bi.Migrations
             modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.FileEntity", b =>
                 {
                     b.HasOne("CoTech.Bi.Modules.Wer.Models.Entities.ReportEntity", "Report")
-                        .WithMany()
+                        .WithMany("Files")
                         .HasForeignKey("ReportId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.GroupEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.MessageEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Modules.Wer.Models.Entities.GroupEntity", "Group")
+                        .WithMany("MessagesList")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.PartyEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Modules.Wer.Models.Entities.GroupEntity", "Group")
+                        .WithMany("UsersList")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -823,6 +970,32 @@ namespace CoTech.Bi.Migrations
                     b.HasOne("CoTech.Bi.Modules.Wer.Models.Entities.WeekEntity", "Week")
                         .WithMany()
                         .HasForeignKey("WeekId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.SeenMessagesEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Modules.Wer.Models.Entities.MessageEntity", "Message")
+                        .WithMany("Seen")
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.SeenReportsEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Modules.Wer.Models.Entities.ReportEntity", "Report")
+                        .WithMany("Seen")
+                        .HasForeignKey("ReportId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

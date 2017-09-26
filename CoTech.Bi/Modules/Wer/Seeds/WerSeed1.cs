@@ -87,6 +87,16 @@ namespace CoTech.Bi.Modules.Wer.Seeds
                 Email="dortiz@opessa.net",
                 Password="dortiz",
                 Permissions = new List<PermissionEntity> {
+                    new PermissionEntity()
+                    {
+                        RoleId = 1,
+                        CompanyId = companies["opessa-corp"].Id
+                    },
+                  new PermissionEntity()
+                  {
+                      RoleId = 602,
+                      CompanyId = companies["opessa-corp"].Id
+                  },
                   new PermissionEntity()
                   {
                       RoleId = 601,
@@ -274,6 +284,29 @@ namespace CoTech.Bi.Modules.Wer.Seeds
                 Name="Gustavo",
                 Email="mazon.gustavo@gmail.com",
                 Password="gmazon",
+                Permissions = new List<PermissionEntity>
+                {
+                    new PermissionEntity()
+                    {
+                        RoleId = 1,
+                        CompanyId = companies["opessa-corp"].Id
+                    },
+                    new PermissionEntity()
+                    {
+                        RoleId = 1,
+                        CompanyId = companies["gde"].Id
+                    },
+                    new PermissionEntity()
+                    {
+                        RoleId = 603,
+                        CompanyId = companies["opessa-corp"].Id
+                    },
+                    new PermissionEntity()
+                    {
+                        RoleId = 603,
+                        CompanyId = companies["gde"].Id
+                    }
+                }
                 
             },new UserEntity(){
                 // Id = 10,
@@ -563,6 +596,26 @@ namespace CoTech.Bi.Modules.Wer.Seeds
                 Email="pvalenzuela@gdesarrollos.com",
                 Password="pvalenzuela",
                 Permissions = new List<PermissionEntity> {
+                    new PermissionEntity()
+                    {
+                        RoleId = 1,
+                        CompanyId = companies["opessa-corp"].Id
+                    },
+                    new PermissionEntity()
+                    {
+                        RoleId = 1,
+                        CompanyId = companies["gde"].Id
+                    },
+                  new PermissionEntity()
+                  {
+                      RoleId = 602,
+                      CompanyId = companies["opessa-corp"].Id
+                  },
+                    new PermissionEntity()
+                  {
+                      RoleId = 602,
+                      CompanyId = companies["gde"].Id
+                  },
                   new PermissionEntity()
                   {
                       RoleId = 601,
