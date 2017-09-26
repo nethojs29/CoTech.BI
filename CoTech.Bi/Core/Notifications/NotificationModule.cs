@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using CoTech.Bi.Core.Notifications.Models;
 using CoTech.Bi.Core.Notifications.Repositories;
 using CoTech.Bi.Core.Users.Models;
@@ -31,6 +32,11 @@ namespace CoTech.Bi.Core.Notifications
     public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
     {
       
+    }
+
+    public List<ISeed> ConfigureSeeds(BiContext context)
+    {
+      return new List<ISeed>();
     }
 
     public void ConfigureServices(IServiceCollection services)

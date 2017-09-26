@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Identity.DataAccess;
 using CoTech.Bi.Modules.Banks.Models;
+using System.Collections.Generic;
 
 namespace CoTech.Bi.Modules.Clients {
     public class BankModule : IModule
@@ -26,6 +27,11 @@ namespace CoTech.Bi.Modules.Clients {
         }
 
         public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager){
+        }
+
+        public List<ISeed> ConfigureSeeds(BiContext context)
+        {
+            return new List<ISeed>();
         }
 
         public void ConfigureServices(IServiceCollection services)
