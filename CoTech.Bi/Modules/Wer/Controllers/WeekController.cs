@@ -44,5 +44,21 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 return new ObjectResult(new {error = e.Message}){StatusCode = 500};
             }
         }
+        
+        [HttpGet]
+        [RequiresAuth]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                var returnValue = await _weekRepository.paginateWeeks(1);
+                
+                return new OkObjectResult(returnValue);
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {error = e.Message}){StatusCode = 500};
+            }
+        }
     }
 }
