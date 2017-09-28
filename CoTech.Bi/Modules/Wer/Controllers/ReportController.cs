@@ -116,7 +116,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
         }
         
-        [HttpPost("reports/{idReport}")]
+        [HttpPut("reports/{idReport}")]
         public async Task<IActionResult> CreateReport([FromBody] ReportRequest request,long idReport)
         {
             try
