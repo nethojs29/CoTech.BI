@@ -155,7 +155,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
         }
 
-        [HttpPost("reports/{idReport}/files")]
+        [HttpPut("reports/{idReport}/files")]
         public async Task<IActionResult> UploadFileReport([FromQuery(Name = "idReport")] long idReport,
             [FromForm(Name = "file")] IFormFile formFile)
         {
