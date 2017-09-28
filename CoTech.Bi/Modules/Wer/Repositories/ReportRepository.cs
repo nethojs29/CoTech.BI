@@ -141,6 +141,27 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             await context.SaveChangesAsync();
             return report;
         }
+        public ReportEntity Update(ReportRequest request,long idreport)
+        {
+            var report = db.Find(idreport);
+            if (report != null)
+            {
+                var updateReport = new ReportEntity()
+                {
+                    Id = idreport,
+                    CompanyId = report.CompanyId,
+                    UserId = report.UserId,
+                    Financial = report.Financial,
+                    Observation = report.Observation,
+                    Operative = report.Operative,
+                    WeekId = report.WeekId
+                };
+                db.Update(updateReport);
+                context.SaveChanges();
+                return updateReport;
+            }
+            return null;
+        }
 
         public bool Delete(long IdReport)
         {

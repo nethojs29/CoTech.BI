@@ -115,6 +115,22 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 return new ObjectResult(new {error = e.Message}){StatusCode = 500};
             }
         }
+        
+        [HttpPost("reports/{idReport}")]
+        public async Task<IActionResult> CreateReport([FromBody] ReportRequest request,long idReport)
+        {
+            try
+            {
+                var report = _reportRepository.Update(request, idReport);
+                if (report == null)
+                    return NotFound();
+                return new OkObjectResult(report);
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {error = e.Message}){StatusCode = 500};
+            }
+        }
 
         [HttpGet("reports/{idReport}/files/{idFile}")]
         public async Task<IActionResult> DownloadFileReport([FromQuery(Name = "idFile")] long idFile)
