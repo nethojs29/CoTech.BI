@@ -13,6 +13,7 @@ using CoTech.Bi.Modules.Wer.Repositories;
 using CoTech.Bi.Util;
 using Microsoft.AspNetCore.Http;
 using CoTech.Bi.Authorization;
+using CoTech.Bi.Modules.Wer.Models.Responses;
 using Microsoft.Azure.KeyVault.Models;
 
 namespace CoTech.Bi.Modules.Wer.Controllers
@@ -49,15 +50,11 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         {
             try
             {
-                var idCreator = HttpContext.UserId();
-                if (idCreator != null)
-                {
-                    var report =
-                        await _reportRepository.SearchOrCreate(idCompany, idUser, idWeek,
-                            long.Parse(idCreator.ToString()));
-                    return new OkObjectResult(report);
-                }
-                return new ObjectResult(new {error = "no se pudo crear reporte"}){StatusCode = 500};
+                long idCreator = long.Parse(HttpContext.UserId().ToString());
+                var report =
+                    await _reportRepository.SearchOrCreate(idCompany, idUser, idWeek,idCreator);
+                var reportResponse = new ReportResponse(report);
+                return new ObjectResult(reportResponse){StatusCode = 200};
             }
             catch (Exception e)
             {
