@@ -3,7 +3,7 @@ using CoTech.Bi.Modules.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Services.Controllers{
-    [Route("api/services")]
+    [Route("api/companies/{idCompany}/services")]
     public class ServiceController:Controller{
         private readonly ServiceRepository serviceRepo;
 

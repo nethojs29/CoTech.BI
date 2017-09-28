@@ -3,7 +3,7 @@ using CoTech.Bi.Modules.Lender.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Lender.Controllers{
-    [Route("api/lenders")]
+    [Route("api/companies/{idCompany}/lenders")]
     public class LenderController : Controller{
         private readonly LenderRepository lenderRepo;
 

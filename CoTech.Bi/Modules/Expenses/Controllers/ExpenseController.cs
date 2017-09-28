@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Expenses.Controllers{
-    [Route("api/expenses")]
+    [Route("api/companies/{idCompany}/expenses")]
     public class ExpenseController : Controller{
         private readonly ExpenseRepository expenseRepo;
 
