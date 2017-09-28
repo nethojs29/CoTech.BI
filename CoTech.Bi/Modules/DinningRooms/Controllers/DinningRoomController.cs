@@ -4,7 +4,7 @@ using CoTech.Bi.Modules.DinningRooms.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.DinningRooms.Controllers{
-    [Route("api/dinningRooms")]
+    [Route("api/companies/{idCompany}/dinningRooms")]
     public class DinningRoomController : Controller{
         private readonly DinningRoomRepository dinningRepo;
 
@@ -13,8 +13,8 @@ namespace CoTech.Bi.Modules.DinningRooms.Controllers{
         }
         
         [HttpGet]
-        public async Task<IActionResult> getAll(){
-            return new OkObjectResult(await dinningRepo.getAll());
+        public async Task<IActionResult> getAll(long idCompany){
+            return new OkObjectResult(await dinningRepo.getAll(idCompany));
         }
 
         [HttpGet("{id}")]

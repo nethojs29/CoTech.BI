@@ -3,7 +3,7 @@ using CoTech.Bi.Modules.Banks.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Clients.Controllers{
-    [Route("api/banks")]
+    [Route("/api/companies/{idCompany}/banks")]
     public class BankController:Controller{
         private readonly BankRepository bankRepo;
 
@@ -12,8 +12,8 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
         }
 
         [HttpGet]
-        public async Task<IActionResult> getAll(){
-            return new OkObjectResult(await bankRepo.getAll());
+        public async Task<IActionResult> getAll(long idCompany){
+            return new OkObjectResult(await bankRepo.getAll(idCompany));
         }
 
         [HttpGet("{id}")]

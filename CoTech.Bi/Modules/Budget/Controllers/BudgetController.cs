@@ -6,7 +6,7 @@ using CoTech.Bi.Modules.Expenses.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Budget.Controllers{
-    [Route("api/budgets")]
+    [Route("api/companies/{idCompany}/budgets")]
     public class BudgetController : Controller{
         private readonly BudgetRepository budgetRepo;
         private readonly ExpenseRepository expenseRepo;
@@ -17,8 +17,8 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
         }
         
         [HttpGet("{year}")]
-        public async Task<IActionResult> getAll(long year){
-            return new OkObjectResult(await budgetRepo.getFromYear(year));
+        public async Task<IActionResult> getAll(long year, long idCompany){
+            return new OkObjectResult(await budgetRepo.getFromYear(year, idCompany));
         }
 
         [HttpGet("limit/{groupId}")]

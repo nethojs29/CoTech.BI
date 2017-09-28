@@ -18,8 +18,8 @@ namespace CoTech.Bi.Modules.Banks.Models{
             this.context = context;
         }
 
-        public Task<List<BankEntity>> getAll(){
-            return db.Where(b => !b.DeletedAt.HasValue).ToListAsync();
+        public Task<List<BankEntity>> getAll(long CompanyId){
+            return db.Where(b => !b.DeletedAt.HasValue && b.CompanyId == CompanyId).ToListAsync();
         }
 
         public Task<BankEntity> WithId(long id){

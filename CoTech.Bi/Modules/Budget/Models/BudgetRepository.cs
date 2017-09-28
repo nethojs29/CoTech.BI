@@ -18,8 +18,8 @@ namespace CoTech.Bi.Modules.Budget.Models{
             this.context = context;
         }
 
-        public Task<List<BudgetEntity>> getFromYear(long year){
-            return db.Where(p => !p.DeletedAt.HasValue && p.Year == year).ToListAsync();
+        public Task<List<BudgetEntity>> getFromYear(long year, long idCompany){
+            return db.Where(p => !p.DeletedAt.HasValue && p.Year == year && p.CompanyId == idCompany).ToListAsync();
         }
 
         public Task<List<BudgetEntity>> getAllByGroup(long group){
