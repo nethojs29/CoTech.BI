@@ -149,16 +149,16 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 var updateReport = new ReportEntity()
                 {
                     Id = idreport,
-                    CompanyId = report.CompanyId,
-                    UserId = report.UserId,
-                    Financial = report.Financial,
-                    Observation = report.Observation,
-                    Operative = report.Operative,
-                    WeekId = report.WeekId
+                    CompanyId = request.CompanyId,
+                    UserId = request.UserId,
+                    Financial = request.Financial,
+                    Observation = request.Observation,
+                    Operative = request.Operative,
+                    WeekId = request.WeekId
                 };
-                db.Update(updateReport);
+                context.Entry(report).CurrentValues.SetValues(updateReport);
                 context.SaveChanges();
-                return updateReport;
+                return report;
             }
             return null;
         }
