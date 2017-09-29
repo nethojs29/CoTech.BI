@@ -80,7 +80,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         
 
         [HttpGet("reports/user/{idUser}")]
-        public async Task<IActionResult> byUser(int? idUser)
+        public async Task<IActionResult> byUser(long idCompany,int? idUser)
         {
             try
             {
@@ -104,7 +104,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpPost("reports")]
-        public async Task<IActionResult> CreateReport([FromBody] ReportRequest request)
+        public async Task<IActionResult> CreateReport(long idCompany,[FromBody] ReportRequest request)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
         
         [HttpPut("reports/{idReport}")]
-        public async Task<IActionResult> CreateReport([FromBody] ReportRequest request,long idReport)
+        public async Task<IActionResult> CreateReport(long idCompany,[FromBody] ReportRequest request,long idReport)
         {
             try
             {
@@ -133,7 +133,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpGet("reports/{idReport}/files/{idFile}")]
-        public async Task<IActionResult> DownloadFileReport([FromQuery(Name = "idFile")] long idFile)
+        public async Task<IActionResult> DownloadFileReport(long idCompany,[FromQuery(Name = "idFile")] long idFile)
         {
             try
             {
@@ -156,7 +156,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpPut("reports/{idReport}/files")]
-        public async Task<IActionResult> UploadFileReport([FromQuery(Name = "idReport")] long idReport,
+        public async Task<IActionResult> UploadFileReport(long idCompany,[FromQuery(Name = "idReport")] long idReport,
             [FromForm(Name = "file")] IFormFile formFile)
         {
             try
@@ -203,7 +203,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpDelete("reports/{idReport}")]
-        public async Task<IActionResult> DeleteReport(long idReport)
+        public async Task<IActionResult> DeleteReport(long idCompany, long idReport)
         {
             try
             {
@@ -216,7 +216,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpGet("reports/{idReport}")]
-        public async Task<IActionResult> byIdReport(long idReport)
+        public async Task<IActionResult> byIdReport(long idCompany,long idReport)
         {
             try
             {
@@ -229,7 +229,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpGet("reports/start/{idStart}/end/{idEnd}")]
-        public async Task<IActionResult> filterBetweenWeeks(long idStart, long idEnd)
+        public async Task<IActionResult> filterBetweenWeeks(long idCompany,long idStart, long idEnd)
         {
             try
             {
