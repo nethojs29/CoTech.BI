@@ -18,8 +18,8 @@ namespace CoTech.Bi.Modules.DinningRooms.Models{
             this.context = context;
         }
 
-        public Task<List<DinningRoomEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).ToListAsync();
+        public Task<List<DinningRoomEntity>> getAll(long idCompany){
+            return db.Where(p => !p.DeletedAt.HasValue && p.CompanyId == idCompany).ToListAsync();
         }
 
         public Task<DinningRoomEntity> WithId(long id){

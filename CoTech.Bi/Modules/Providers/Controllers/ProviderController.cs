@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
 namespace CoTech.Bi.Modules.Providers.Controllers{
-    [Route("api/providers")]
+    [Route("api/companies/{idCompany}/providers")]
     public class ProviderController : Controller{
         private readonly ProviderRepository providerRepo;
 

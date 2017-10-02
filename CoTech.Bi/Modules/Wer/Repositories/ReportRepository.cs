@@ -69,7 +69,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
 
         public async Task<ReportEntity> SearchOrCreate(long idCompany, long idUser, long idWeek,long idCreator)
         {
-            var report = await db.Where(r => r.WeekId == idWeek && r.UserId == idUser && r.CompanyId == idCompany)
+            var report = await db.Include(r => r.Seen).Include(r => r.Files).Where(r => r.WeekId == idWeek && r.UserId == idUser && r.CompanyId == idCompany)
                 .FirstOrDefaultAsync();
             if (report == null)
             {
@@ -81,9 +81,11 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 };
                 db.Add(report);
                 context.SaveChanges();
+                report.Seen = new List<SeenReportsEntity>();
+                report.Files = new List<FileEntity>();
             }
             if(report != null)
-                if (report.Id > 0 && !report.Seen.Exists(s => s.User.Id == idCreator))
+                if (report.Id > 0 && !report.Seen.Exists(s => s.UserId == idCreator))
                 {
                     dbSeenReportsEntities.Add(new SeenReportsEntity()
                     {
@@ -91,7 +93,8 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                         UserId = idCreator
                     });
                     context.SaveChanges();
-                    report = db.Find(report.Id);
+                    var aux = db.Include(r => r.Seen).Include(r => r.Files).FirstOrDefault(r=> r.Id == report.Id);
+                    report = aux;
                     return report;
                 }
             return report;
@@ -137,6 +140,27 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             db.Add(report);
             await context.SaveChangesAsync();
             return report;
+        }
+        public ReportEntity Update(ReportRequest request,long idreport)
+        {
+            var report = db.Find(idreport);
+            if (report != null)
+            {
+                var updateReport = new ReportEntity()
+                {
+                    Id = idreport,
+                    CompanyId = request.CompanyId,
+                    UserId = request.UserId,
+                    Financial = request.Financial,
+                    Observation = request.Observation,
+                    Operative = request.Operative,
+                    WeekId = request.WeekId
+                };
+                context.Entry(report).CurrentValues.SetValues(updateReport);
+                context.SaveChanges();
+                return report;
+            }
+            return null;
         }
 
         public bool Delete(long IdReport)

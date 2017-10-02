@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Movement.Controllers{
-    [Route("api/movements")]
+    [Route("api/companies/{idCompany}/movements")]
     public class MovementController:Controller{
         private readonly MovementRepository movementRepo;
 

@@ -3,7 +3,7 @@ using CoTech.Bi.Modules.Expenses.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Expenses.Controllers{
-    [Route("api/expenseTypes")]
+    [Route("api/companies/{idCompany}/expenseTypes")]
     public class ExpenseTypeController :Controller {
         private readonly ExpenseTypeRepository expenseRepo;
 

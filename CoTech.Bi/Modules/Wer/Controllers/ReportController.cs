@@ -13,6 +13,7 @@ using CoTech.Bi.Modules.Wer.Repositories;
 using CoTech.Bi.Util;
 using Microsoft.AspNetCore.Http;
 using CoTech.Bi.Authorization;
+using CoTech.Bi.Modules.Wer.Models.Responses;
 using Microsoft.Azure.KeyVault.Models;
 
 namespace CoTech.Bi.Modules.Wer.Controllers
@@ -49,15 +50,11 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         {
             try
             {
-                var idCreator = HttpContext.UserId();
-                if (idCreator != null)
-                {
-                    var report =
-                        await _reportRepository.SearchOrCreate(idCompany, idUser, idWeek,
-                            long.Parse(idCreator.ToString()));
-                    return new OkObjectResult(report);
-                }
-                return new ObjectResult(new {error = "no se pudo crear reporte"}){StatusCode = 500};
+                long idCreator = long.Parse(HttpContext.UserId().ToString());
+                var report =
+                    await _reportRepository.SearchOrCreate(idCompany, idUser, idWeek,idCreator);
+                var reportResponse = new ReportResponse(report);
+                return new ObjectResult(reportResponse){StatusCode = 200};
             }
             catch (Exception e)
             {
@@ -83,7 +80,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         
 
         [HttpGet("reports/user/{idUser}")]
-        public async Task<IActionResult> byUser(int? idUser)
+        public async Task<IActionResult> byUser(long idCompany,int? idUser)
         {
             try
             {
@@ -107,7 +104,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpPost("reports")]
-        public async Task<IActionResult> CreateReport([FromBody] ReportRequest request)
+        public async Task<IActionResult> CreateReport(long idCompany,[FromBody] ReportRequest request)
         {
             try
             {
@@ -118,9 +115,25 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 return new ObjectResult(new {error = e.Message}){StatusCode = 500};
             }
         }
+        
+        [HttpPut("reports/{idReport}")]
+        public async Task<IActionResult> CreateReport(long idCompany,[FromBody] ReportRequest request,long idReport)
+        {
+            try
+            {
+                var report = _reportRepository.Update(request, idReport);
+                if (report == null)
+                    return NotFound();
+                return new OkObjectResult(report);
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {error = e.Message}){StatusCode = 500};
+            }
+        }
 
         [HttpGet("reports/{idReport}/files/{idFile}")]
-        public async Task<IActionResult> DownloadFileReport([FromQuery(Name = "idFile")] long idFile)
+        public async Task<IActionResult> DownloadFileReport(long idCompany,[FromQuery(Name = "idFile")] long idFile)
         {
             try
             {
@@ -143,7 +156,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpPost("reports/{idReport}/files")]
-        public async Task<IActionResult> UploadFileReport([FromQuery(Name = "idReport")] long idReport,
+        public async Task<IActionResult> UploadFileReport(long idCompany,[FromQuery(Name = "idReport")] long idReport,
             [FromForm(Name = "file")] IFormFile formFile)
         {
             try
@@ -190,7 +203,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpDelete("reports/{idReport}")]
-        public async Task<IActionResult> DeleteReport(long idReport)
+        public async Task<IActionResult> DeleteReport(long idCompany, long idReport)
         {
             try
             {
@@ -203,7 +216,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpGet("reports/{idReport}")]
-        public async Task<IActionResult> byIdReport(long idReport)
+        public async Task<IActionResult> byIdReport(long idCompany,long idReport)
         {
             try
             {
@@ -216,7 +229,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpGet("reports/start/{idStart}/end/{idEnd}")]
-        public async Task<IActionResult> filterBetweenWeeks(long idStart, long idEnd)
+        public async Task<IActionResult> filterBetweenWeeks(long idCompany,long idStart, long idEnd)
         {
             try
             {

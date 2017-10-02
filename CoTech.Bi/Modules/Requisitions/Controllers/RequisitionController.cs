@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Requisitions.Controllers{
-    [Route("api/requisitions")]
+    [Route("api/companies/{idCompany}/requisitions")]
     public class RequisitionController :Controller{
         private readonly RequisitionRepository requisitionRepo;
 
