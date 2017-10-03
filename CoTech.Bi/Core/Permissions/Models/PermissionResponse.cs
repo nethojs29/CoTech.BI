@@ -8,10 +8,12 @@ namespace CoTech.Bi.Core.Permissions.Models
 {
     public class PermissionResponse
     {
+        public long Id { get; set; }
         public long CompanyId { get; set; }
         public long RoleId { get; set; }
 
         public PermissionResponse(PermissionEntity entity) {
+            Id = entity.Id;
             CompanyId = entity.CompanyId;
             RoleId = entity.RoleId;
         }
