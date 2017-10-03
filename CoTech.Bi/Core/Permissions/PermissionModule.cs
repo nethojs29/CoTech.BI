@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using CoTech.Bi.Core.Permissions.EventProcessors;
 using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Permissions.Repositories;
@@ -29,6 +30,11 @@ namespace CoTech.Bi.Core.Permissions
     public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
     {
       
+    }
+
+    public List<ISeed> ConfigureSeeds(BiContext context)
+    {
+      return new List<ISeed>();
     }
 
     public void ConfigureServices(IServiceCollection services)

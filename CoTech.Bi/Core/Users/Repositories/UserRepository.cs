@@ -31,7 +31,7 @@ namespace CoTech.Bi.Core.Users.Repositories
         }
 
         public Task<List<UserEntity>> GetAll() {
-            return db.Where(u => !u.DeletedAt.HasValue).ToListAsync();
+            return db.Where(u => !u.DeletedAt.HasValue && u.Root == null).ToListAsync();
         }
 
         public Task<List<UserEntity>> InCompany(long companyId){

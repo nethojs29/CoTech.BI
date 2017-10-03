@@ -5,13 +5,14 @@ using System;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Entity;
-using CoTech.Bi.Modules.Wer.Initialize;
+using CoTech.Bi.Modules.Wer.Seeds;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 
 namespace CoTech.Bi.Modules.Wer
 {
@@ -30,6 +31,7 @@ namespace CoTech.Bi.Modules.Wer
             services.AddScoped<WeekRepository>();
             services.AddScoped<ReportRepository>();
             services.AddScoped<FilesRepository>();
+            services.AddScoped<ReplyRepository>();
         }
 
         public void ConfigureEntities(ModelBuilder modelBuilder)
@@ -40,11 +42,26 @@ namespace CoTech.Bi.Modules.Wer
             
             modelBuilder.Entity<FileEntity>().ToTable("Wer_File");
             
+            modelBuilder.Entity<GroupEntity>().ToTable("Wer_Groups");
+            
+            modelBuilder.Entity<SeenReportsEntity>().ToTable("Wer_Seen_Reports");
+            
+            modelBuilder.Entity<MessageEntity>().ToTable("Wer_Messages");
+            
+            modelBuilder.Entity<SeenMessagesEntity>().ToTable("Wer_Seen_Messages");
+            
+            modelBuilder.Entity<FileEntity>().ToTable("Wer_File");
+            
         }
 
         public void ConfigureInitializer(BiContext _context, UserManager<UserEntity> userManager)
         {
-            new InitializeModule(_context, userManager);
+            // new InitializeModule(_context, userManager);
+        }
+
+        public List<ISeed> ConfigureSeeds(BiContext context)
+        {
+            return new List<ISeed> { new WerSeed1() };
         }
     }
 }

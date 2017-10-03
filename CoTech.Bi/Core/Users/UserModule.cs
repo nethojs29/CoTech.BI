@@ -12,6 +12,8 @@ using CoTech.Bi.Entity;
 using CoTech.Bi.Identity.DataAccess;
 using CoTech.Bi.Core.Users.Repositories;
 using CoTech.Bi.Core.Users.EventProcessors;
+using System.Collections.Generic;
+using CoTech.Bi.Core.Users.Seeds;
 
 namespace CoTech.Bi.Core.Users
 {
@@ -34,6 +36,11 @@ namespace CoTech.Bi.Core.Users
 
     public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
     {
+    }
+
+    public List<ISeed> ConfigureSeeds(BiContext context)
+    {
+      return new List<ISeed> { new UserSeed1() };
     }
 
     public void ConfigureServices(IServiceCollection services)

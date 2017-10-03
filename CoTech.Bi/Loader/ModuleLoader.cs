@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CoTech.Bi.Loader
 {
@@ -38,6 +39,24 @@ namespace CoTech.Bi.Loader
         public static void BiEntities(this ModelBuilder modelBuilder){
             modules.ForEach(m => m.ConfigureEntities(modelBuilder));
         }
+        public static void BiInitialize(this BiContext biContext, UserManager<UserEntity> _manager)
+        {
+            modules.ForEach(item => item.ConfigureInitializer(biContext,_manager));
+        }
+        public static void BiSeedUp(this MigrationBuilder migrationBuilder, int version) {
+            var context = new BiContext();
+            modules.ForEach(mod => mod.ConfigureSeeds(context)
+                .Where(s => s.Version == version)
+                .ToList()
+                .ForEach(s => s.Up(context)));
+        }
+        public static void BiSeedDown(this MigrationBuilder migrationBuilder, int version) {
+            var context = new BiContext();
+            modules.ForEach(mod => mod.ConfigureSeeds(context)
+                .Where(s => s.Version == version)
+                .ToList()
+                .ForEach(s => s.Down(context)));
+        }
         private static List<Type> GetTypesByInterface<T>(Assembly assembly)
         {
             if (!typeof(T).IsInterface)
@@ -48,9 +67,5 @@ namespace CoTech.Bi.Loader
                 .ToList<Type>();
         }
 
-        public static void BiInitialize(this BiContext biContext, UserManager<UserEntity> _manager)
-        {
-            modules.ForEach(item => item.ConfigureInitializer(biContext,_manager));
-        }
     }
 }

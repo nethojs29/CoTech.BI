@@ -10,6 +10,7 @@ using CoTech.Bi.Core.Companies.EventProcessors;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Entity;
 using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 
 namespace CoTech.Bi.Core.Companies
 {
@@ -27,6 +28,7 @@ namespace CoTech.Bi.Core.Companies
           .HasIndex(c => c.Url)
           .IsUnique();
       modelBuilder.Entity<CompanyToModule>().ToTable("Company_Has_Modules");
+      modelBuilder.Entity<DepartmentEntity>().ToTable("Departments");
     }
 
     public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
@@ -38,7 +40,13 @@ namespace CoTech.Bi.Core.Companies
     {
       services.AddScoped<CompanyRepository>();
       services.AddScoped<CompanyNotifier>();
+      services.AddScoped<DepartmentRepository>();
       services.AddSingleton(new CompanyEventProcessor());
+    }
+
+    public List<ISeed> ConfigureSeeds(BiContext context)
+    {
+      return new List<ISeed>();
     }
   }
 }

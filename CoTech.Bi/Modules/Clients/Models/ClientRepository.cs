@@ -19,8 +19,8 @@ namespace CoTech.Bi.Modules.Clients.Models{
             this.context = context;
         }
         
-        public Task<List<ClientEntity>> getAll(){
-            return db.Where( c => !c.DeletedAt.HasValue).ToListAsync();
+        public Task<List<ClientEntity>> getAll(long idCompany){
+            return db.Where( c => !c.DeletedAt.HasValue && c.CompanyId == idCompany).ToListAsync();
         }
 
         public Task<ClientEntity> withId(long id){

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Clients.Controllers{
-    [Route("api/clients")]
+    [Route("api/companies/{idCompany}/clients")]
     public class ClientController:Controller{
         private readonly ClientRepository clientRepo;
 
@@ -17,8 +17,8 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
         }
 
         [HttpGet]
-        public async Task<IActionResult> getAll(){
-            return new OkObjectResult(await clientRepo.getAll());
+        public async Task<IActionResult> getAll(long idCompany){
+            return new OkObjectResult(await clientRepo.getAll(idCompany));
         }
 
         [HttpGet("{id}")]
@@ -29,7 +29,7 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
         [HttpPost]
         [RequiresRoot]
         public async Task<IActionResult> Create([FromBody] CreateClientReq req){
-            var client = req.toEntity();
+            var client = req.toEntity(HttpContext.UserId().Value);
             await clientRepo.Create(client);
             return Created($"/api/clients/${client.Id}", client);
         }

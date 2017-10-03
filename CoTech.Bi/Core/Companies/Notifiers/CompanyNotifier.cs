@@ -17,16 +17,16 @@ using EntityFrameworkCore.Triggers;
 namespace CoTech.Bi.Core.Companies.Notifiers
 {
     public class CompanyNotifier {
-        private IObservable<IBeforeEntry<EventEntity, BiContext>> eventObservable;
+        private IObservable<IAfterEntry<EventEntity, BiContext>> eventObservable;
         public CompanyNotifier(){
 
-            eventObservable = DbObservable<BiContext>.FromInserting<EventEntity>()
+            eventObservable = DbObservable<BiContext>.FromInserted<EventEntity>()
                 .Where(entry => entry.Entity.Body is CompanyEvent);
             eventObservable.Where(entry => entry.Entity.Body is CompanyUpdatedEvt)
                 .Subscribe(onUpdated);
         }
 
-        private void onUpdated(IBeforeEntry<EventEntity, BiContext> entry) {
+        private void onUpdated(IAfterEntry<EventEntity, BiContext> entry) {
             var db = entry.Context.Set<NotificationEntity>();
             var dbPermission = entry.Context.Set<PermissionEntity>();
             var eventBody = entry.Entity.Body as CompanyUpdatedEvt;
