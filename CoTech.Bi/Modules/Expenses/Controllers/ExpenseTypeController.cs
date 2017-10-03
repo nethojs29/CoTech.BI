@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
+using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Expenses.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Expenses.Controllers{
     [Route("api/companies/{idCompany}/expenseTypes")]
-    public class ExpenseTypeController :Controller {
+    public class ExpenseTypeController : Controller {
         private readonly ExpenseTypeRepository expenseRepo;
 
         public ExpenseTypeController(ExpenseTypeRepository expenseRepo){
@@ -23,7 +24,7 @@ namespace CoTech.Bi.Modules.Expenses.Controllers{
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateExpenseTypeReq req){
-            var expense = req.toEntity();
+            var expense = req.toEntity(HttpContext.UserId().Value);
             await expenseRepo.Create(expense);
             return Created($"/api/expenses/${expense.Id}", expense);
         }

@@ -10,12 +10,13 @@ namespace CoTech.Bi.Modules.Movement.Controllers{
         public long CompanyId{ set; get; }
         public int Type{ set; get; }
 
-        public MovementEntity toEntity(){
+        public MovementEntity toEntity(long userId){
             return new MovementEntity {
                 Amount = Amount,
                 Concept = Concept,
                 CompanyId = CompanyId,
                 Type = Type,
+                CreatorId = userId,
                 CreatedAt = DateTime.Now
             };
         }

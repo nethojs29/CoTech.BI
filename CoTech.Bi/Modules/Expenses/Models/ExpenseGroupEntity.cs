@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using CoTech.Bi.Core.Companies.Models;
+using CoTech.Bi.Core.Users.Models;
 
 namespace CoTech.Bi.Modules.Expenses.Models{
     public class ExpenseGroupEntity{
@@ -13,7 +14,8 @@ namespace CoTech.Bi.Modules.Expenses.Models{
         [Required]
         public int CompanyId{ set; get; }
         public CompanyEntity Company{ set; get; }
-        
+        public long CreatorId{ set; get; }
+        public UserEntity Creator{ set; get; }
         public DateTime CreatedAt{ set; get; }
         public DateTime? DeletedAt{ set; get; }
     }

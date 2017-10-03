@@ -15,7 +15,7 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
         public string Phone{set; get;}
         public long CompanyId{set; get;}
 
-        public ClientEntity toEntity(){
+        public ClientEntity toEntity(long userId){
             return new ClientEntity{
                 Name = Name,
                 Tradename = Tradename,
@@ -25,6 +25,7 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
                 State = State,
                 Phone = Phone,
                 Email = Email,
+                CreatorId = userId,
                 CompanyId = CompanyId,
                 Status = 1,
                 CreatedAt = DateTime.Now

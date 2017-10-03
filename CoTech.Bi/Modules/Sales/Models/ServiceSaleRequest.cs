@@ -12,7 +12,7 @@ namespace CoTech.Bi.Modules.Sales.Models{
         public bool iva{ set; get; }
         public long CompanyId{ set; get; }
 
-        public ServiceSaleEntity toEntity(){
+        public ServiceSaleEntity toEntity(long userId){
             return new ServiceSaleEntity {
                 ServiceId = ServiceId,
                 ClientId = ClientId,
@@ -21,6 +21,7 @@ namespace CoTech.Bi.Modules.Sales.Models{
                 Date = Date,
                 iva = iva,
                 CompanyId = CompanyId,
+                CreatorId = userId,
                 CreatedAt = DateTime.Now
             };
         }

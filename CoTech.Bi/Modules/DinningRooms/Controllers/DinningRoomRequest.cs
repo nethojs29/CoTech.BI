@@ -26,7 +26,7 @@ namespace CoTech.Bi.Modules.DinningRooms.Controllers{
                 Phone = Phone,
                 Email = Email,
                 CompanyId = CompanyId,
-                UserId = userId,
+                CreatorId = userId,
                 Status = 1,
                 CreatedAt = DateTime.Now
             };

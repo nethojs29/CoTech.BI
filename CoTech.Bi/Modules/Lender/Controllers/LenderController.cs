@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Lender.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +24,7 @@ namespace CoTech.Bi.Modules.Lender.Controllers{
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateLenderReq req){
-            var lender = req.toEntity();
+            var lender = req.toEntity(HttpContext.UserId().Value);
             await lenderRepo.Create(lender);
             return Created($"/api/lenders/${lender.Id}", lender);
         }

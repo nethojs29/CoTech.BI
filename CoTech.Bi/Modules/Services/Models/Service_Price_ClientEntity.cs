@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using CoTech.Bi.Core.Companies.Models;
+using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Modules.Clients.Models;
 
 namespace CoTech.Bi.Modules.Services.Models{
@@ -18,6 +19,9 @@ namespace CoTech.Bi.Modules.Services.Models{
         public CompanyEntity Company{ set; get; }
         public ServiceEntity Service{ set; get; }
         public ClientEntity Client{ set; get; }
+        
+        public long CreatorId{ set; get; }
+        public UserEntity Creator{ set; get; }
         
         public DateTime CreatedAt{ set; get; }
         public DateTime? DeletedAt{ set; get; }

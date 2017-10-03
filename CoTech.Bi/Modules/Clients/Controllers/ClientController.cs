@@ -29,7 +29,7 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
         [HttpPost]
         [RequiresRoot]
         public async Task<IActionResult> Create([FromBody] CreateClientReq req){
-            var client = req.toEntity();
+            var client = req.toEntity(HttpContext.UserId().Value);
             await clientRepo.Create(client);
             return Created($"/api/clients/${client.Id}", client);
         }

@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using CoTech.Bi.Core.Companies.Models;
+using CoTech.Bi.Core.Users.Models;
 
 namespace CoTech.Bi.Modules.Providers.Models{
     public class ProviderEntity{
@@ -26,6 +27,9 @@ namespace CoTech.Bi.Modules.Providers.Models{
         public CompanyEntity Company{ set; get; }
         [Required]
         public int Status{ set; get; }
+        
+        public long CreatorId{ set; get; }
+        public UserEntity Creator{ set; get; }
         
         public DateTime CreatedAt{ set; get; }
         public DateTime? DeletedAt{ set; get; }

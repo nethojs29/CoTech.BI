@@ -7,7 +7,7 @@ namespace CoTech.Bi.Modules.Services.Models{
         public string Name{ set; get; }
         public long CompanyId{ set; get; }
 
-        public ServiceEntity toEntity(){
+        public ServiceEntity toEntity(long userId){
             return new ServiceEntity {
                 Name = Name,
                 CompanyId = CompanyId,
@@ -26,7 +26,7 @@ namespace CoTech.Bi.Modules.Services.Models{
         public long ServiceId{ set; get; }
         public long CompanyId{ set; get; }
 
-        public Service_Price_ClientEntity toEntity(){
+        public Service_Price_ClientEntity toEntity(long userId){
             return new Service_Price_ClientEntity {
                 Price = Price,
                 ClientId = ClientId,

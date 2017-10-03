@@ -15,7 +15,7 @@ namespace CoTech.Bi.Modules.Providers.Controllers{
         public string Email{ set; get; }
         public long CompanyId{ set; get; }
 
-        public ProviderEntity toEntity(){
+        public ProviderEntity toEntity(long userId){
             return new ProviderEntity {
                 Name = Name,
                 Tradename = Tradename,
@@ -26,6 +26,7 @@ namespace CoTech.Bi.Modules.Providers.Controllers{
                 Email = Email,
                 CompanyId = CompanyId,
                 Status = 1,
+                CreatorId = userId,
                 CreatedAt = DateTime.Now
             };
         }

@@ -11,7 +11,7 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
         public string Account{ set; get; }
         public long CompanyId{set; get;}
 
-        public BankEntity toEntity(){
+        public BankEntity toEntity(long userId){
             return new BankEntity {
                 Name = Name,
                 RFC = RFC,
@@ -19,6 +19,7 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
                 Account = Account,
                 Status = 1,
                 CompanyId = CompanyId,
+                CreatorId = userId,
                 CreatedAt = DateTime.Now
             };
         }
