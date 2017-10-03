@@ -155,8 +155,9 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
         }
 
-        [HttpPost("reports/{idReport}/files")]
+        [HttpPost("reports/{idReport}/{filetype}/files")]
         public async Task<IActionResult> UploadFileReport(long idCompany,[FromQuery(Name = "idReport")] long idReport,
+            [FromQuery(Name = "filetype")] Int16 filetype,
             [FromForm(Name = "file")] IFormFile formFile)
         {
             try
@@ -181,6 +182,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                         Mime = MimeReader.GetMimeType(Path.GetExtension(formFile.FileName)),
                         Name = formFile.FileName,
                         Uri = filePath,
+                        Type = filetype,
                         ReportId = idReport
                     });
                     if (file != null)

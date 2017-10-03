@@ -35,6 +35,11 @@ namespace CoTech.Bi.Core.Permissions.Controllers
             return Ok(users.Select(u => new UserAndPermissions(u)));
         }
 
+        [HttpGet("{userId}/permissions")]
+        public async Task<IActionResult> GetUserPermissions(long company, long userId){
+            return new OkObjectResult(await permissionRepository.GetUserPermissionsInCompany(userId, company));
+        }
+
         [HttpPost("{user}")]
         [RequiresAbsoluteRole(Role.Super, Role.Admin)]
         [ProducesResponseType(typeof(PermissionResponse), 200)]
