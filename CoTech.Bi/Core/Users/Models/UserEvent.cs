@@ -24,6 +24,25 @@ namespace CoTech.Bi.Core.Users.Models
         }
     }
 
+    public class UserUpdatedEvt : UserEvent {
+      public long Id { get; set; }
+      public string Name { get; set; }
+      public string Lastname { get; set; }
+
+      public UserUpdatedEvt(UpdateUserCmd cmd) {
+        Id = cmd.Id;
+        Name = cmd.Name;
+        Lastname = cmd.Lastname;
+      }
+
+      public static EventEntity MakeEventEntity(UpdateUserCmd cmd) {
+        return new EventEntity {
+          UserId = cmd.UserId,
+          Body = new UserUpdatedEvt(cmd)
+        };
+      }
+    }
+
     public class PasswordChangedEvt : UserEvent {
       public long UserId { get; set; }
       public string HashedPassword { get; set; }
@@ -37,6 +56,13 @@ namespace CoTech.Bi.Core.Users.Models
         return new EventEntity {
           UserId = cmd.UserId,
           Body = new PasswordChangedEvt(userId, hashedPassword)
+        };
+      }
+
+      public static EventEntity MakeEventEntity(ChangePasswordCmd cmd) {
+        return new EventEntity {
+          UserId = cmd.UserId,
+          Body = new PasswordChangedEvt(cmd.UserId, cmd.Password)
         };
       }
     }

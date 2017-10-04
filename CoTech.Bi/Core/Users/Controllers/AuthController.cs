@@ -104,6 +104,11 @@ namespace CoTech.Bi.Core.Users.Controllers
 				});
 		}
 
+			/// <summary>
+			/// PRE-Alpha v-0.10
+			/// </summary>
+			/// <param name="request"></param>
+			/// <returns></returns>
 	    [HttpPost("reset")]
 	    public async Task<IActionResult> ResetPassword([FromBody] ResetRequest request)
 	    {
@@ -112,8 +117,9 @@ namespace CoTech.Bi.Core.Users.Controllers
 			    var user = await _userRepository.WithEmail(request.email);
 			    var password = PasswordGenerator.CreateRandomPassword(8);
 			    user.Password = _passwordHasher.HashPassword(user, password);
-			    var result = await _userRepository.Update(user);
-			    if (result > 0)
+					var cmd = new ChangePasswordCmd(user.Password, user.Id);
+			    var result = await _userRepository.ChangePassword(cmd);
+			    if (result)
 			    {
 				    bool response = MailsHelpers.MailPassword(user.Email,password);
 				    if (response)
