@@ -52,7 +52,7 @@ namespace CoTech.Bi.Core.Users.EventProcessors
           }
           user.Name = body.Name;
           user.Lastname = body.Lastname;
-          db.Add(user);
+          db.Update(user);
         }
 
         private void onPasswordChange(IBeforeEntry<EventEntity, BiContext> entry) {
