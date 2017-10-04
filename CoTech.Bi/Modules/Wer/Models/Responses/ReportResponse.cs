@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Core.Users.Repositories;
 using CoTech.Bi.Modules.Wer.Models.Entities;
 
 namespace CoTech.Bi.Modules.Wer.Models.Responses
@@ -17,7 +19,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
         
         public SeenReportsEntity[] Seen { set; get; }
 
-        public ReportResponse(ReportEntity report)
+        public ReportResponse(ReportEntity report, UserRepository _users)
         {
             this.Id = report.Id;
             this.CompanyId = report.CompanyId;
@@ -36,7 +38,8 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
                 Id = r.Id,
                 ReportId = r.ReportId,
                 SeenAt = r.SeenAt,
-                UserId = r.UserId
+                UserId = r.UserId,
+                User = _users.WithId(r.UserId).Result
             }).ToArray();
             this.Financial = report.Financial == null ? "": report.Financial;
             this.Observation = report.Observation == null ? "": report.Observation;

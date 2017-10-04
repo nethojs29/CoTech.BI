@@ -72,6 +72,31 @@ namespace CoTech.Bi.Migrations
                     b.ToTable("Company_Has_Modules");
                 });
 
+            modelBuilder.Entity("CoTech.Bi.Core.Companies.Models.DepartmentEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("CompanyId");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<long?>("CreatorEventId");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatorEventId");
+
+                    b.ToTable("Departments");
+                });
+
             modelBuilder.Entity("CoTech.Bi.Core.EventSourcing.Models.EventEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -443,6 +468,75 @@ namespace CoTech.Bi.Migrations
                     b.ToTable("ExpenseTypes");
                 });
 
+            modelBuilder.Entity("CoTech.Bi.Modules.Lender.Models.LenderEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Address");
+
+                    b.Property<string>("City");
+
+                    b.Property<long>("CompanyId");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<string>("Email");
+
+                    b.Property<int>("Increment");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Phone");
+
+                    b.Property<string>("RFC");
+
+                    b.Property<string>("State");
+
+                    b.Property<int>("Status");
+
+                    b.Property<string>("Suburb");
+
+                    b.Property<string>("postalCode");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Lenders");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Movement.Models.MovementEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<float>("Amount");
+
+                    b.Property<long>("ClientId");
+
+                    b.Property<long>("CompanyId");
+
+                    b.Property<string>("Concept")
+                        .IsRequired();
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<int>("Type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Movements");
+                });
+
             modelBuilder.Entity("CoTech.Bi.Modules.Providers.Models.ProviderEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -491,13 +585,15 @@ namespace CoTech.Bi.Migrations
 
                     b.Property<DateTime>("ApplicationDate");
 
-                    b.Property<DateTime>("ApproveDate");
+                    b.Property<DateTime?>("ApproveDate");
 
                     b.Property<long?>("ApproveUserId");
 
+                    b.Property<long?>("BankId");
+
                     b.Property<long>("CompanyId");
 
-                    b.Property<DateTime>("ComprobateDate");
+                    b.Property<DateTime?>("ComprobateDate");
 
                     b.Property<string>("ComprobateFileUrl");
 
@@ -509,22 +605,23 @@ namespace CoTech.Bi.Migrations
 
                     b.Property<DateTime?>("DeletedAt");
 
+                    b.Property<long?>("LenderId");
+
                     b.Property<string>("MotiveSurplus");
 
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired();
+                    b.Property<string>("PaymentMethod");
 
-                    b.Property<float>("Refund");
+                    b.Property<float?>("Refund");
 
                     b.Property<long>("ResponsableId");
 
                     b.Property<int>("Status");
 
-                    b.Property<float>("Total");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ApproveUserId");
+
+                    b.HasIndex("BankId");
 
                     b.HasIndex("CompanyId");
 
@@ -532,9 +629,129 @@ namespace CoTech.Bi.Migrations
 
                     b.HasIndex("CreatorId");
 
+                    b.HasIndex("LenderId");
+
                     b.HasIndex("ResponsableId");
 
                     b.ToTable("Requisitions");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Sales.Models.ServiceSaleEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("ClientId");
+
+                    b.Property<long>("CompanyId");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<float>("Price");
+
+                    b.Property<int>("Quantity");
+
+                    b.Property<long>("ServiceId");
+
+                    b.Property<bool>("iva");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("Daily_Service_Sale");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Services.Models.Service_Price_ClientEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("ClientId");
+
+                    b.Property<long>("CompanyId");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<float>("Price");
+
+                    b.Property<long>("ServiceId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("Services_Price_Clients");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Services.Models.ServiceEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("CompanyId");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.SmallBox.Models.SmallBoxEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<float>("Amount");
+
+                    b.Property<long?>("ClientId");
+
+                    b.Property<long>("CompanyId");
+
+                    b.Property<string>("Concept")
+                        .IsRequired();
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<long?>("ProviderId");
+
+                    b.Property<int>("Type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ProviderId");
+
+                    b.ToTable("SmallBox");
                 });
 
             modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.FileEntity", b =>
@@ -726,6 +943,18 @@ namespace CoTech.Bi.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("CoTech.Bi.Core.Companies.Models.DepartmentEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany("Departments")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Core.EventSourcing.Models.EventEntity", "CreatorEvent")
+                        .WithMany()
+                        .HasForeignKey("CreatorEventId");
+                });
+
             modelBuilder.Entity("CoTech.Bi.Core.EventSourcing.Models.EventEntity", b =>
                 {
                     b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "User")
@@ -874,6 +1103,27 @@ namespace CoTech.Bi.Migrations
                         .HasForeignKey("CompanyId1");
                 });
 
+            modelBuilder.Entity("CoTech.Bi.Modules.Lender.Models.LenderEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Movement.Models.MovementEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Modules.Clients.Models.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("CoTech.Bi.Modules.Providers.Models.ProviderEntity", b =>
                 {
                     b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
@@ -887,6 +1137,10 @@ namespace CoTech.Bi.Migrations
                     b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "ApproveUser")
                         .WithMany()
                         .HasForeignKey("ApproveUserId");
+
+                    b.HasOne("CoTech.Bi.Modules.Banks.Models.BankEntity", "Bank")
+                        .WithMany()
+                        .HasForeignKey("BankId");
 
                     b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
                         .WithMany()
@@ -902,10 +1156,74 @@ namespace CoTech.Bi.Migrations
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("CoTech.Bi.Modules.Lender.Models.LenderEntity", "Lender")
+                        .WithMany()
+                        .HasForeignKey("LenderId");
+
                     b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "Responsable")
                         .WithMany()
                         .HasForeignKey("ResponsableId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Sales.Models.ServiceSaleEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Modules.Clients.Models.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Modules.Services.Models.ServiceEntity", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Services.Models.Service_Price_ClientEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Modules.Clients.Models.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Modules.Services.Models.ServiceEntity", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Services.Models.ServiceEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.SmallBox.Models.SmallBoxEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Modules.Clients.Models.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId");
+
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Modules.Providers.Models.ProviderEntity", "Provider")
+                        .WithMany()
+                        .HasForeignKey("ProviderId");
                 });
 
             modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.FileEntity", b =>
