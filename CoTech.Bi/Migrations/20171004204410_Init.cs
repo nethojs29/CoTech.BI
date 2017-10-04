@@ -24,6 +24,118 @@ namespace CoTech.Bi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Requisitions",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ApplicationDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ApproveDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    ApproveUserId = table.Column<long>(type: "bigint", nullable: true),
+                    BankId = table.Column<long>(type: "bigint", nullable: true),
+                    CompanyId = table.Column<long>(type: "bigint", nullable: false),
+                    ComprobateDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    ComprobateFileUrl = table.Column<string>(type: "longtext", nullable: true),
+                    ComprobateUserId = table.Column<long>(type: "bigint", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<long>(type: "bigint", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    LenderId = table.Column<long>(type: "bigint", nullable: true),
+                    MotiveSurplus = table.Column<string>(type: "longtext", nullable: true),
+                    PaymentMethod = table.Column<string>(type: "longtext", nullable: true),
+                    Refund = table.Column<float>(type: "float", nullable: true),
+                    ResponsableId = table.Column<long>(type: "bigint", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Requisitions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Daily_Service_Sale",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ClientId = table.Column<long>(type: "bigint", nullable: false),
+                    CompanyId = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<long>(type: "bigint", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Price = table.Column<float>(type: "float", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    ServiceId = table.Column<long>(type: "bigint", nullable: false),
+                    iva = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Daily_Service_Sale", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Movements",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Amount = table.Column<float>(type: "float", nullable: false),
+                    ClientId = table.Column<long>(type: "bigint", nullable: false),
+                    CompanyId = table.Column<long>(type: "bigint", nullable: false),
+                    Concept = table.Column<string>(type: "longtext", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<long>(type: "bigint", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Movements", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Services_Price_Clients",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ClientId = table.Column<long>(type: "bigint", nullable: false),
+                    CompanyId = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<long>(type: "bigint", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Price = table.Column<float>(type: "float", nullable: false),
+                    ServiceId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Services_Price_Clients", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SmallBox",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Amount = table.Column<float>(type: "float", nullable: false),
+                    ClientId = table.Column<long>(type: "bigint", nullable: true),
+                    CompanyId = table.Column<long>(type: "bigint", nullable: false),
+                    Concept = table.Column<string>(type: "longtext", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<long>(type: "bigint", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    ProviderId = table.Column<long>(type: "bigint", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SmallBox", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Banks",
                 columns: table => new
                 {
@@ -33,6 +145,7 @@ namespace CoTech.Bi.Migrations
                     Bank = table.Column<string>(type: "longtext", nullable: false),
                     CompanyId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<long>(type: "bigint", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Name = table.Column<string>(type: "longtext", nullable: false),
                     RFC = table.Column<string>(type: "longtext", nullable: false),
@@ -74,6 +187,7 @@ namespace CoTech.Bi.Migrations
                     City = table.Column<string>(type: "longtext", nullable: false),
                     CompanyId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<long>(type: "bigint", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Email = table.Column<string>(type: "longtext", nullable: false),
                     Name = table.Column<string>(type: "longtext", nullable: false),
@@ -103,6 +217,23 @@ namespace CoTech.Bi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Departments",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CompanyId = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorEventId = table.Column<long>(type: "bigint", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Departments", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DinningRooms",
                 columns: table => new
                 {
@@ -112,14 +243,14 @@ namespace CoTech.Bi.Migrations
                     City = table.Column<string>(type: "longtext", nullable: true),
                     CompanyId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<long>(type: "bigint", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Email = table.Column<string>(type: "longtext", nullable: true),
                     Name = table.Column<string>(type: "longtext", nullable: false),
                     Phone = table.Column<string>(type: "longtext", nullable: true),
                     Responsable = table.Column<string>(type: "longtext", nullable: true),
                     State = table.Column<string>(type: "longtext", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                    Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -147,6 +278,12 @@ namespace CoTech.Bi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Expenses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Expenses_Requisitions_RequisitionId",
+                        column: x => x.RequisitionId,
+                        principalTable: "Requisitions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -158,6 +295,7 @@ namespace CoTech.Bi.Migrations
                     CompanyId = table.Column<int>(type: "int", nullable: false),
                     CompanyId1 = table.Column<long>(type: "bigint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<long>(type: "bigint", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Name = table.Column<string>(type: "longtext", nullable: false),
                     TypeId = table.Column<int>(type: "int", nullable: false),
@@ -177,12 +315,40 @@ namespace CoTech.Bi.Migrations
                     CompanyId = table.Column<int>(type: "int", nullable: false),
                     CompanyId1 = table.Column<long>(type: "bigint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<long>(type: "bigint", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Name = table.Column<string>(type: "longtext", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ExpenseTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Lenders",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Address = table.Column<string>(type: "longtext", nullable: true),
+                    City = table.Column<string>(type: "longtext", nullable: true),
+                    CompanyId = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<long>(type: "bigint", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Email = table.Column<string>(type: "longtext", nullable: true),
+                    Increment = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "longtext", nullable: true),
+                    Phone = table.Column<string>(type: "longtext", nullable: true),
+                    RFC = table.Column<string>(type: "longtext", nullable: true),
+                    State = table.Column<string>(type: "longtext", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Suburb = table.Column<string>(type: "longtext", nullable: true),
+                    postalCode = table.Column<string>(type: "longtext", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lenders", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -211,6 +377,7 @@ namespace CoTech.Bi.Migrations
                     CompanyId = table.Column<long>(type: "bigint", nullable: false),
                     Contact = table.Column<string>(type: "longtext", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<long>(type: "bigint", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Email = table.Column<string>(type: "longtext", nullable: false),
                     Name = table.Column<string>(type: "longtext", nullable: false),
@@ -225,31 +392,35 @@ namespace CoTech.Bi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Requisitions",
+                name: "Services",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    ApplicationDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    ApproveDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    ApproveUserId = table.Column<long>(type: "bigint", nullable: true),
                     CompanyId = table.Column<long>(type: "bigint", nullable: false),
-                    ComprobateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    ComprobateFileUrl = table.Column<string>(type: "longtext", nullable: true),
-                    ComprobateUserId = table.Column<long>(type: "bigint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreatorId = table.Column<long>(type: "bigint", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    MotiveSurplus = table.Column<string>(type: "longtext", nullable: true),
-                    PaymentMethod = table.Column<string>(type: "longtext", nullable: false),
-                    Refund = table.Column<float>(type: "float", nullable: false),
-                    ResponsableId = table.Column<long>(type: "bigint", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Total = table.Column<float>(type: "float", nullable: false)
+                    Name = table.Column<string>(type: "longtext", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Requisitions", x => x.Id);
+                    table.PrimaryKey("PK_Services", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Wer_Groups",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Category = table.Column<int>(type: "int", nullable: false),
+                    CompanyId = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wer_Groups", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -282,9 +453,11 @@ namespace CoTech.Bi.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Extension = table.Column<string>(type: "longtext", nullable: true),
                     Mime = table.Column<string>(type: "longtext", nullable: true),
                     Name = table.Column<string>(type: "longtext", nullable: true),
                     ReportId = table.Column<long>(type: "bigint", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     Uri = table.Column<string>(type: "longtext", nullable: true)
                 },
                 constraints: table =>
@@ -386,6 +559,34 @@ namespace CoTech.Bi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PartyEntity",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DateIn = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DateOut = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    GroupId = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PartyEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PartyEntity_Wer_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Wer_Groups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PartyEntity_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RootUsers",
                 columns: table => new
                 {
@@ -398,6 +599,61 @@ namespace CoTech.Bi.Migrations
                     table.PrimaryKey("PK_RootUsers", x => x.Id);
                     table.ForeignKey(
                         name: "FK_RootUsers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Wer_Messages",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    GroupId = table.Column<long>(type: "bigint", nullable: false),
+                    Message = table.Column<string>(type: "longtext", nullable: true),
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wer_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Wer_Messages_Wer_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Wer_Groups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Wer_Messages_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Wer_Seen_Reports",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ReportId = table.Column<long>(type: "bigint", nullable: false),
+                    SeenAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wer_Seen_Reports", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Wer_Seen_Reports_Wer_Reports_ReportId",
+                        column: x => x.ReportId,
+                        principalTable: "Wer_Reports",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Wer_Seen_Reports_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -431,10 +687,42 @@ namespace CoTech.Bi.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Wer_Seen_Messages",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    MessageId = table.Column<long>(type: "bigint", nullable: false),
+                    SeenAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wer_Seen_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Wer_Seen_Messages_Wer_Messages_MessageId",
+                        column: x => x.MessageId,
+                        principalTable: "Wer_Messages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Wer_Seen_Messages_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Banks_CompanyId",
                 table: "Banks",
                 column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Banks_CreatorId",
+                table: "Banks",
+                column: "CreatorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Budgets_CompanyId",
@@ -455,6 +743,11 @@ namespace CoTech.Bi.Migrations
                 name: "IX_Clients_CompanyId",
                 table: "Clients",
                 column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Clients_CreatorId",
+                table: "Clients",
+                column: "CreatorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Companies_CreatorEventId",
@@ -478,14 +771,44 @@ namespace CoTech.Bi.Migrations
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Daily_Service_Sale_ClientId",
+                table: "Daily_Service_Sale",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Daily_Service_Sale_CompanyId",
+                table: "Daily_Service_Sale",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Daily_Service_Sale_CreatorId",
+                table: "Daily_Service_Sale",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Daily_Service_Sale_ServiceId",
+                table: "Daily_Service_Sale",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Departments_CompanyId",
+                table: "Departments",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Departments_CreatorEventId",
+                table: "Departments",
+                column: "CreatorEventId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DinningRooms_CompanyId",
                 table: "DinningRooms",
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DinningRooms_UserId",
+                name: "IX_DinningRooms_CreatorId",
                 table: "DinningRooms",
-                column: "UserId");
+                column: "CreatorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_UserId",
@@ -518,6 +841,11 @@ namespace CoTech.Bi.Migrations
                 column: "CompanyId1");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ExpensesGroups_CreatorId",
+                table: "ExpensesGroups",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ExpensesGroups_TypeId1",
                 table: "ExpensesGroups",
                 column: "TypeId1");
@@ -526,6 +854,36 @@ namespace CoTech.Bi.Migrations
                 name: "IX_ExpenseTypes_CompanyId1",
                 table: "ExpenseTypes",
                 column: "CompanyId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExpenseTypes_CreatorId",
+                table: "ExpenseTypes",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lenders_CompanyId",
+                table: "Lenders",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lenders_CreatorId",
+                table: "Lenders",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Movements_ClientId",
+                table: "Movements",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Movements_CompanyId",
+                table: "Movements",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Movements_CreatorId",
+                table: "Movements",
+                column: "CreatorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notification_Receivers_NotificationId",
@@ -541,6 +899,16 @@ namespace CoTech.Bi.Migrations
                 name: "IX_Notifications_SenderId",
                 table: "Notifications",
                 column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PartyEntity_GroupId",
+                table: "PartyEntity",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PartyEntity_UserId",
+                table: "PartyEntity",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Permissions_CompanyId",
@@ -563,9 +931,19 @@ namespace CoTech.Bi.Migrations
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Providers_CreatorId",
+                table: "Providers",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Requisitions_ApproveUserId",
                 table: "Requisitions",
                 column: "ApproveUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Requisitions_BankId",
+                table: "Requisitions",
+                column: "BankId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Requisitions_CompanyId",
@@ -583,6 +961,11 @@ namespace CoTech.Bi.Migrations
                 column: "CreatorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Requisitions_LenderId",
+                table: "Requisitions",
+                column: "LenderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Requisitions_ResponsableId",
                 table: "Requisitions",
                 column: "ResponsableId");
@@ -592,6 +975,56 @@ namespace CoTech.Bi.Migrations
                 table: "RootUsers",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Services_CompanyId",
+                table: "Services",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Services_CreatorId",
+                table: "Services",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Services_Price_Clients_ClientId",
+                table: "Services_Price_Clients",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Services_Price_Clients_CompanyId",
+                table: "Services_Price_Clients",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Services_Price_Clients_CreatorId",
+                table: "Services_Price_Clients",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Services_Price_Clients_ServiceId",
+                table: "Services_Price_Clients",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SmallBox_ClientId",
+                table: "SmallBox",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SmallBox_CompanyId",
+                table: "SmallBox",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SmallBox_CreatorId",
+                table: "SmallBox",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SmallBox_ProviderId",
+                table: "SmallBox",
+                column: "ProviderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_CreatorEventId",
@@ -610,6 +1043,26 @@ namespace CoTech.Bi.Migrations
                 column: "ReportId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Wer_Groups_CompanyId",
+                table: "Wer_Groups",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wer_Groups_UserId",
+                table: "Wer_Groups",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wer_Messages_GroupId",
+                table: "Wer_Messages",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wer_Messages_UserId",
+                table: "Wer_Messages",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Wer_Reports_CompanyId",
                 table: "Wer_Reports",
                 column: "CompanyId");
@@ -624,157 +1077,25 @@ namespace CoTech.Bi.Migrations
                 table: "Wer_Reports",
                 column: "WeekId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Banks_Companies_CompanyId",
-                table: "Banks",
-                column: "CompanyId",
-                principalTable: "Companies",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.CreateIndex(
+                name: "IX_Wer_Seen_Messages_MessageId",
+                table: "Wer_Seen_Messages",
+                column: "MessageId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Budgets_Companies_CompanyId",
-                table: "Budgets",
-                column: "CompanyId",
-                principalTable: "Companies",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.CreateIndex(
+                name: "IX_Wer_Seen_Messages_UserId",
+                table: "Wer_Seen_Messages",
+                column: "UserId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Budgets_Users_CreatorId",
-                table: "Budgets",
-                column: "CreatorId",
-                principalTable: "Users",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.CreateIndex(
+                name: "IX_Wer_Seen_Reports_ReportId",
+                table: "Wer_Seen_Reports",
+                column: "ReportId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Budgets_ExpensesGroups_ExpenseGroupId",
-                table: "Budgets",
-                column: "ExpenseGroupId",
-                principalTable: "ExpensesGroups",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Clients_Companies_CompanyId",
-                table: "Clients",
-                column: "CompanyId",
-                principalTable: "Companies",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Company_Has_Modules_Companies_CompanyId",
-                table: "Company_Has_Modules",
-                column: "CompanyId",
-                principalTable: "Companies",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_DinningRooms_Companies_CompanyId",
-                table: "DinningRooms",
-                column: "CompanyId",
-                principalTable: "Companies",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_DinningRooms_Users_UserId",
-                table: "DinningRooms",
-                column: "UserId",
-                principalTable: "Users",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Expenses_Companies_CompanyId",
-                table: "Expenses",
-                column: "CompanyId",
-                principalTable: "Companies",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Expenses_ExpensesGroups_ExpenseGroupId",
-                table: "Expenses",
-                column: "ExpenseGroupId",
-                principalTable: "ExpensesGroups",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Expenses_Providers_ProviderId",
-                table: "Expenses",
-                column: "ProviderId",
-                principalTable: "Providers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Expenses_Requisitions_RequisitionId",
-                table: "Expenses",
-                column: "RequisitionId",
-                principalTable: "Requisitions",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ExpensesGroups_Companies_CompanyId1",
-                table: "ExpensesGroups",
-                column: "CompanyId1",
-                principalTable: "Companies",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ExpensesGroups_ExpenseTypes_TypeId1",
-                table: "ExpensesGroups",
-                column: "TypeId1",
-                principalTable: "ExpenseTypes",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ExpenseTypes_Companies_CompanyId1",
-                table: "ExpenseTypes",
-                column: "CompanyId1",
-                principalTable: "Companies",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Permissions_Companies_CompanyId",
-                table: "Permissions",
-                column: "CompanyId",
-                principalTable: "Companies",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Permissions_Users_UserId",
-                table: "Permissions",
-                column: "UserId",
-                principalTable: "Users",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Permissions_Events_CreatorEventId",
-                table: "Permissions",
-                column: "CreatorEventId",
-                principalTable: "Events",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Providers_Companies_CompanyId",
-                table: "Providers",
-                column: "CompanyId",
-                principalTable: "Companies",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.CreateIndex(
+                name: "IX_Wer_Seen_Reports_UserId",
+                table: "Wer_Seen_Reports",
+                column: "UserId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Requisitions_Companies_CompanyId",
@@ -812,6 +1133,390 @@ namespace CoTech.Bi.Migrations
                 name: "FK_Requisitions_Users_ResponsableId",
                 table: "Requisitions",
                 column: "ResponsableId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Requisitions_Banks_BankId",
+                table: "Requisitions",
+                column: "BankId",
+                principalTable: "Banks",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Requisitions_Lenders_LenderId",
+                table: "Requisitions",
+                column: "LenderId",
+                principalTable: "Lenders",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Daily_Service_Sale_Companies_CompanyId",
+                table: "Daily_Service_Sale",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Daily_Service_Sale_Users_CreatorId",
+                table: "Daily_Service_Sale",
+                column: "CreatorId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Daily_Service_Sale_Clients_ClientId",
+                table: "Daily_Service_Sale",
+                column: "ClientId",
+                principalTable: "Clients",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Daily_Service_Sale_Services_ServiceId",
+                table: "Daily_Service_Sale",
+                column: "ServiceId",
+                principalTable: "Services",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Movements_Companies_CompanyId",
+                table: "Movements",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Movements_Users_CreatorId",
+                table: "Movements",
+                column: "CreatorId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Movements_Clients_ClientId",
+                table: "Movements",
+                column: "ClientId",
+                principalTable: "Clients",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Services_Price_Clients_Companies_CompanyId",
+                table: "Services_Price_Clients",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Services_Price_Clients_Users_CreatorId",
+                table: "Services_Price_Clients",
+                column: "CreatorId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Services_Price_Clients_Clients_ClientId",
+                table: "Services_Price_Clients",
+                column: "ClientId",
+                principalTable: "Clients",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Services_Price_Clients_Services_ServiceId",
+                table: "Services_Price_Clients",
+                column: "ServiceId",
+                principalTable: "Services",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_SmallBox_Companies_CompanyId",
+                table: "SmallBox",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_SmallBox_Users_CreatorId",
+                table: "SmallBox",
+                column: "CreatorId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_SmallBox_Clients_ClientId",
+                table: "SmallBox",
+                column: "ClientId",
+                principalTable: "Clients",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_SmallBox_Providers_ProviderId",
+                table: "SmallBox",
+                column: "ProviderId",
+                principalTable: "Providers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Banks_Companies_CompanyId",
+                table: "Banks",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Banks_Users_CreatorId",
+                table: "Banks",
+                column: "CreatorId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Budgets_Companies_CompanyId",
+                table: "Budgets",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Budgets_Users_CreatorId",
+                table: "Budgets",
+                column: "CreatorId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Budgets_ExpensesGroups_ExpenseGroupId",
+                table: "Budgets",
+                column: "ExpenseGroupId",
+                principalTable: "ExpensesGroups",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Clients_Companies_CompanyId",
+                table: "Clients",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Clients_Users_CreatorId",
+                table: "Clients",
+                column: "CreatorId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Company_Has_Modules_Companies_CompanyId",
+                table: "Company_Has_Modules",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Departments_Companies_CompanyId",
+                table: "Departments",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Departments_Events_CreatorEventId",
+                table: "Departments",
+                column: "CreatorEventId",
+                principalTable: "Events",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_DinningRooms_Companies_CompanyId",
+                table: "DinningRooms",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_DinningRooms_Users_CreatorId",
+                table: "DinningRooms",
+                column: "CreatorId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Expenses_Companies_CompanyId",
+                table: "Expenses",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Expenses_ExpensesGroups_ExpenseGroupId",
+                table: "Expenses",
+                column: "ExpenseGroupId",
+                principalTable: "ExpensesGroups",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Expenses_Providers_ProviderId",
+                table: "Expenses",
+                column: "ProviderId",
+                principalTable: "Providers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ExpensesGroups_Companies_CompanyId1",
+                table: "ExpensesGroups",
+                column: "CompanyId1",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ExpensesGroups_Users_CreatorId",
+                table: "ExpensesGroups",
+                column: "CreatorId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ExpensesGroups_ExpenseTypes_TypeId1",
+                table: "ExpensesGroups",
+                column: "TypeId1",
+                principalTable: "ExpenseTypes",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ExpenseTypes_Companies_CompanyId1",
+                table: "ExpenseTypes",
+                column: "CompanyId1",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ExpenseTypes_Users_CreatorId",
+                table: "ExpenseTypes",
+                column: "CreatorId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Lenders_Companies_CompanyId",
+                table: "Lenders",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Lenders_Users_CreatorId",
+                table: "Lenders",
+                column: "CreatorId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Permissions_Companies_CompanyId",
+                table: "Permissions",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Permissions_Users_UserId",
+                table: "Permissions",
+                column: "UserId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Permissions_Events_CreatorEventId",
+                table: "Permissions",
+                column: "CreatorEventId",
+                principalTable: "Events",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Providers_Companies_CompanyId",
+                table: "Providers",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Providers_Users_CreatorId",
+                table: "Providers",
+                column: "CreatorId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Services_Companies_CompanyId",
+                table: "Services",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Services_Users_CreatorId",
+                table: "Services",
+                column: "CreatorId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Wer_Groups_Companies_CompanyId",
+                table: "Wer_Groups",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Wer_Groups_Users_UserId",
+                table: "Wer_Groups",
+                column: "UserId",
                 principalTable: "Users",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
@@ -856,16 +1561,16 @@ namespace CoTech.Bi.Migrations
                 table: "Events");
 
             migrationBuilder.DropTable(
-                name: "Banks");
-
-            migrationBuilder.DropTable(
                 name: "Budgets");
 
             migrationBuilder.DropTable(
-                name: "Clients");
+                name: "Company_Has_Modules");
 
             migrationBuilder.DropTable(
-                name: "Company_Has_Modules");
+                name: "Daily_Service_Sale");
+
+            migrationBuilder.DropTable(
+                name: "Departments");
 
             migrationBuilder.DropTable(
                 name: "DinningRooms");
@@ -874,7 +1579,13 @@ namespace CoTech.Bi.Migrations
                 name: "Expenses");
 
             migrationBuilder.DropTable(
+                name: "Movements");
+
+            migrationBuilder.DropTable(
                 name: "Notification_Receivers");
+
+            migrationBuilder.DropTable(
+                name: "PartyEntity");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
@@ -883,13 +1594,22 @@ namespace CoTech.Bi.Migrations
                 name: "RootUsers");
 
             migrationBuilder.DropTable(
+                name: "Services_Price_Clients");
+
+            migrationBuilder.DropTable(
+                name: "SmallBox");
+
+            migrationBuilder.DropTable(
                 name: "Wer_File");
 
             migrationBuilder.DropTable(
-                name: "ExpensesGroups");
+                name: "Wer_Seen_Messages");
 
             migrationBuilder.DropTable(
-                name: "Providers");
+                name: "Wer_Seen_Reports");
+
+            migrationBuilder.DropTable(
+                name: "ExpensesGroups");
 
             migrationBuilder.DropTable(
                 name: "Requisitions");
@@ -898,10 +1618,31 @@ namespace CoTech.Bi.Migrations
                 name: "Notifications");
 
             migrationBuilder.DropTable(
+                name: "Services");
+
+            migrationBuilder.DropTable(
+                name: "Clients");
+
+            migrationBuilder.DropTable(
+                name: "Providers");
+
+            migrationBuilder.DropTable(
+                name: "Wer_Messages");
+
+            migrationBuilder.DropTable(
                 name: "Wer_Reports");
 
             migrationBuilder.DropTable(
                 name: "ExpenseTypes");
+
+            migrationBuilder.DropTable(
+                name: "Banks");
+
+            migrationBuilder.DropTable(
+                name: "Lenders");
+
+            migrationBuilder.DropTable(
+                name: "Wer_Groups");
 
             migrationBuilder.DropTable(
                 name: "Wer_Weeks");

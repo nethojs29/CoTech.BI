@@ -5,7 +5,7 @@ using CoTech.Bi.Loader;
 
 namespace CoTech.Bi.Migrations
 {
-    public partial class SeedV1 : Migration
+    public partial class Seedv1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
