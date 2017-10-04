@@ -13,7 +13,7 @@ namespace CoTech.Bi.Modules.SmallBox.Models{
         public long? ProviderId{ set; get; }
         public long? ClientId{ set; get; }
 
-        public SmallBoxEntity toEntity(){
+        public SmallBoxEntity toEntity(long userId){
             return new SmallBoxEntity {
                 Concept = Concept,
                 Amount = Amount,
@@ -22,6 +22,7 @@ namespace CoTech.Bi.Modules.SmallBox.Models{
                 CompanyId = CompanyId,
                 ProviderId = ProviderId,
                 ClientId = ClientId,
+                CreatorId = userId,
                 CreatedAt = DateTime.Now
             };
         }

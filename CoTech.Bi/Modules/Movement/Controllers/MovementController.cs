@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using CoTech.Bi.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Movement.Controllers{
@@ -22,7 +23,7 @@ namespace CoTech.Bi.Modules.Movement.Controllers{
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateMovementReq req){
-            var movement = req.toEntity();
+            var movement = req.toEntity(HttpContext.UserId().Value);
             await movementRepo.Create(movement);
             return Created($"/api/movements/${movement.Id}", movement);
         }

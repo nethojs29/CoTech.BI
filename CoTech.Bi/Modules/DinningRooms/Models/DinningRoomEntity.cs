@@ -20,8 +20,8 @@ namespace CoTech.Bi.Modules.DinningRooms.Models{
         public long CompanyId{ set; get; }
         public CompanyEntity Company{ set; get; }
         
-        public long UserId{ set; get; }
-        public UserEntity User{ set; get; }
+        public long CreatorId{ set; get; }
+        public UserEntity Creator{ set; get; }
         
         public DateTime CreatedAt{ set; get; }
         public DateTime? DeletedAt{ set; get; }

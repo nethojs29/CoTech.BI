@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +24,7 @@ namespace CoTech.Bi.Modules.Services.Controllers{
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateServicePriceClientReq req){
-            var service = req.toEntity();
+            var service = req.toEntity(HttpContext.UserId().Value);
             await spcRepo.Create(service);
             return Created($"/api/services/${service.Id}", service);
         }

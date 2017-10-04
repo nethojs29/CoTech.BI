@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Banks.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +24,7 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateBankReq req){
-            var bank = req.toEntity();
+            var bank = req.toEntity(HttpContext.UserId().Value);
             await bankRepo.Create(bank);
             return Created($"/api/banks/${bank.Id}", bank);
         }

@@ -13,6 +13,7 @@ using CoTech.Bi.Modules.Wer.Repositories;
 using CoTech.Bi.Util;
 using Microsoft.AspNetCore.Http;
 using CoTech.Bi.Authorization;
+using CoTech.Bi.Core.Users.Repositories;
 using CoTech.Bi.Modules.Wer.Models.Responses;
 using Microsoft.Azure.KeyVault.Models;
 
@@ -26,11 +27,13 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         private readonly ReportRepository _reportRepository;
         
         private readonly FilesRepository _filesRepository;
+        private readonly UserRepository _userRepository;
 
-        public ReportController(ReportRepository reportRepository,FilesRepository filesRepository)
+        public ReportController(ReportRepository reportRepository,FilesRepository filesRepository,UserRepository _repository)
         {
             this._reportRepository = reportRepository;
             this._filesRepository = filesRepository;
+            this._userRepository = _repository;
         }
         [HttpGet("companies")]
         public async Task<IActionResult> getAllCompanies(long idCompany)
@@ -53,7 +56,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 long idCreator = long.Parse(HttpContext.UserId().ToString());
                 var report =
                     await _reportRepository.SearchOrCreate(idCompany, idUser, idWeek,idCreator);
-                var reportResponse = new ReportResponse(report);
+                var reportResponse = new ReportResponse(report,this._userRepository);
                 return new ObjectResult(reportResponse){StatusCode = 200};
             }
             catch (Exception e)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using CoTech.Bi.Core.Companies.Models;
+using CoTech.Bi.Core.Users.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace CoTech.Bi.Modules.Banks.Models{
@@ -18,8 +19,9 @@ namespace CoTech.Bi.Modules.Banks.Models{
         public int Status{ set; get; }
         [Required]
         public long CompanyId{set; get;}
-        [Required]
         public CompanyEntity Company{set; get;}
+        public long CreatorId{ set; get; }
+        public UserEntity Creator{ set; get; }
         [Required]
         public DateTime CreatedAt{set; get;}
         public DateTime? DeletedAt{set; get;}

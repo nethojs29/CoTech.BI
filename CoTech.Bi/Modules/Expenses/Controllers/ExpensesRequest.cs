@@ -44,10 +44,11 @@ namespace CoTech.Bi.Modules.Expenses.Controllers{
         public string Name{ set; get; }
         public int CompanyId{ set; get; }
 
-        public ExpenseTypeEntity toEntity(){
+        public ExpenseTypeEntity toEntity(long userId){
             return new ExpenseTypeEntity {
                 Name = Name,
                 CompanyId = CompanyId,
+                CreatorId = userId,
                 CreatedAt = DateTime.Now
             };
         }
@@ -62,7 +63,7 @@ namespace CoTech.Bi.Modules.Expenses.Controllers{
         public int TypeId{ set; get; }
         public int CompanyId{ set; get; }
 
-        public ExpenseGroupEntity toEntity(){
+        public ExpenseGroupEntity toEntity(long userId){
             return new ExpenseGroupEntity {
                 Name = Name,
                 TypeId = TypeId,

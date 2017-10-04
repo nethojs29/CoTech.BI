@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Sales.Models;
 using CoTech.Bi.Modules.Sales.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ namespace CoTech.Bi.Modules.Sales.Controllers{
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateServiceSaleReq req){
-            var sale = req.toEntity();
+            var sale = req.toEntity(HttpContext.UserId().Value);
             await serviceSaleRepo.Create(sale);
             return Created($"/api/sales/${sale.Id}", sale);
         }

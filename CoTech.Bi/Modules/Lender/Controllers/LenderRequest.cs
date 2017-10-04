@@ -17,7 +17,7 @@ namespace CoTech.Bi.Modules.Lender.Controllers{
         public int Increment{ set; get; }
         public long CompanyId{ set; get; }
 
-        public LenderEntity toEntity(){
+        public LenderEntity toEntity(long userId){
             return new LenderEntity {
                 Name = Name,
                 RFC = RFC,
@@ -30,6 +30,7 @@ namespace CoTech.Bi.Modules.Lender.Controllers{
                 Email = Email,
                 Increment = Increment,
                 CompanyId = CompanyId,
+                CreatorId = userId,
                 Status = 1,
                 CreatedAt = DateTime.Now
             };

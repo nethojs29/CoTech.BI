@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Providers.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -24,7 +25,7 @@ namespace CoTech.Bi.Modules.Providers.Controllers{
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateProviderReq req){
-            var provider = req.toEntity();
+            var provider = req.toEntity(HttpContext.UserId().Value);
             await providerRepo.Create(provider);
             return Created($"/api/providers/${provider.Id}", provider);
         }
