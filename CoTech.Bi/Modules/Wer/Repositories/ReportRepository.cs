@@ -69,7 +69,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
 
         public async Task<ReportEntity> SearchOrCreate(long idCompany, long idUser, long idWeek,long idCreator)
         {
-            var report = await db.Include(r => r.Seen).Include(r => r.Files).Where(r => r.WeekId == idWeek && r.UserId == idUser && r.CompanyId == idCompany)
+            var report = await db.Include(r => r.Seen).Include(r => r.User).Include(r => r.Files).Where(r => r.WeekId == idWeek && r.UserId == idUser && r.CompanyId == idCompany)
                 .FirstOrDefaultAsync();
             if (report == null)
             {
@@ -93,7 +93,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                         UserId = idCreator
                     });
                     context.SaveChanges();
-                    var aux = db.Include(r => r.Seen).Include(r => r.Files).FirstOrDefault(r=> r.Id == report.Id);
+                    var aux = db.Include(r => r.Seen).Include(r => r.User).Include(r => r.Files).FirstOrDefault(r=> r.Id == report.Id);
                     report = aux;
                     return report;
                 }

@@ -1198,6 +1198,27 @@ namespace CoTech.Bi.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("CoTech.Bi.Modules.Lender.Models.LenderEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Movement.Models.MovementEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Modules.Clients.Models.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("CoTech.Bi.Modules.Providers.Models.ProviderEntity", b =>
                 {
                     b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
