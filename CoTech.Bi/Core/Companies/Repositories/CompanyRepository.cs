@@ -70,7 +70,7 @@ namespace CoTech.Bi.Core.Companies.Repositories
         public async Task<CompanyEntity> Update(UpdateCompanyCmd cmd){
           var evt = CompanyUpdatedEvt.MakeEventEntity(cmd);
           var insertions = await eventRepository.Create(evt);
-          return await db.FirstAsync(c => c.Id == evt.Id);
+          return await db.FirstAsync(c => c.Id == cmd.Id);
         }
 
         public async Task<bool> AddModule(AddModuleCmd cmd) {
