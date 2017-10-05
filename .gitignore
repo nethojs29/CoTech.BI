@@ -42,4 +42,5 @@ Thumbs.db
 # VSCode
 .vscode
 .idea
-Migrations
+# Migrations 
+storage

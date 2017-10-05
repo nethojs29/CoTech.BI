@@ -8,12 +8,11 @@ namespace CoTech.Bi.Core.Users.Models
     public string Name { get; set; }
     public string Lastname { get; set; }
     public string Email { get; set; }
+  }
 
-    public UserEntity toEntity(){
-      return new UserEntity {
-        Name = Name, Lastname = Lastname, Email = Email
-      };
-    }
+  public class UpdateUserReq : IUserRequest {
+    public string Name { get; set; }
+    public string Lastname { get; set; }
   }
 
   public class LogInReq : IUserRequest {

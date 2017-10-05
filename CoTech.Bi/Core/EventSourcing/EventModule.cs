@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using CoTech.Bi.Core.EventSourcing.Models;
 using CoTech.Bi.Core.EventSourcing.Repositories;
 using CoTech.Bi.Core.Users.Models;
@@ -30,6 +31,11 @@ namespace CoTech.Bi.Core.EventSourcing
     public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager)
     {
       
+    }
+
+    public List<ISeed> ConfigureSeeds(BiContext context)
+    {
+      return new List<ISeed>();
     }
 
     public void ConfigureServices(IServiceCollection services)

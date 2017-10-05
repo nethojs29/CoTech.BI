@@ -1,4 +1,5 @@
 ﻿using  System;
+using System.Collections.Generic;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Users.Models;
 
@@ -21,5 +22,9 @@ namespace CoTech.Bi.Modules.Wer.Models.Entities
         
         public long CompanyId { set; get; }
         public CompanyEntity Company { set; get; }
+        
+        public List<FileEntity> Files { set; get; }
+        
+        public List<SeenReportsEntity> Seen { set; get; }
     }
 }

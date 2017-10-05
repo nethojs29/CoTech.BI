@@ -7,25 +7,35 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Wer.Models;
+using CoTech.Bi.Modules.Wer.Models.Entities;
 using CoTech.Bi.Modules.Wer.Models.Requests;
 using CoTech.Bi.Modules.Wer.Repositories;
+using CoTech.Bi.Util;
 using Microsoft.AspNetCore.Http;
+using CoTech.Bi.Authorization;
+using CoTech.Bi.Core.Users.Repositories;
+using CoTech.Bi.Modules.Wer.Models.Responses;
 using Microsoft.Azure.KeyVault.Models;
 
 namespace CoTech.Bi.Modules.Wer.Controllers
 {
     [Route("/api/companies/{idCompany}/res")]
+    [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
     public class ReportController : Controller
     {
 
         private readonly ReportRepository _reportRepository;
+        
+        private readonly FilesRepository _filesRepository;
+        private readonly UserRepository _userRepository;
 
-        public ReportController(ReportRepository reportRepository)
+        public ReportController(ReportRepository reportRepository,FilesRepository filesRepository,UserRepository _repository)
         {
             this._reportRepository = reportRepository;
+            this._filesRepository = filesRepository;
+            this._userRepository = _repository;
         }
-
-        [HttpGet("companies/all")]
+        [HttpGet("companies")]
         public async Task<IActionResult> getAllCompanies(long idCompany)
         {
             try
@@ -37,6 +47,23 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             {
                 return new ObjectResult(new {error = e.Message}){StatusCode = 500};
             }
+        }
+        [HttpGet("reports/search/{idUser}/{idWeek}")]
+        public async Task<IActionResult> SearchOrCreate(long idCompany, long idUser, long idWeek)
+        {
+            try
+            {
+                long idCreator = long.Parse(HttpContext.UserId().ToString());
+                var report =
+                    await _reportRepository.SearchOrCreate(idCompany, idUser, idWeek,idCreator);
+                var reportResponse = new ReportResponse(report,this._userRepository);
+                return new ObjectResult(reportResponse){StatusCode = 200};
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {error = e.Message}){StatusCode = 500};
+            }
+            
         }
         
         [HttpGet("reports/week/{idWeek}")]
@@ -53,8 +80,10 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             
         }
 
+        
+
         [HttpGet("reports/user/{idUser}")]
-        public async Task<IActionResult> byUser(int? idUser)
+        public async Task<IActionResult> byUser(long idCompany,int? idUser)
         {
             try
             {
@@ -78,7 +107,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpPost("reports")]
-        public async Task<IActionResult> CreateReport([FromBody] ReportRequest request)
+        public async Task<IActionResult> CreateReport(long idCompany,[FromBody] ReportRequest request)
         {
             try
             {
@@ -89,16 +118,60 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 return new ObjectResult(new {error = e.Message}){StatusCode = 500};
             }
         }
+        
+        [HttpPut("reports/{idReport}")]
+        public async Task<IActionResult> CreateReport(long idCompany,[FromBody] ReportRequest request,long idReport)
+        {
+            try
+            {
+                var report = _reportRepository.Update(request, idReport);
+                if (report == null)
+                    return NotFound();
+                return new OkObjectResult(report);
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {error = e.Message}){StatusCode = 500};
+            }
+        }
 
-        [HttpPost("reports/{idReport}/files")]
-        public async Task<IActionResult> UploadFileReport([FromQuery(Name = "idReport")] long idReport,
+        [HttpGet("reports/{idReport}/files/{idFile}")]
+        public async Task<IActionResult> DownloadFileReport(long idCompany,[FromQuery(Name = "idFile")] long idFile)
+        {
+            try
+            {
+                var fileEntity = await _filesRepository.ById(idFile);
+                if (fileEntity != null)
+                {
+                    var stream = System.IO.File.ReadAllBytes(fileEntity.Uri);
+                    var response = File(stream, fileEntity.Mime);
+                    return response;
+                }
+                else
+                {
+                    return StatusCode(500);
+                }
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {message = e.Message}){StatusCode = 500};
+            }
+        }
+
+        [HttpPost("reports/{idReport}/{filetype}/files")]
+        public async Task<IActionResult> UploadFileReport(long idCompany,[FromQuery(Name = "idReport")] long idReport,
+            [FromQuery(Name = "filetype")] Int16 filetype,
             [FromForm(Name = "file")] IFormFile formFile)
         {
             try
             {
                 if (formFile != null)
                 {
-                    var directory = Directory.GetCurrentDirectory();
+                    var directory = Directory.GetCurrentDirectory()+ "/storage/wer/";
+                    if (!Directory.Exists(directory))
+                    {
+                        Directory.CreateDirectory(directory);
+                    }
                     var filePath = directory + Guid.NewGuid() + Path.GetExtension(formFile.FileName);
                     if (formFile.Length > 0)
                     {
@@ -107,7 +180,23 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                             await formFile.CopyToAsync(stream);
                         }
                     }
-                    return Ok(new { count = formFile.Length, formFile.ContentType});
+                    var file = await _filesRepository.CreateFile(new FileEntity()
+                    {
+                        Mime = MimeReader.GetMimeType(Path.GetExtension(formFile.FileName)),
+                        Name = formFile.FileName,
+                        Uri = filePath,
+                        Type = filetype,
+                        ReportId = idReport
+                    });
+                    if (file != null)
+                    {
+                        return new ObjectResult(file){StatusCode = 201};
+                    }
+                    else
+                    {
+                        System.IO.File.Delete(filePath);
+                        return StatusCode(500);
+                    } 
                 }else 
                     return new BadRequestResult();
             }
@@ -119,7 +208,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpDelete("reports/{idReport}")]
-        public async Task<IActionResult> DeleteReport(long idReport)
+        public async Task<IActionResult> DeleteReport(long idCompany, long idReport)
         {
             try
             {
@@ -132,7 +221,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpGet("reports/{idReport}")]
-        public async Task<IActionResult> byIdReport(long idReport)
+        public async Task<IActionResult> byIdReport(long idCompany,long idReport)
         {
             try
             {
@@ -145,7 +234,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpGet("reports/start/{idStart}/end/{idEnd}")]
-        public async Task<IActionResult> filterBetweenWeeks(long idStart, long idEnd)
+        public async Task<IActionResult> filterBetweenWeeks(long idCompany,long idStart, long idEnd)
         {
             try
             {

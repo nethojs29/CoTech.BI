@@ -50,7 +50,7 @@ namespace CoTech.Bi.Core.Companies.EventProcessors
             if(eventBody.Name != null) companyEntity.Name = eventBody.Name;
             if(eventBody.Activity != null) companyEntity.Activity = eventBody.Activity;
             if(eventBody.Url != null) {
-                if(db.Count(c => c.Url == eventBody.Url) != 0) {
+                if(db.Count(c => c.Url == eventBody.Url && c.Id != companyEntity.Id) != 0) {
                     entry.Cancel = true;
                     return;
                 }

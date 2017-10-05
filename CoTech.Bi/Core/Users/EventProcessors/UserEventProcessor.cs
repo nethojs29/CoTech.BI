@@ -20,6 +20,8 @@ namespace CoTech.Bi.Core.Users.EventProcessors
             .Where(e => e.Entity.Body is UserEvent);
           eventObservable.Where(e => e.Entity.Body is UserCreatedEvt)
             .Subscribe(onCreate);
+          eventObservable.Where(e => e.Entity.Body is UserUpdatedEvt)
+            .Subscribe(onUpdate);
           eventObservable.Where(e => e.Entity.Body is PasswordChangedEvt)
             .Subscribe(onPasswordChange);
         }
@@ -38,6 +40,19 @@ namespace CoTech.Bi.Core.Users.EventProcessors
             return;
           }
           db.Add(user);
+        }
+
+        private void onUpdate(IBeforeEntry<EventEntity, BiContext> entry) {
+          var db = entry.Context.Set<UserEntity>();
+          var body = entry.Entity.Body as UserUpdatedEvt;
+          var user = db.Find(body.Id);
+          if (user == null) {
+            entry.Cancel = true;
+            return;
+          }
+          user.Name = body.Name;
+          user.Lastname = body.Lastname;
+          db.Update(user);
         }
 
         private void onPasswordChange(IBeforeEntry<EventEntity, BiContext> entry) {

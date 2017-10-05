@@ -52,6 +52,11 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             get { return this.context.Set<CompanyEntity>(); }
         }
 
+        private DbSet<SeenReportsEntity> dbSeenReportsEntities
+        {
+            get { return this.context.Set<SeenReportsEntity>(); }
+        }
+
         private WeekRepository _weekRepository;
 
         private CompanyRepository _companyRepository;
@@ -60,6 +65,39 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             this.context = context;
             this._weekRepository = repository;
             this._companyRepository = companyRepository;
+        }
+
+        public async Task<ReportEntity> SearchOrCreate(long idCompany, long idUser, long idWeek,long idCreator)
+        {
+            var report = await db.Include(r => r.Seen).Include(r => r.User).Include(r => r.Files).Where(r => r.WeekId == idWeek && r.UserId == idUser && r.CompanyId == idCompany)
+                .FirstOrDefaultAsync();
+            if (report == null)
+            {
+                report = new ReportEntity()
+                {
+                    CompanyId = idCompany,
+                    UserId = idUser,
+                    WeekId = idWeek
+                };
+                db.Add(report);
+                context.SaveChanges();
+                report.Seen = new List<SeenReportsEntity>();
+                report.Files = new List<FileEntity>();
+            }
+            if(report != null)
+                if (report.Id > 0 && !report.Seen.Exists(s => s.UserId == idCreator))
+                {
+                    dbSeenReportsEntities.Add(new SeenReportsEntity()
+                    {
+                        Report = report,
+                        UserId = idCreator
+                    });
+                    context.SaveChanges();
+                    var aux = db.Include(r => r.Seen).Include(r => r.User).Include(r => r.Files).FirstOrDefault(r=> r.Id == report.Id);
+                    report = aux;
+                    return report;
+                }
+            return report;
         }
 
         public Task<List<ReportEntity>> getAll()
@@ -92,9 +130,37 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 CompanyId = request.CompanyId,
                 WeekId = request.WeekId
             };
+            var Seen = new List<SeenReportsEntity>();
+            Seen.Add(new SeenReportsEntity()
+            {
+                UserId = request.UserId,
+                Report = report
+            });
+            report.Seen = Seen;
             db.Add(report);
             await context.SaveChangesAsync();
             return report;
+        }
+        public ReportEntity Update(ReportRequest request,long idreport)
+        {
+            var report = db.Find(idreport);
+            if (report != null)
+            {
+                var updateReport = new ReportEntity()
+                {
+                    Id = idreport,
+                    CompanyId = request.CompanyId,
+                    UserId = request.UserId,
+                    Financial = request.Financial,
+                    Observation = request.Observation,
+                    Operative = request.Operative,
+                    WeekId = request.WeekId
+                };
+                context.Entry(report).CurrentValues.SetValues(updateReport);
+                context.SaveChanges();
+                return report;
+            }
+            return null;
         }
 
         public bool Delete(long IdReport)

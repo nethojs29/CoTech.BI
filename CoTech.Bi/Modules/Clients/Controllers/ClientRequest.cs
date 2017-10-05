@@ -15,7 +15,7 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
         public string Phone{set; get;}
         public long CompanyId{set; get;}
 
-        public ClientEntity toEntity(){
+        public ClientEntity toEntity(long userId){
             return new ClientEntity{
                 Name = Name,
                 Tradename = Tradename,
@@ -25,23 +25,23 @@ namespace CoTech.Bi.Modules.Clients.Controllers{
                 State = State,
                 Phone = Phone,
                 Email = Email,
+                CreatorId = userId,
                 CompanyId = CompanyId,
                 Status = 1,
-                CreatedAt = new DateTime()
+                CreatedAt = DateTime.Now
             };
         }
     }
+
+    public class UpdateClientReq:ClientRequest{
+        public string Name{set; get;}
+        public string Tradename{set; get;}
+        public string RFC{set; get;}
+        public string Address{set; get;}
+        public string City{set; get;}
+        public string State{set; get;}
+        public string Email{set; get;}
+        public string Phone{set; get;}
+        public int Status{set; get;}
+    }
 }
-
-
-/*
-"Name": "Name",
-    "Tradename": "Tradename",
-    "RFC" : "RFC",
-    "Address" : "Address",
-    "City" : "City",
-    "State" : "State",
-    "Phone" : "Phone",
-    "Email" : "Email",
-    "CompanyId" : 1
- */

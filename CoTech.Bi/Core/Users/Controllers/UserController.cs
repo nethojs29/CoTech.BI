@@ -43,5 +43,17 @@ namespace CoTech.Bi.Core.Users.Controllers {
         return BadRequest();
       }
     }
+
+    [HttpPut("{id}")]
+    [RequiresAuth]
+    public async Task<IActionResult> Update(long id, [FromBody] UpdateUserReq req) {
+      var cmd = new UpdateUserCmd(req, id, HttpContext.UserId().Value);
+      var updated = await userRepository.Update(cmd);
+      if (updated) {
+        return Ok();
+      } else {
+        return BadRequest();
+      }
+    }
   }
 }

@@ -18,4 +18,24 @@ namespace CoTech.Bi.Core.Users.Models
           Password = PasswordGenerator.CreateRandomPassword(8);
         }
     }
+
+    public class UpdateUserCmd : UserCommand {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string Lastname { get; set;}
+        public UpdateUserCmd(UpdateUserReq req, long editingUserId, long loggedUserId) {
+            Id = editingUserId;
+            Name = req.Name;
+            Lastname = req.Lastname;
+            UserId = loggedUserId;
+        }
+    }
+
+    public class ChangePasswordCmd : UserCommand {
+        public string Password { get; set; }
+        public ChangePasswordCmd(string password, long userId) {
+            UserId = userId;
+            Password = password;
+        }
+    }
 }

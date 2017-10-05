@@ -31,7 +31,7 @@ namespace CoTech.Bi.Core.Users.Repositories
         }
 
         public Task<List<UserEntity>> GetAll() {
-            return db.Where(u => !u.DeletedAt.HasValue).ToListAsync();
+            return db.Where(u => !u.DeletedAt.HasValue && u.Root == null).ToListAsync();
         }
 
         public Task<List<UserEntity>> InCompany(long companyId){
@@ -73,10 +73,17 @@ namespace CoTech.Bi.Core.Users.Repositories
           return user;
         }
 
-      public Task<int> Update(UserEntity entity)
-      {
-        db.Update(entity);
-        return context.SaveChangesAsync();
-      }
+        public async Task<bool> Update(UpdateUserCmd cmd)
+        {
+          var evt = UserUpdatedEvt.MakeEventEntity(cmd);
+          var insertions = await eventRepository.Create(evt);
+          return insertions > 0;
+        }
+
+        public async Task<bool> ChangePassword(ChangePasswordCmd cmd) {
+          var evt = PasswordChangedEvt.MakeEventEntity(cmd);
+          var insertions = await eventRepository.Create(evt);
+          return insertions > 0;
+        }
     }
 }
