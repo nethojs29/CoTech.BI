@@ -22,8 +22,8 @@ namespace CoTech.Bi.Core.Companies.Notifiers
 
             eventObservable = DbObservable<BiContext>.FromInserted<EventEntity>()
                 .Where(entry => entry.Entity.Body is CompanyEvent);
-            eventObservable.Where(entry => entry.Entity.Body is CompanyUpdatedEvt)
-                .Subscribe(onUpdated);
+            // eventObservable.Where(entry => entry.Entity.Body is CompanyUpdatedEvt)
+            //     .Subscribe(onUpdated);
         }
 
         private void onUpdated(IAfterEntry<EventEntity, BiContext> entry) {
