@@ -61,7 +61,7 @@ namespace CoTech.Bi.Modules.Wer
 
         public List<ISeed> ConfigureSeeds(BiContext context)
         {
-            return new List<ISeed> { new WerSeed1() };
+            return new List<ISeed> { new WerSeed1(), new WerSeed1Weeks() };
         }
     }
 }
