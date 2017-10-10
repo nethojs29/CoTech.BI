@@ -25,6 +25,8 @@ using System.IO;
 using CoTech.Bi.Util;
 using System.Transactions;
 using CoTech.Bi.Modules.Wer.Models;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Hangfire;
 using Hangfire.AspNetCore;
 using Hangfire.MySql;
@@ -86,7 +88,8 @@ namespace CoTech.Bi
             // services.AddScoped<IDbInitializer, DbInitializer>();
             
             services.AddHangfire(config => config.UseStorage(new MySqlStorage("Server=localhost;User Id=bi;Password=bi-core;Database=bi-core;Allow User Variables=True;")));
-
+            
+            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

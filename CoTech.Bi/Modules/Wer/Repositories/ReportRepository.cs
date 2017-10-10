@@ -67,6 +67,17 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             this._companyRepository = companyRepository;
         }
 
+        public Task<List<ReportPdfResponse>> getPdfData(long idCompany, long idWeek)
+        {
+            return db.Where(r => r.CompanyId == idCompany && r.WeekId == idWeek).Select(
+                r =>
+                    new ReportPdfResponse()
+                    {
+                        
+                    }
+            ).ToListAsync();
+        }
+
         public async Task<ReportEntity> SearchOrCreate(long idCompany, long idUser, long idWeek,long idCreator)
         {
             var report = await db.Include(r => r.Seen).Include(r => r.User).Include(r => r.Files).Where(r => r.WeekId == idWeek && r.UserId == idUser && r.CompanyId == idCompany)
@@ -230,6 +241,64 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             return db.Where(r => r.CompanyId == company && r.UserId == user)
                 .OrderByDescending(r => r.WeekId)
                 .ToListAsync();
+        }
+        
+        public List<ReportPdfResponse> GetReportRecursive(long idCompany, long idWeek)
+        {
+            List<ReportPdfResponse> list = new List<ReportPdfResponse>();
+            var company = dbCompaniesEntities.Include(c => c.Children).FirstOrDefault(c => c.Id == idCompany);
+            if (company != null)
+            {
+                var users = dbUsersEntities
+                    .Where(u => u.Permissions.Where(p => p.RoleId > 600 && p.RoleId < 700).Any(p => p.CompanyId == idCompany))
+                    .ToList();
+                foreach (var user in users)
+                {
+                    var report = db.Include(r => r.Company).Include(r => r.User).Include(r => r.Week).FirstOrDefault(r =>
+                        r.UserId == user.Id && r.CompanyId == idCompany && r.WeekId == idWeek);
+                    if (report != null)
+                    {
+                        string color = "";
+                        if (!string.IsNullOrEmpty(report.Company.Color))
+                        {
+                            color = report.Company.Color;
+                        }
+                        list.Add(new ReportPdfResponse()
+                        {
+                            EndTime = report.Week.EndTime,
+                            StarTime = report.Week.StartTime,
+                            Finantial = report.Financial,
+                            Operative = report.Operative,
+                            Observations = report.Observation,
+                            User = report.User.Name + " " + report.User.Lastname,
+                            Company = report.Company.Name,
+                            Color = color
+                        });
+                    }
+                    else
+                    {
+                        var week = dbWeek.First(w => w.Id == idWeek);
+                        list.Add(new ReportPdfResponse()
+                        {
+                            EndTime = week.EndTime,
+                            StarTime = week.StartTime,
+                            Finantial = "",
+                            Operative = "",
+                            Observations = "",
+                            User = user.Name + " " + user.Lastname,
+                            Company = company.Name,
+                            Color = company.Color
+                        });
+                    }
+                }
+                
+                foreach (CompanyEntity child in company.Children)
+                {
+                    var returned = this.GetReportRecursive(child.Id,idWeek);
+                    list = list.Concat(returned).ToList();
+                }
+            }
+            return list;
         }
 
         public List<CompanyResponse> GetCompaniesRecursive(long idCompany)

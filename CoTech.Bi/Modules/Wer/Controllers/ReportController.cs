@@ -37,7 +37,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
         [HttpGet("companies")]
         public async Task<IActionResult> getAllCompanies(long idCompany)
-        {
+        { 
             try
             {
                 var result = _reportRepository.GetCompaniesRecursive(idCompany);

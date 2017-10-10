@@ -1,0 +1,41 @@
+@using System.Linq
+@model CoTech.Bi.Modules.Wer.Models.Responses.ReportPdfResponse[]
+@{ 
+    Layout = "_PDFLayout";
+}
+
+@{
+    <h1 style="font-size: 5em;">Reporte Empresarial Semanal</h1>
+    <h2>Semana: @Model.First().StarTime.ToString("dd/MM/yyyy")  -  @Model.First().EndTime.ToString("dd/MM/yyyy")</h2>
+    var currentCom = "";
+    var flag = false;
+    foreach (var item in this.Model)
+    {
+        if (!string.IsNullOrEmpty(item.Color))
+        {
+            if (currentCom != item.Company)
+            {
+                if (flag)
+                {
+                    <p style="page-break-after: always"></p>
+                }
+                else
+                {
+                    flag = true;
+                }
+                <h1 style="border-bottom: 6px solid #@item.Color">@item.Company</h1>
+            }
+            <h2>@item.User</h2>
+            <h3>Operativo:</h3>
+            <p>@item.Operative</p>
+            <br>
+            <h3>Financiero:</h3>
+            <p>@item.Finantial</p>
+            <br>
+            <h3>Observaciones:</h3>
+            <p>@item.Observations</p>
+            <hr>
+        }
+        currentCom = item.Company;
+    }
+}
