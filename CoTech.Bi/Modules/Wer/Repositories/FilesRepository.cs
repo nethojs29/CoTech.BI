@@ -27,14 +27,14 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             this._context = biContext;
         }
 
-        public async Task<FileEntity> CreateFile(FileEntity entity)
+        public FileEntity CreateFile(FileEntity entity)
         {
             var file = entity;
             if (_dbReports.Count(r => r.Id == entity.ReportId) > 0)
             {
                 _dbFiles.Add(file);
-                await _context.SaveChangesAsync();
-                return new FileEntity(){Mime = file.Mime, Id = file.Id, ReportId = file.ReportId, Name = file.Name};
+                _context.SaveChanges();
+                return entity;
             }
             return null;
         }
@@ -44,10 +44,11 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             return _dbFiles.FindAsync(id);
         }
 
-        public Task<List<LibraryResponse>> GetLibrary(long idCompany)
+        public Task<List<LibraryResponse>> GetLibrary(long idCompany,long idWeek)
         {
             return _dbFiles.Where(
-                f => f.Report.CompanyId == idCompany
+                f => f.Report.CompanyId == idCompany &&
+                     f.Report.WeekId == idWeek
             ).OrderByDescending(f => f.Report.Week.EndTime).Select(
                 data =>
                     new LibraryResponse()

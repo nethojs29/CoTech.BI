@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CoTech.Bi.Modules.Wer.Models.Responses;
+using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Wer.Repositories;
-using DinkToPdf;
-using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -16,6 +13,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
+using iTextSharp.text;
+using iTextSharp.text.html.simpleparser;
+using iTextSharp.text.pdf;
 
 namespace CoTech.Bi.Modules.Wer.Controllers
 {
@@ -27,15 +27,13 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         private IRazorViewEngine _viewEngine;
         private ITempDataProvider _tempDataProvider;
         private IServiceProvider _serviceProvider;
-        private IConverter _converter;
         
         public LibraryController(
             FilesRepository filesRepository,
             ReportRepository reportRepository,
             IRazorViewEngine viewEngine,
             ITempDataProvider tempDataProvider,
-            IServiceProvider serviceProvider,
-            IConverter converter
+            IServiceProvider serviceProvider
             )
         {
             this._reportRepository = reportRepository;
@@ -43,46 +41,53 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             this._filesRepository = filesRepository;
             this._tempDataProvider = tempDataProvider;
             this._serviceProvider = serviceProvider;
-            this._converter = converter;
         }
-        [HttpGet("library")]
-        public IActionResult GetLibrary([FromRoute]long idCompany)
+        [HttpGet("library/week/{idWeek}")]
+        [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
+        public IActionResult GetLibrary([FromRoute]long idCompany, [FromRoute] long idWeek)
         {
             return new ObjectResult(
-                this._filesRepository.GetLibrary(idCompany)
+                this._filesRepository.GetLibrary(idCompany,idWeek)
             ) {StatusCode = 200};
         }
 
         [HttpGet("week/{idWeek}/pdf")]
+        [[RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
         public async Task<IActionResult> GetPdf([FromRoute(Name = "idCompany")] long idCompany, [FromRoute(Name = "idWeek")] long idWeek)
         {
-            var reports = _reportRepository.GetReportRecursive(idCompany, idWeek);
-            var data = await this.RenderViewToStringAsync("PDFTemplate", reports.ToArray());
-            var doc = new HtmlToPdfDocument()
+            try
             {
-                GlobalSettings = {
-                    ColorMode = ColorMode.Color,
-                    Orientation = Orientation.Landscape,
-                    PaperSize = PaperKind.Letter,
-                },
-                Objects = {
-                    new ObjectSettings() {
-                        PagesCount = true,
-                        HtmlContent = data,
-                        WebSettings = { DefaultEncoding = "utf-8",MinimumFontSize = 16,enablePlugins = true,LoadImages = true},
-                        HeaderSettings =
-                        {
-                            FontSize = 9,
-                            Right = "Página [page] de [toPage]",
-                            Left = DateTime.Now.ToString("dd/MM/yyyy"),
-                            Line = true,
-                            Spacing = 2.812
-                        }
-                    }
+                var reports = _reportRepository.GetReportRecursive(idCompany, idWeek);
+                var data = await this.RenderViewToStringAsync("PDFTemplate", reports.ToArray());
+                var pdf = this.GetPDF(data.Replace("\n",""));
+                return File(pdf,"application/pdf");
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {error = e.Message}){StatusCode = 500};
+            }
+        }
+        
+        public byte[] GetPDF(string pHTML) {
+            byte[] bPDF = null;
+            MemoryStream ms = new MemoryStream();
+            TextReader txtReader = new StringReader(pHTML);
+            Document doc = new Document(PageSize.LETTER, 30, 30, 30, 30);
+            PdfWriter oPdfWriter = PdfWriter.GetInstance(doc, ms);
+            doc.Open();
+            var xmlWorker = HTMLWorker.ParseToList(txtReader,new StyleSheet());
+            foreach (var item in xmlWorker)
+            {
+                if (item.Chunks.Count(cChunks => cChunks.Content.Contains("Semana:")) > 0)
+                {
+                    doc.NewPage();
                 }
-            };
-            byte[] pdf = this._converter.Convert(doc);
-            return File(pdf, "application/pdf");
+                doc.Add(item);
+            }
+            
+            doc.Close();
+            bPDF = ms.ToArray();
+            return bPDF;
         }
         
         public async Task<string> RenderViewToStringAsync<TModel>(string viewName, TModel model)

@@ -5,37 +5,33 @@
 }
 
 @{
-    <h1 style="font-size: 5em;">Reporte Empresarial Semanal</h1>
-    <h2>Semana: @Model.First().StarTime.ToString("dd/MM/yyyy")  -  @Model.First().EndTime.ToString("dd/MM/yyyy")</h2>
+    <h1 style="font-size: 10mm;text-align: center;">Reporte Empresarial Semanal</h1>
+    <h2 style="font-size: 8mm;text-align: center;">@Model.First().StarTime.ToString("dd/MM/yyyy")  -  @Model.First().EndTime.ToString("dd/MM/yyyy")</h2>
     var currentCom = "";
-    var flag = false;
+    var space = "___________________________________";
     foreach (var item in this.Model)
     {
         if (!string.IsNullOrEmpty(item.Color))
         {
             if (currentCom != item.Company)
             {
-                if (flag)
+                if (!currentCom.Equals(""))
                 {
-                    <p style="page-break-after: always"></p>
+                    <h5 style="font-size: 4mm; text-align: right;">Semana: @item.StarTime.ToString("dd/MM/yyyy")  -  @item.EndTime.ToString("dd/MM/yyyy")</h5>
                 }
-                else
-                {
-                    flag = true;
-                }
-                <h1 style="border-bottom: 6px solid #@item.Color">@item.Company</h1>
+                <h1 style="font-size: 8mm; text-align: center;">Empresa: @item.Company</h1>
+                <h1 style="color: #@item.Color;font-size: 10mm; text-align: center;">@space</h1>
+                
             }
-            <h2>@item.User</h2>
-            <h3>Operativo:</h3>
-            <p>@item.Operative</p>
-            <br>
-            <h3>Financiero:</h3>
-            <p>@item.Finantial</p>
-            <br>
-            <h3>Observaciones:</h3>
-            <p>@item.Observations</p>
-            <hr>
+            <h2 style="font-size: 8mm; text-align: center;">@item.User</h2>
+            <h3 style="font-size: 6mm; text-align: left;">Operativo:</h3>
+            <p style="font-size: 6mm;">@item.Operative</p>
+            <h3 style="font-size: 6mm; text-align: left;">Financiero:</h3>
+            <p style="font-size: 6mm;">@item.Finantial</p>
+            <h3 style="font-size: 6mm; text-align: left;">Observaciones:</h3>
+            <p style="font-size: 6mm;">@item.Observations</p>
+            
+            currentCom = item.Company;
         }
-        currentCom = item.Company;
     }
 }

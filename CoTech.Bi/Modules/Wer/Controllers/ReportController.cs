@@ -48,6 +48,28 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 return new ObjectResult(new {error = e.Message}){StatusCode = 500};
             }
         }
+        [HttpGet("pendings")]
+        public async Task<IActionResult> getPendings(long idCompany)
+        { 
+            try
+            {
+                var idUser = long.Parse(HttpContext.UserId().ToString());
+                var result = _reportRepository.GetReportSeensRecursive(idCompany, idUser);
+                return new ObjectResult(
+                    new
+                    {
+                        pendings = result.Where(r => r.create).ToArray(),
+                        unexists = result.Where(r => !r.create).ToArray()
+                    })
+                {
+                    StatusCode = 200
+                };
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {error = e.Message}){StatusCode = 500};
+            }
+        }
         [HttpGet("reports/search/{idUser}/{idWeek}")]
         public async Task<IActionResult> SearchOrCreate(long idCompany, long idUser, long idWeek)
         {
@@ -159,8 +181,8 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpPost("reports/{idReport}/{filetype}/files")]
-        public async Task<IActionResult> UploadFileReport(long idCompany,[FromQuery(Name = "idReport")] long idReport,
-            [FromQuery(Name = "filetype")] Int16 filetype,
+        public async Task<IActionResult> UploadFileReport([FromRoute(Name = "idCompany")]long idCompany,[FromRoute(Name = "idReport")] long idReport,
+            [FromRoute(Name = "filetype")] Int16 filetype,
             [FromForm(Name = "file")] IFormFile formFile)
         {
             try
@@ -180,7 +202,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                             await formFile.CopyToAsync(stream);
                         }
                     }
-                    var file = await _filesRepository.CreateFile(new FileEntity()
+                    var file = _filesRepository.CreateFile(new FileEntity()
                     {
                         Mime = MimeReader.GetMimeType(Path.GetExtension(formFile.FileName)),
                         Name = formFile.FileName,

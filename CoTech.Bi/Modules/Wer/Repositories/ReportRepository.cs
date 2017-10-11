@@ -300,6 +300,82 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             }
             return list;
         }
+        public List<ReportPendingsResponse> GetReportSeensRecursive(long idCompany, long idUser)
+        {
+            var week = dbWeek.OrderByDescending(r => r.EndTime).Take(10).ToList();
+            List<ReportPendingsResponse> list = new List<ReportPendingsResponse>();
+            var company = dbCompaniesEntities.Include(c => c.Children).FirstOrDefault(c => c.Id == idCompany);
+            if (company != null)
+            {
+                var users = dbUsersEntities
+                    .Where(u => u.Permissions.Where(p => p.RoleId > 600 && p.RoleId < 700).Any(p => p.CompanyId == idCompany))
+                    .ToList();
+                foreach (var user in users)
+                {
+                    var report = db.Include(r => r.Company)
+                        .Include(r => r.User)
+                        .Include(r => r.Week)
+                        .Include(r => r.Seen)
+                        .FirstOrDefault(r =>
+                        !r.Seen.Exists(s => s.UserId == idUser)
+                        );
+                    if (report != null)
+                    {
+                        if (string.IsNullOrEmpty(report.Financial) || string.IsNullOrEmpty(report.Operative))
+                        {
+                            list.Add(new ReportPendingsResponse()
+                            {
+                                idWeek = report.WeekId,
+                                idCompany = report.CompanyId,
+                                idUser = report.UserId,
+                                User = report.User.Name + " " + report.User.Lastname,
+                                create = false
+                            });
+                        }
+                        else
+                        {
+                            list.Add(new ReportPendingsResponse()
+                            {
+                                idWeek = report.WeekId,
+                                idCompany = report.CompanyId,
+                                idUser = report.UserId,
+                                User = report.User.Name + " " + report.User.Lastname,
+                                create = true
+                            });
+                        }
+                    }
+                    else
+                    {
+                        foreach (var weekEntity in week)
+                        {
+                            var reportData = db.FirstOrDefault(r =>
+                                r.WeekId == weekEntity.Id &&
+                                r.UserId == user.Id &&
+                                r.CompanyId == company.Id
+                            );
+                            if (reportData != null)
+                            {
+                                list.Add(new ReportPendingsResponse()
+                                {
+                                    idWeek = weekEntity.Id,
+                                    idCompany = company.Id,
+                                    idUser = user.Id,
+                                    User = user.Name + " " + user.Lastname,
+                                    create = false
+                                });
+                            }
+                        }
+                    }
+                }
+                
+                foreach (CompanyEntity child in company.Children)
+                {
+                    var returned = this.GetReportSeensRecursive(child.Id,idUser);
+                    list = list.Concat(returned).ToList();
+                }
+            }
+            return list;
+        }
 
         public List<CompanyResponse> GetCompaniesRecursive(long idCompany)
         {
