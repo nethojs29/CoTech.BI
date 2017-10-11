@@ -52,7 +52,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpGet("week/{idWeek}/pdf")]
-        [[RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
+        [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
         public async Task<IActionResult> GetPdf([FromRoute(Name = "idCompany")] long idCompany, [FromRoute(Name = "idWeek")] long idWeek)
         {
             try
