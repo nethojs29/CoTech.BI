@@ -53,10 +53,10 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 data =>
                     new LibraryResponse()
                     {
-                        IdFile = data.Id,
-                        IdFormat = data.ReportId,
-                        IdWeek = data.Report.WeekId,
-                        IdUser = data.Report.UserId,
+                        Id = data.Id,
+                        ReportId = data.ReportId,
+                        WeekId = data.Report.WeekId,
+                        UserId = data.Report.UserId,
                         Name = data.Name,
                         EndTime = data.Report.Week.EndTime,
                         StartTime = data.Report.Week.StartTime,
