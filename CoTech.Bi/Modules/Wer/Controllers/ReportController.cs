@@ -158,7 +158,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
 
         [HttpGet("reports/{idReport}/files/{idFile}")]
-        public async Task<IActionResult> DownloadFileReport(long idCompany,[FromQuery(Name = "idFile")] long idFile)
+        public async Task<IActionResult> DownloadFileReport(long idCompany,[FromRoute(Name = "idFile")] long idFile)
         {
             try
             {
@@ -166,7 +166,10 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 if (fileEntity != null)
                 {
                     var stream = System.IO.File.ReadAllBytes(fileEntity.Uri);
-                    var response = File(stream, fileEntity.Mime);
+                    HttpContext.Response.ContentType = "application/pdf";
+                    var response = new FileContentResult(stream, fileEntity.Mime) {
+                        FileDownloadName = fileEntity.Name
+                    };
                     return response;
                 }
                 else
