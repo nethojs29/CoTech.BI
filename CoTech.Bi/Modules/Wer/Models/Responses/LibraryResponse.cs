@@ -10,6 +10,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
         public long IdUser { set; get; }
         public int Type { set; get; }
         public string Name { set; get; }
+        public string Mime { set; get; }
         public DateTime StartTime { set; get; }
         public DateTime EndTime { set; get; }
     }

@@ -60,7 +60,8 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                         Name = data.Name,
                         EndTime = data.Report.Week.EndTime,
                         StartTime = data.Report.Week.StartTime,
-                        Type = data.Type
+                        Type = data.Type,
+                        Mime = data.Mime
                     }
             ).ToListAsync();
         }
