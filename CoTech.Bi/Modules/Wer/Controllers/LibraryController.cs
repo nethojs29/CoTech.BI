@@ -44,10 +44,10 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         }
         [HttpGet("library/week/{idWeek}")]
         [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
-        public IActionResult GetLibrary([FromRoute]long idCompany, [FromRoute] long idWeek)
+        public async Task<IActionResult> GetLibrary([FromRoute]long idCompany, [FromRoute] long idWeek)
         {
             return new ObjectResult(
-                this._filesRepository.GetLibrary(idCompany,idWeek)
+                await this._filesRepository.GetLibrary(idCompany,idWeek)
             ) {StatusCode = 200};
         }
 
@@ -68,7 +68,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
         }
         
-        public byte[] GetPDF(string pHTML) {
+        private byte[] GetPDF(string pHTML) {
             byte[] bPDF = null;
             MemoryStream ms = new MemoryStream();
             TextReader txtReader = new StringReader(pHTML);
@@ -90,7 +90,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             return bPDF;
         }
         
-        public async Task<string> RenderViewToStringAsync<TModel>(string viewName, TModel model)
+        private async Task<string> RenderViewToStringAsync<TModel>(string viewName, TModel model)
         {
             var actionContext = GetActionContext();
             var view = FindView(actionContext, viewName);
