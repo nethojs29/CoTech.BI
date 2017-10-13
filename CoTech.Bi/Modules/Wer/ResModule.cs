@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
+using CoTech.Bi.Modules.Wer.EventProcessors;
+using CoTech.Bi.Modules.Wer.Notifiers;
 
 namespace CoTech.Bi.Modules.Wer
 {
@@ -32,6 +34,8 @@ namespace CoTech.Bi.Modules.Wer
             services.AddScoped<ReportRepository>();
             services.AddScoped<FilesRepository>();
             services.AddScoped<ReplyRepository>();
+            services.AddSingleton(new ReportEventProcessor());
+            services.AddSingleton(new ReportNotifier());
         }
 
         public void ConfigureEntities(ModelBuilder modelBuilder)
