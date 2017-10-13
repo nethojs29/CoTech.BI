@@ -146,7 +146,8 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         {
             try
             {
-                var report = _reportRepository.Update(request, idReport);
+                var idUser = HttpContext.UserId().Value;
+                var report = await _reportRepository.Update(request, idReport,idUser);
                 if (report == null)
                     return NotFound();
                 return new OkObjectResult(report);

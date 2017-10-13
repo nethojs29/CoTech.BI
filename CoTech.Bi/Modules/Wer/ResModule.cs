@@ -23,7 +23,7 @@ namespace CoTech.Bi.Modules.Wer
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            RecurringJob.AddOrUpdate("crear semanas",(WeekRepository repository)=>repository.AddWeek(),Cron.Weekly(DayOfWeek.Saturday));
+            RecurringJob.AddOrUpdate("crear semanas",(WeekRepository repository)=>repository.AddWeek(),Cron.Weekly(DayOfWeek.Saturday,20));
         }
 
         public void ConfigureServices(IServiceCollection services)

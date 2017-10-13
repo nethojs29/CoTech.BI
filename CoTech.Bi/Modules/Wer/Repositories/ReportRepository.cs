@@ -4,11 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Companies.Repositories;
+using CoTech.Bi.Core.EventSourcing.Models;
+using CoTech.Bi.Core.EventSourcing.Repositories;
 using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Entity;
 using Microsoft.EntityFrameworkCore;
 using CoTech.Bi.Modules.Wer.Models.Entities;
+using CoTech.Bi.Modules.Wer.Models.Events;
 using CoTech.Bi.Modules.Wer.Models.Requests;
 using CoTech.Bi.Modules.Wer.Models.Responses;
 using Microsoft.AspNetCore.Rewrite.Internal.UrlMatches;
@@ -60,11 +63,13 @@ namespace CoTech.Bi.Modules.Wer.Repositories
         private WeekRepository _weekRepository;
 
         private CompanyRepository _companyRepository;
+        private EventRepository _eventRepository;
         
-        public ReportRepository(BiContext context, WeekRepository repository,CompanyRepository companyRepository){
+        public ReportRepository(BiContext context, WeekRepository repository,CompanyRepository companyRepository, EventRepository eventRepository){
             this.context = context;
             this._weekRepository = repository;
             this._companyRepository = companyRepository;
+            this._eventRepository = eventRepository;
         }
 
         public Task<List<ReportPdfResponse>> getPdfData(long idCompany, long idWeek)
@@ -152,26 +157,29 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             await context.SaveChangesAsync();
             return report;
         }
-        public ReportEntity Update(ReportRequest request,long idreport)
+        public async Task<ReportEntity> Update(ReportRequest request,long idreport,long idUser)
         {
-            var report = db.Find(idreport);
-            if (report != null)
+            var evt = new EventEntity()
             {
-                var updateReport = new ReportEntity()
+                UserId = idUser,
+                Body = new ReportUpdatedEvt()
                 {
                     Id = idreport,
-                    CompanyId = request.CompanyId,
-                    UserId = request.UserId,
-                    Financial = request.Financial,
                     Observation = request.Observation,
                     Operative = request.Operative,
-                    WeekId = request.WeekId
-                };
-                context.Entry(report).CurrentValues.SetValues(updateReport);
-                context.SaveChanges();
-                return report;
+                    Financial = request.Financial
+                }
+            };
+            var updating = await _eventRepository.Create(evt);
+            if (updating == 0)
+            {
+                return null;
             }
-            return null;
+            else
+            {
+                return db.Find(idreport);
+            }
+
         }
 
         public bool Delete(long IdReport)
