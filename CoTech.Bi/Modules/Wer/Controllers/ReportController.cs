@@ -150,7 +150,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 var report = await _reportRepository.Update(request, idReport,idUser);
                 if (report == null)
                     return NotFound();
-                return new OkObjectResult(report);
+                return new OkObjectResult(new ReportResponse(report, _userRepository));
             }
             catch (Exception e)
             {
