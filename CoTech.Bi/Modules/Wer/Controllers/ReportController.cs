@@ -78,7 +78,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 long idCreator = long.Parse(HttpContext.UserId().ToString());
                 var report =
                     await _reportRepository.SearchOrCreate(idCompany, idUser, idWeek,idCreator);
-                var reportResponse = new ReportResponse(report,this._userRepository);
+                var reportResponse = new ReportResponse(report);
                 return new ObjectResult(reportResponse){StatusCode = 200};
             }
             catch (Exception e)
@@ -150,7 +150,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 var report = await _reportRepository.Update(request, idReport,idUser);
                 if (report == null)
                     return NotFound();
-                return new OkObjectResult(new ReportResponse(report, _userRepository));
+                return new OkObjectResult(new ReportResponse(report));
             }
             catch (Exception e)
             {
