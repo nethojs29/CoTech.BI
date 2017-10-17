@@ -320,12 +320,13 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     .ToList();
                 foreach (var user in users)
                 {
-                    var report = db.Include(r => r.Company)
+                    var report = db
+                        .Where(r => !r.Seen.Exists(s => s.UserId == idUser))
+                        .Include(r => r.Company)
                         .Include(r => r.User)
                         .Include(r => r.Week)
-                        .FirstOrDefault(r =>
-                        !r.Seen.Exists(s => s.UserId == idUser)
-                        );
+                        .Include(r => r.Seen)
+                        .FirstOrDefault();
                     if (report != null)
                     {
                         if (string.IsNullOrEmpty(report.Financial) || string.IsNullOrEmpty(report.Operative))
