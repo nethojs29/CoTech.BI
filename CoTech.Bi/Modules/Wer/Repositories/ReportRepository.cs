@@ -177,7 +177,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             }
             else
             {
-                return db.Find(idreport);
+                return db.Include(r => r.User).Include(r => r.Files).Include(r => r.Seen).First(r => r.Id == idreport);
             }
 
         }
