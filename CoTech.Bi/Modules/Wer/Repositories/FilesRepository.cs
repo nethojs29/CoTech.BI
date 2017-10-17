@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Entity;
@@ -43,6 +44,20 @@ namespace CoTech.Bi.Modules.Wer.Repositories
         {
             return _dbFiles.FindAsync(id);
         }
+        public bool? DeleteById(long id)
+        {
+            var file = _dbFiles.Find(id);
+            if (file != null)
+            {
+                File.Delete(file.Uri);
+                if (!File.Exists(file.Uri))
+                {
+                    _dbFiles.Remove(file);
+                    return _context.SaveChanges() > 0;
+                }
+            }
+            return null;
+        }
 
         public Task<List<LibraryResponse>> GetLibrary(long idCompany,long idWeek)
         {
@@ -50,6 +65,26 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 f => f.Report.CompanyId == idCompany &&
                      f.Report.WeekId == idWeek
             ).OrderByDescending(f => f.Report.Week.EndTime).Select(
+                data =>
+                    new LibraryResponse()
+                    {
+                        Id = data.Id,
+                        ReportId = data.ReportId,
+                        WeekId = data.Report.WeekId,
+                        UserId = data.Report.UserId,
+                        Name = data.Name,
+                        EndTime = data.Report.Week.EndTime,
+                        StartTime = data.Report.Week.StartTime,
+                        Type = data.Type,
+                        Mime = data.Mime
+                    }
+            ).ToListAsync();
+        }
+        public Task<List<LibraryResponse>> GetLibraryCompany(long idCompany)
+        {
+            return _dbFiles.Where(
+                f => f.Report.CompanyId == idCompany)
+                .OrderByDescending(f => f.Report.Week.EndTime).Select(
                 data =>
                     new LibraryResponse()
                     {

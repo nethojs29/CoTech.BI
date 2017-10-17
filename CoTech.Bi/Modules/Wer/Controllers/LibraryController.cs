@@ -46,9 +46,35 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
         public async Task<IActionResult> GetLibrary([FromRoute]long idCompany, [FromRoute] long idWeek)
         {
-            return new ObjectResult(
-                await this._filesRepository.GetLibrary(idCompany,idWeek)
-            ) {StatusCode = 200};
+            try
+            {
+                return new ObjectResult(
+                    await this._filesRepository.GetLibrary(idCompany,idWeek)
+                ) {StatusCode = 200};
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(
+                    new { message = e.Message}
+                ) {StatusCode = 500};
+            }
+        }
+        [HttpGet("library")]
+        [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
+        public async Task<IActionResult> GetLibrary([FromRoute]long idCompany)
+        {
+            try
+            {
+                return new ObjectResult(
+                    await this._filesRepository.GetLibraryCompany(idCompany)
+                ) {StatusCode = 200};
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(
+                    new { message = e.Message}
+                ) {StatusCode = 500};
+            }
         }
 
         [HttpGet("week/{idWeek}/pdf")]

@@ -323,7 +323,6 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     var report = db.Include(r => r.Company)
                         .Include(r => r.User)
                         .Include(r => r.Week)
-                        .Include(r => r.Seen)
                         .FirstOrDefault(r =>
                         !r.Seen.Exists(s => s.UserId == idUser)
                         );
