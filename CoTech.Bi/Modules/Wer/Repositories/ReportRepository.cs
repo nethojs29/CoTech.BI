@@ -321,7 +321,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 foreach (var user in users)
                 {
                     var report = db
-                        .Where(r => !r.Seen.Exists(s => s.UserId == idUser))
+                        .Where(r => r.Seen.Count(r => r.UserId == idUser) == 0)
                         .Include(r => r.Company)
                         .Include(r => r.User)
                         .Include(r => r.Week)
