@@ -54,7 +54,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             try
             {
                 var idUser = HttpContext.UserId().Value;
-                var result = _reportRepository.GetReportSeensRecursive(idCompany, idUser);
+                var result = _reportRepository.GetReportSeensRecursive(idCompany, idUser, null);
                 var uncreate = result;
                 return new ObjectResult(
                     new
