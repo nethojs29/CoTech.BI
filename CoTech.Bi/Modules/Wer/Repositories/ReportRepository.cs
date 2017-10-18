@@ -352,7 +352,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                             });
                         }
                     }
-                    else
+                    else if(company.ParentId != null)
                     {
                         foreach (var weekEntity in week)
                         {
