@@ -55,11 +55,12 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             {
                 var idUser = HttpContext.UserId().Value;
                 var result = _reportRepository.GetReportSeensRecursive(idCompany, idUser);
+                var uncreate = result;
                 return new ObjectResult(
                     new
                     {
                         pendings = result.Where(r => r.create).ToArray(),
-                        unexists = result.Where(r => !r.create).ToArray()
+                        unexists = uncreate.Where(r => !r.create).ToArray()
                     })
                 {
                     StatusCode = 200

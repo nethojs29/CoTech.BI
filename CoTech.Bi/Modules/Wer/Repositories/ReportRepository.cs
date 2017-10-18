@@ -321,7 +321,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 foreach (var user in users)
                 {
                     var report = db
-                        .Where(r => r.Seen.Count(r => r.UserId == idUser) == 0)
+                        .Where(r => r.Seen.Count(rp => rp.UserId == idUser) == 0)
                         .Include(r => r.Company)
                         .Include(r => r.User)
                         .Include(r => r.Week)
@@ -372,13 +372,24 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                                     create = false
                                 });
                             }
+                            else
+                            {
+                                list.Add(new ReportPendingsResponse()
+                                {
+                                    idWeek = weekEntity.Id,
+                                    idCompany = company.Id,
+                                    idUser = user.Id,
+                                    User = user.Name + " " + user.Lastname,
+                                    create = false
+                                });
+                            }
                         }
                     }
                 }
                 
                 foreach (CompanyEntity child in company.Children)
                 {
-                    var returned = this.GetReportSeensRecursive(child.Id,idUser);
+                    var returned = GetReportSeensRecursive(child.Id,idUser);
                     list = list.Concat(returned).ToList();
                 }
             }
