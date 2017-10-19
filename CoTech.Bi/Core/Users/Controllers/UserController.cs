@@ -22,7 +22,7 @@ namespace CoTech.Bi.Core.Users.Controllers {
     }
 
     [HttpGet]
-    [RequiresAbsoluteRoleAnywhere(Role.Super, Role.Admin)]
+    [RequiresAuth]
     public async Task<IActionResult> GetAll() {
       var users = await userRepository.GetAll();
       return new OkObjectResult(users.Select(u => new UserResponse(u)));

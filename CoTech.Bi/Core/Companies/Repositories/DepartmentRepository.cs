@@ -26,7 +26,7 @@ namespace CoTech.Bi.Core.Companies.Repositories{
             return db.Where(p => !p.DeletedAt.HasValue).ToListAsync();
         }
 
-        public Task<List<DepartmentEntity>> getAllByGroup(long group){
+        public Task<List<DepartmentEntity>> getAll(){
             return db.Where(p => !p.DeletedAt.HasValue).ToListAsync();
         }
 
@@ -34,11 +34,9 @@ namespace CoTech.Bi.Core.Companies.Repositories{
             return db.FindAsync(id);
         }
 
-        public async Task<DepartmentEntity> Create(CreateDepartmentCmd cmd){
-            var evtEntity = DepartmentCreatedEvt.MakeEventEntity(cmd);
-            var insertions = await eventRepo.Create(evtEntity);
-            if (insertions == 0) return null;
-            return await db.FirstAsync(d => d.CreatorEventId == evtEntity.Id);
+        public async Task Create(DepartmentEntity entity){
+            var entry = db.Add(entity);
+            await context.SaveChangesAsync();
         }
 
         public async Task<DepartmentEntity> Update(UpdateDepartmentCmd cmd){

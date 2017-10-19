@@ -11,6 +11,7 @@ namespace CoTech.Bi.Modules.Services.Models{
             return new ServiceEntity {
                 Name = Name,
                 CompanyId = CompanyId,
+                CreatorId = userId,
                 CreatedAt = DateTime.Now
             };
         }
@@ -32,6 +33,7 @@ namespace CoTech.Bi.Modules.Services.Models{
                 ClientId = ClientId,
                 ServiceId = ServiceId,
                 CompanyId = CompanyId,
+                CreatorId = userId,
                 CreatedAt = DateTime.Now
             };
         }

@@ -23,6 +23,9 @@ namespace CoTech.Bi.Modules.Sales.Models{
         
         public bool iva{ set; get; }
         
+        public long SaleId{ set; get; }
+        public SSaleEntity Sale{ set; get; }
+        
         public CompanyEntity Company{ set; get; }
         public ServiceEntity Service{ set; get; }
         public ClientEntity Client{ set; get; }

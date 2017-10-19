@@ -25,6 +25,10 @@ namespace CoTech.Bi.Modules.Services{
         public Task<Service_Price_ClientEntity> WithId(long id){
             return db.FindAsync(id);
         }
+        
+        public Task<List<Service_Price_ClientEntity>> WithClientId(long id){
+            return db.Where(p => !p.DeletedAt.HasValue && p.ClientId == id).ToListAsync();
+        }
 
         public async Task Create(Service_Price_ClientEntity entity){
             var entry = db.Add(entity);

@@ -11,9 +11,10 @@ using System;
 namespace CoTech.Bi.Migrations
 {
     [DbContext(typeof(BiContext))]
-    partial class BiContextModelSnapshot : ModelSnapshot
+    [Migration("20171013235307_stuff")]
+    partial class stuff
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -635,7 +636,7 @@ namespace CoTech.Bi.Migrations
                     b.Property<string>("Suburb")
                         .IsRequired();
 
-                    b.Property<long?>("UserId");
+                    b.Property<long>("UserId");
 
                     b.HasKey("Id");
 
@@ -1307,7 +1308,8 @@ namespace CoTech.Bi.Migrations
 
                     b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CoTech.Bi.Modules.Providers.Models.ProviderEntity", b =>
