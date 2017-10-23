@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Modules.Clients.Models;
 
 namespace CoTech.Bi.Modules.Sales.Models{
     public class SSaleEntity{
@@ -10,6 +11,9 @@ namespace CoTech.Bi.Modules.Sales.Models{
         public double Total{ set; get; }
         [Required]
         public DateTime Date{ set; get; }
+        
+        public long ClientId{ set; get; }
+        public ClientEntity Client{ set; get; }
         
         public long CompanyId{ set; get; }
         public CompanyEntity Company{ set; get; }
