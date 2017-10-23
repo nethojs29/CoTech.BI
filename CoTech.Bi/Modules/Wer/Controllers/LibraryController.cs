@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Routing;
 using iTextSharp.text;
 using iTextSharp.text.html.simpleparser;
 using iTextSharp.text.pdf;
+using iTextSharp;
 
 namespace CoTech.Bi.Modules.Wer.Controllers
 {
@@ -46,9 +47,35 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
         public async Task<IActionResult> GetLibrary([FromRoute]long idCompany, [FromRoute] long idWeek)
         {
-            return new ObjectResult(
-                await this._filesRepository.GetLibrary(idCompany,idWeek)
-            ) {StatusCode = 200};
+            try
+            {
+                return new ObjectResult(
+                    await this._filesRepository.GetLibrary(idCompany,idWeek)
+                ) {StatusCode = 200};
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(
+                    new { message = e.Message}
+                ) {StatusCode = 500};
+            }
+        }
+        [HttpGet("library")]
+        [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
+        public async Task<IActionResult> GetLibrary([FromRoute]long idCompany)
+        {
+            try
+            {
+                return new ObjectResult(
+                    await this._filesRepository.GetLibraryCompany(idCompany)
+                ) {StatusCode = 200};
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(
+                    new { message = e.Message}
+                ) {StatusCode = 500};
+            }
         }
 
         [HttpGet("week/{idWeek}/pdf")]
@@ -72,13 +99,13 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             byte[] bPDF = null;
             MemoryStream ms = new MemoryStream();
             TextReader txtReader = new StringReader(pHTML);
-            Document doc = new Document(PageSize.LETTER, 30, 30, 30, 30);
+            Document doc = new Document(PageSize.Letter, 30, 30, 30, 30);
             PdfWriter oPdfWriter = PdfWriter.GetInstance(doc, ms);
             doc.Open();
-            var xmlWorker = HTMLWorker.ParseToList(txtReader,new StyleSheet());
-            foreach (var item in xmlWorker)
+            var xmlWorker = HtmlWorker.ParseToList(txtReader,new StyleSheet());
+            foreach (Paragraph item in xmlWorker)
             {
-                if (item.Chunks.Count(cChunks => cChunks.Content.Contains("Semana:")) > 0)
+                if (item.Content.Contains("Semana:"))
                 {
                     doc.NewPage();
                 }

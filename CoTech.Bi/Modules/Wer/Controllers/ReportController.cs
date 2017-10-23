@@ -53,13 +53,14 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         { 
             try
             {
-                var idUser = long.Parse(HttpContext.UserId().ToString());
-                var result = _reportRepository.GetReportSeensRecursive(idCompany, idUser);
+                var idUser = HttpContext.UserId().Value;
+                var result = _reportRepository.GetReportSeensRecursive(idCompany, idUser, null);
+                var uncreate = result;
                 return new ObjectResult(
                     new
                     {
                         pendings = result.Where(r => r.create).ToArray(),
-                        unexists = result.Where(r => !r.create).ToArray()
+                        unexists = uncreate.Where(r => !r.create).ToArray()
                     })
                 {
                     StatusCode = 200
@@ -177,6 +178,33 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 {
                     return StatusCode(500);
                 }
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {message = e.Message}){StatusCode = 500};
+            }
+        }
+        [HttpDelete("reports/{idReport}/files/{idFile}")]
+        public async Task<IActionResult> DeleteFileReport(long idCompany,[FromRoute(Name = "idFile")] long idFile)
+        {
+            try
+            {
+                var fileEntity = _filesRepository.DeleteById(idFile);
+                if (fileEntity != null)
+                {
+                    if (fileEntity == true)
+                    {
+                        return new OkObjectResult(new {message = "deleted"});
+                    }
+                    return new ObjectResult(new {message = "not deleted"})
+                    {
+                        StatusCode = 500
+                    };
+                }
+                return new ObjectResult(new { message = "not found"})
+                {
+                    StatusCode = 404
+                };
             }
             catch (Exception e)
             {
