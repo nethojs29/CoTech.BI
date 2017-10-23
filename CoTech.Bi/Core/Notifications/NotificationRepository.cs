@@ -53,7 +53,7 @@ namespace CoTech.Bi.Core.Notifications.Repositories
                 return false;
             }
             receiver.Read = true;
-            db.Add(notification);
+            db.Update(notification);
             await context.SaveChangesAsync();
             return true;
         }
