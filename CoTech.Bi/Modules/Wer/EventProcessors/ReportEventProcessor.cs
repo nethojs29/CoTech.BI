@@ -28,6 +28,7 @@ namespace CoTech.Bi.Modules.Wer.EventProcessors
                 entry.Cancel = true;
                 return;
             }
+            report.Updated = DateTime.Now;
             entry.Context.Entry(report).CurrentValues.SetValues(body);
         }
     }

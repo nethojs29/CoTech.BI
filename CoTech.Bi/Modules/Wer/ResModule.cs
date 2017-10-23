@@ -34,6 +34,7 @@ namespace CoTech.Bi.Modules.Wer
             services.AddScoped<ReportRepository>();
             services.AddScoped<FilesRepository>();
             services.AddScoped<ReplyRepository>();
+            services.AddScoped<NotificationsIOSRepository>();
             services.AddSingleton(new ReportEventProcessor());
             services.AddSingleton(new ReportNotifier());
         }
@@ -55,6 +56,8 @@ namespace CoTech.Bi.Modules.Wer
             modelBuilder.Entity<SeenMessagesEntity>().ToTable("Wer_Seen_Messages");
             
             modelBuilder.Entity<FileEntity>().ToTable("Wer_File");
+            
+            modelBuilder.Entity<IOSTokenEntity>().ToTable("Wer_Token_User");
             
         }
 

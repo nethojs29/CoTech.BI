@@ -85,35 +85,57 @@ namespace CoTech.Bi.Modules.Wer.Repositories
 
         public async Task<ReportEntity> SearchOrCreate(long idCompany, long idUser, long idWeek,long idCreator)
         {
-            var report = await db.Include(r => r.Seen).Include(r => r.User).Include(r => r.Files).Where(r => r.WeekId == idWeek && r.UserId == idUser && r.CompanyId == idCompany)
-                .FirstOrDefaultAsync();
-            if (report == null)
+            if (dbPermissionEntities.Count(p => p.CompanyId == idCompany && p.RoleId == 601 && p.UserId == idUser) > 0)
             {
-                report = new ReportEntity()
+                var report = await db.Include(r => r.Seen).Include(r => r.User).Include(r => r.Files).Where(r => r.WeekId == idWeek && r.UserId == idUser && r.CompanyId == idCompany)
+                    .FirstOrDefaultAsync();
+                if (report == null)
                 {
-                    CompanyId = idCompany,
-                    UserId = idUser,
-                    WeekId = idWeek
-                };
-                db.Add(report);
-                context.SaveChanges();
-                report.Seen = new List<SeenReportsEntity>();
-                report.Files = new List<FileEntity>();
-            }
-            if(report != null)
-                if (report.Id > 0 && !report.Seen.Exists(s => s.UserId == idCreator) && (!string.IsNullOrEmpty(report.Financial) || !string.IsNullOrEmpty(report.Operative)))
-                {
-                    dbSeenReportsEntities.Add(new SeenReportsEntity()
+                    report = new ReportEntity()
                     {
-                        Report = report,
-                        UserId = idCreator
-                    });
+                        CompanyId = idCompany,
+                        UserId = idUser,
+                        WeekId = idWeek
+                    };
+                    db.Add(report);
                     context.SaveChanges();
-                    var aux = db.Include(r => r.Seen).Include(r => r.User).Include(r => r.Files).FirstOrDefault(r=> r.Id == report.Id);
-                    report = aux;
-                    return report;
+                    report.Seen = new List<SeenReportsEntity>();
+                    report.Files = new List<FileEntity>();
                 }
-            return report;
+                if(report != null)
+                    if (report.Id > 0 && !report.Seen.Exists(s => s.UserId == idCreator) &&
+                        (!string.IsNullOrEmpty(report.Financial) || !string.IsNullOrEmpty(report.Operative)))
+                    {
+                        dbSeenReportsEntities.Add(new SeenReportsEntity()
+                        {
+                            Report = report,
+                            UserId = idCreator
+                        });
+                        context.SaveChanges();
+                        var aux = db.Include(r => r.Seen).Include(r => r.User).Include(r => r.Files)
+                            .FirstOrDefault(r => r.Id == report.Id);
+                        report = aux;
+                        return report;
+                    }
+                    else
+                    {
+                        var seen = report.Seen.FirstOrDefault(s => s.UserId == idCreator);
+                        if (seen != null)
+                        {
+                            context.Entry(seen).CurrentValues.SetValues(new SeenReportsEntity()
+                            {
+                                Id = seen.Id,
+                                UserId = seen.UserId,
+                                ReportId = seen.ReportId,
+                                SeenAt = DateTime.Now
+                            });
+                            context.SaveChanges();
+                            return report;
+                        }
+                    }
+                return report;
+            }
+            return null;
         }
 
         public Task<List<ReportEntity>> getAll()
@@ -333,7 +355,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                                 .FirstOrDefault();
                             if (report != null)
                             {
-                                if (string.IsNullOrEmpty(report.Financial) || string.IsNullOrEmpty(report.Operative))
+                                if (string.IsNullOrEmpty(report.Financial) && string.IsNullOrEmpty(report.Operative))
                                 {
                                     list.Add(new ReportPendingsResponse()
                                     {
@@ -354,6 +376,21 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                                         User = report.User.Name + " " + report.User.Lastname,
                                         create = true
                                     });
+                                }
+                                else
+                                {
+                                    var seen = report.Seen.First(see => see.UserId == idUser);
+                                    if (seen.SeenAt.Ticks < report.Updated.Ticks)
+                                    {
+                                        list.Add(new ReportPendingsResponse()
+                                        {
+                                            idWeek = report.WeekId,
+                                            idCompany = report.CompanyId,
+                                            idUser = report.UserId,
+                                            User = report.User.Name + " " + report.User.Lastname,
+                                            create = true
+                                        });
+                                    }
                                 }
                             }
                             else

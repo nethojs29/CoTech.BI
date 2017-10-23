@@ -79,8 +79,15 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 long idCreator = long.Parse(HttpContext.UserId().ToString());
                 var report =
                     await _reportRepository.SearchOrCreate(idCompany, idUser, idWeek,idCreator);
-                var reportResponse = new ReportResponse(report);
-                return new ObjectResult(reportResponse){StatusCode = 200};
+                if (report != null)
+                {
+                    var reportResponse = new ReportResponse(report);
+                    return new ObjectResult(reportResponse) {StatusCode = 200};
+                }
+                else
+                {
+                    return new NotFoundObjectResult(new {message = "No se encuentra reporte con datos especificados."});
+                }
             }
             catch (Exception e)
             {

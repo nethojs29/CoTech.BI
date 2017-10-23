@@ -8,9 +8,12 @@ using CoTech.Bi.Core.Notifications.Models;
 using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Entity;
+using CoTech.Bi.Modules.Wer.Controllers;
 using CoTech.Bi.Modules.Wer.Models.Entities;
 using CoTech.Bi.Modules.Wer.Models.Events;
 using CoTech.Bi.Modules.Wer.Models.Notifications;
+using CoTech.Bi.Modules.Wer.Models.Responses;
+using CoTech.Bi.Modules.Wer.Repositories;
 using EntityFrameworkCore.Rx;
 using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
@@ -27,10 +30,11 @@ namespace CoTech.Bi.Modules.Wer.Notifiers
 
         private void OnUpdated(IAfterEntry<EventEntity, BiContext> evt)
         {
+            var _notification = new NotificationsIOSRepository(evt.Context);
             var _dbNotification = evt.Context.Set<NotificationEntity>();
             var _dbReport = evt.Context.Set<ReportEntity>();
             var reportEvt = evt.Entity.Body as ReportUpdatedEvt;
-            var report = _dbReport.Find(reportEvt.Id);
+            var report = _dbReport.Include(r => r.Company).Include(r => r.Week).Include(r => r.User).First(r => r.Id == reportEvt.Id);
             var users = this.UserFromReport(evt.Context, report);
             _dbNotification.Add(new NotificationEntity()
             {
@@ -47,6 +51,11 @@ namespace CoTech.Bi.Modules.Wer.Notifiers
                     UserId = u
                 }).ToList()
             });
+            var message = "Se actualizó reporte de la empresa: " + report.Company.Name + " por el usuario: " +
+                          report.User.Name + " " + report.User.Lastname + " en la semana: " +
+                          report.Week.StartTime.ToString("dd MMM").ToUpper() + " al " +
+                          report.Week.EndTime.ToString("dd MMM yyyy").ToUpper();
+            _notification.SendNotification(users,message, report);
             evt.Context.SaveChanges();
         }
 
