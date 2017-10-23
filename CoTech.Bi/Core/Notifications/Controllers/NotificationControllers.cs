@@ -29,11 +29,23 @@ namespace CoTech.Bi.Core.Notifications.Controllers
                 var socket = await HttpContext.WebSockets.AcceptWebSocketAsync();
                 var userId = HttpContext.UserId().Value;
                 var notificationObs = notificationRepository.UserNotifications(userId);
-                var sender = new NotificationSender(socket);
+                var sender = new NotificationSender(socket, userId);
                 notificationObs.Subscribe(sender);
                 await sender.UntilWebsocketCloses();
             } else {
               HttpContext.Response.StatusCode = 400;
+            }
+        }
+
+        [HttpPost("{id}/read")]
+        [RequiresAuth]
+        public async Task<IActionResult> MarkAsRead(long id) {
+            long userId = HttpContext.UserId().Value;
+            var ok = await notificationRepository.MarkAsRead(id, userId);
+            if (ok) {
+                return Ok();
+            } else {
+                return BadRequest();
             }
         }
     }
@@ -41,8 +53,10 @@ namespace CoTech.Bi.Core.Notifications.Controllers
     public class NotificationSender : IObserver<NotificationEntity>
     {
         private WebSocket webSocket;
-        public NotificationSender(WebSocket socket){
+        private long userId;
+        public NotificationSender(WebSocket socket, long userId){
             this.webSocket = socket;
+            this.userId = userId;
         }
         public void OnCompleted()
         {
@@ -61,8 +75,8 @@ namespace CoTech.Bi.Core.Notifications.Controllers
 
         public async Task SendNext(NotificationEntity entity){
           if(webSocket.State == WebSocketState.Open){
-              
-              var json = JsonConvert.SerializeObject(new NotificationResponse(entity), JsonConverterOptions.JsonSettings);
+              var res = new NotificationResponse(entity, userId);
+              var json = JsonConvert.SerializeObject(res, JsonConverterOptions.JsonSettings);
               var bytes = Encoding.Unicode.GetBytes(json);
               var segment = new ArraySegment<byte>(bytes);
               await webSocket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
