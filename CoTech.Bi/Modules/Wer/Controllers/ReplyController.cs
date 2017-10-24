@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Wer.Models.Entities;
+using CoTech.Bi.Modules.Wer.Models.Requests;
 using CoTech.Bi.Modules.Wer.Repositories;
 using CoTech.Bi.Util;
 using Microsoft.AspNetCore.Mvc;
@@ -25,12 +26,20 @@ namespace CoTech.Bi.Modules.Wer.Controllers
 
         [HttpPost("reply/{type}/user/{idUser}")]
         [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
-        public async Task<IActionResult> CreateReply([FromRoute]long idCompany,[FromRoute] int type,[FromRoute] long idUser,[FromBody] MessageEntity message)
+        public async Task<IActionResult> CreateReply([FromRoute]long idCompany,[FromRoute] int type,[FromRoute] long idUser,[FromBody] MessageRequest message)
         {
             try
             {
-                var creator = long.Parse(this.HttpContext.UserId().ToString());
-                var values = await this._replyRepository.SearchOrCreateGroup(idCompany, idUser, creator, type, message);
+                var creator = HttpContext.UserId().Value;
+                var values =
+                    await _replyRepository.SearchOrCreateGroup(idCompany, idUser, creator, type,
+                        new MessageEntity()
+                        {
+                            Message = message.Message,
+                            Tags = message.Tags,
+                            UserId = creator,
+                            WeekId = message.WeekId
+                        });
                 if (values != null)
                 {
                     return BadRequest(new {message = "Imposible crear con datos especificados."});
@@ -82,7 +91,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
 
         public async Task SendNext(MessageEntity entity){
             if(webSocket.State == WebSocketState.Open){
-              
+                
                 var json = JsonConvert.SerializeObject(entity, JsonConverterOptions.JsonSettings);
                 var bytes = Encoding.Unicode.GetBytes(json);
                 var segment = new ArraySegment<byte>(bytes);

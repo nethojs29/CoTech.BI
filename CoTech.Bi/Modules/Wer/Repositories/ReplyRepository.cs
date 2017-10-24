@@ -85,12 +85,12 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             }
             else
             {
-                var groupList = _group.Where(g =>
+                var groupList = _group.FirstOrDefault(g =>
                     g.Category == type && g.CompanyId == company && g.UsersList.Exists(u => u.UserId == user) &&
-                    g.UsersList.Exists(u => u.UserId == creator)).ToList();
-                if (groupList.Count == 1)
+                    g.UsersList.Exists(u => u.UserId == creator));
+                if (groupList != null)
                 {
-                    message.GroupId = groupList[0].Id;
+                    message.GroupId = groupList.Id;
                     message.Seen = new List<SeenMessagesEntity>
                     {
                         new SeenMessagesEntity(){
@@ -100,7 +100,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     };
                     _Message.Add(message);
                     context.SaveChanges();
-                    return message;
+                    return _Message.Find(message.Id);
                 }
                 else
                 {
