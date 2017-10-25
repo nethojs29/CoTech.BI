@@ -49,12 +49,18 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         {
             try
             {
-
+                var creator = HttpContext.UserId().Value;
+                var party = _replyRepository.UpdateParty(idCompany, idUser, creator, type);
+                if (party != null)
+                {
+                    return new OkObjectResult(party);
+                }
+                return new ObjectResult(new {message = "no se encontro grupo de chat"}){StatusCode = 404};
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                return new ObjectResult(new {message = e.Message}){StatusCode = 500};
+
             }
         }
 

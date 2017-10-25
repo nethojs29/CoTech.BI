@@ -49,8 +49,8 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 .ToListAsync();
         }
 
-        public Task<PartyEntity> UpdateParty(long company, long user, long creator,
-            int type, MessageEntity message)
+        public PartyEntity UpdateParty(long company, long user, long creator,
+            int type)
         {
             var group = _group.Include(g => g.UsersList)
                 .Where( g=>
@@ -61,7 +61,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     g.CompanyId == company
                 );
             var usr = group.UsersList.FirstOrDefault(u => u.UserId == creator);
-            if (user != null)
+            if (usr != null)
             {
                 var aux = usr;
                 aux.DateIn = DateTime.Now;
