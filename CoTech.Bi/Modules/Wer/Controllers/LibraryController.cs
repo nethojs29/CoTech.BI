@@ -21,6 +21,7 @@ using iTextSharp;
 namespace CoTech.Bi.Modules.Wer.Controllers
 {
     [Route("/api/companies/{idCompany}/res")]
+    [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
     public class LibraryController : Controller
     {
         private readonly FilesRepository _filesRepository;
