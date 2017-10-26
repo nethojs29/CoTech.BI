@@ -3,7 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
+using CoTech.Bi.Modules.Wer.Models.Entities;
 using CoTech.Bi.Modules.Wer.Repositories;
+using CoTech.Bi.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -44,6 +46,56 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             this._tempDataProvider = tempDataProvider;
             this._serviceProvider = serviceProvider;
         }
+        [HttpPost("library/week/{idWeek}")]
+        [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
+        public async Task<IActionResult> PostLibrary([FromRoute]long idCompany, [FromRoute] long idWeek,
+            [FromForm(Name = "file")] IFormFile formFile)
+        {
+            try
+            {
+                if (formFile != null)
+                {
+                    var directory = Directory.GetCurrentDirectory()+ "/storage/wer/";
+                    if (!Directory.Exists(directory))
+                    {
+                        Directory.CreateDirectory(directory);
+                    }
+                    var filePath = directory + Guid.NewGuid() + Path.GetExtension(formFile.FileName);
+                    if (formFile.Length > 0)
+                    {
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await formFile.CopyToAsync(stream);
+                        }
+                    }
+                    var file = _filesRepository.createFile(new FileCompanyEntity()
+                    {
+                        Mime = MimeReader.GetMimeType(Path.GetExtension(formFile.FileName)),
+                        Name = formFile.FileName,
+                        Uri = filePath,
+                        Extension = Path.GetExtension(formFile.FileName),
+                        WeekId = idWeek,
+                        CompanyId = idCompany,
+                        UserId = HttpContext.UserId().Value
+                    });
+                    if (file != null)
+                    {
+                        return new ObjectResult(file){StatusCode = 201};
+                    }
+                    else
+                    {
+                        System.IO.File.Delete(filePath);
+                        return StatusCode(500);
+                    } 
+                }else 
+                    return new BadRequestResult();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                return StatusCode(500); // 500 is generic server error
+            }
+        }
         [HttpGet("library/week/{idWeek}")]
         [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
         public async Task<IActionResult> GetLibrary([FromRoute]long idCompany, [FromRoute] long idWeek)
@@ -51,7 +103,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             try
             {
                 return new ObjectResult(
-                    await this._filesRepository.GetLibrary(idCompany,idWeek)
+                     this._filesRepository.GetLibrary(idCompany,idWeek)
                 ) {StatusCode = 200};
             }
             catch (Exception e)
@@ -68,7 +120,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             try
             {
                 return new ObjectResult(
-                    await this._filesRepository.GetLibraryCompany(idCompany)
+                    this._filesRepository.GetLibraryCompany(idCompany)
                 ) {StatusCode = 200};
             }
             catch (Exception e)

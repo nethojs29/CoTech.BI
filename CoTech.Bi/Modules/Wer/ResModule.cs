@@ -47,6 +47,8 @@ namespace CoTech.Bi.Modules.Wer
             
             modelBuilder.Entity<FileEntity>().ToTable("Wer_File");
             
+            modelBuilder.Entity<FileCompanyEntity>().ToTable("Wer_File_Company");
+            
             modelBuilder.Entity<PartyEntity>().ToTable("Wer_Party");
             
             modelBuilder.Entity<GroupEntity>().ToTable("Wer_Groups");
