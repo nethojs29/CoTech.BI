@@ -29,6 +29,7 @@ namespace CoTech.Bi.Core.Notifications.Repositories
                 var myNotifs = await db
                     .Where(n => n.Receivers.Any(u => u.UserId == userId))
                     .Include(n => n.Receivers)
+                    .OrderByDescending(n => n.CreatedAt)
                     .ToListAsync();
                 myNotifs.ForEach(n => observable.OnNext(n));
                 observable.OnCompleted();
