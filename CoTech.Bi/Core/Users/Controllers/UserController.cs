@@ -28,6 +28,13 @@ namespace CoTech.Bi.Core.Users.Controllers {
       return new OkObjectResult(users.Select(u => new UserResponse(u)));
     }
 
+    [HttpGet("{user}")]
+    [RequiresAbsoluteRoleAnywhere(Role.Super, Role.Admin)]
+      public async Task<IActionResult> GetUserInCompany(long company, long user) {
+          var userEntity = await userRepository.WithId(user);
+          return Ok(userEntity);
+    }
+
     [HttpPost]
     [RequiresRoot]
     public async Task<IActionResult> Create([FromBody] CreateUserReq req){

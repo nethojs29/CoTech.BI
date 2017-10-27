@@ -11,8 +11,8 @@ using System;
 namespace CoTech.Bi.Migrations
 {
     [DbContext(typeof(BiContext))]
-    [Migration("20171006002759_Seedv1")]
-    partial class Seedv1
+    [Migration("20171024192216_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -843,6 +843,22 @@ namespace CoTech.Bi.Migrations
                     b.ToTable("Wer_Groups");
                 });
 
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.IOSTokenEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Token");
+
+                    b.Property<long>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Wer_Token_User");
+                });
+
             modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.MessageEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -854,13 +870,19 @@ namespace CoTech.Bi.Migrations
 
                     b.Property<string>("Message");
 
+                    b.Property<string>("Tags");
+
                     b.Property<long>("UserId");
+
+                    b.Property<long>("WeekId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("WeekId");
 
                     b.ToTable("Wer_Messages");
                 });
@@ -884,7 +906,7 @@ namespace CoTech.Bi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PartyEntity");
+                    b.ToTable("Wer_Party");
                 });
 
             modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.ReportEntity", b =>
@@ -899,6 +921,8 @@ namespace CoTech.Bi.Migrations
                     b.Property<string>("Observation");
 
                     b.Property<string>("Operative");
+
+                    b.Property<DateTime>("Updated");
 
                     b.Property<long>("UserId");
 
@@ -1347,6 +1371,14 @@ namespace CoTech.Bi.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.IOSTokenEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.MessageEntity", b =>
                 {
                     b.HasOne("CoTech.Bi.Modules.Wer.Models.Entities.GroupEntity", "Group")
@@ -1357,6 +1389,11 @@ namespace CoTech.Bi.Migrations
                     b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Modules.Wer.Models.Entities.WeekEntity", "Week")
+                        .WithMany()
+                        .HasForeignKey("WeekId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

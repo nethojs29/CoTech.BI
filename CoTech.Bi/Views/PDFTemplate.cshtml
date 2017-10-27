@@ -1,0 +1,37 @@
+@using System.Linq
+@model CoTech.Bi.Modules.Wer.Models.Responses.ReportPdfResponse[]
+@{ 
+    Layout = "_PDFLayout";
+}
+
+@{
+    <h1 style="font-size: 10mm;text-align: center;">Reporte Empresarial Semanal</h1>
+    <h2 style="font-size: 8mm;text-align: center;">@Model.First().StarTime.ToString("dd/MM/yyyy")  -  @Model.First().EndTime.ToString("dd/MM/yyyy")</h2>
+    var currentCom = "";
+    var space = "___________________________________";
+    foreach (var item in this.Model)
+    {
+        if (!string.IsNullOrEmpty(item.Color))
+        {
+            if (currentCom != item.Company)
+            {
+                if (!currentCom.Equals(""))
+                {
+                    <h5 style="font-size: 4mm; text-align: right;">Semana: @item.StarTime.ToString("dd/MM/yyyy")  -  @item.EndTime.ToString("dd/MM/yyyy")</h5>
+                }
+                <h1 style="font-size: 8mm; text-align: center;">Empresa: @item.Company</h1>
+                <h1 style="color: #@item.Color;font-size: 10mm; text-align: center;">@space</h1>
+                
+            }
+            <h2 style="font-size: 8mm; text-align: center;">@item.User</h2>
+            <h3 style="font-size: 6mm; text-align: left;">Operativo:</h3>
+            <p style="font-size: 6mm;">@item.Operative</p>
+            <h3 style="font-size: 6mm; text-align: left;">Financiero:</h3>
+            <p style="font-size: 6mm;">@item.Finantial</p>
+            <h3 style="font-size: 6mm; text-align: left;">Observaciones:</h3>
+            <p style="font-size: 6mm;">@item.Observations</p>
+            
+            currentCom = item.Company;
+        }
+    }
+}

@@ -11,9 +11,10 @@ using System;
 namespace CoTech.Bi.Migrations
 {
     [DbContext(typeof(BiContext))]
-    partial class BiContextModelSnapshot : ModelSnapshot
+    [Migration("20171024192507_Seedv1")]
+    partial class Seedv1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -798,36 +799,6 @@ namespace CoTech.Bi.Migrations
                     b.ToTable("SmallBox");
                 });
 
-            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.FileCompanyEntity", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<long>("CompanyId");
-
-                    b.Property<string>("Extension");
-
-                    b.Property<string>("Mime");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("Uri");
-
-                    b.Property<long>("UserId");
-
-                    b.Property<long>("WeekId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("WeekId");
-
-                    b.ToTable("Wer_File_Company");
-                });
-
             modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.FileEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -1377,24 +1348,6 @@ namespace CoTech.Bi.Migrations
                     b.HasOne("CoTech.Bi.Modules.Providers.Models.ProviderEntity", "Provider")
                         .WithMany()
                         .HasForeignKey("ProviderId");
-                });
-
-            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.FileCompanyEntity", b =>
-                {
-                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CoTech.Bi.Modules.Wer.Models.Entities.WeekEntity", "Week")
-                        .WithMany()
-                        .HasForeignKey("WeekId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.FileEntity", b =>

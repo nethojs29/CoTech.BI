@@ -433,6 +433,7 @@ namespace CoTech.Bi.Migrations
                     Financial = table.Column<string>(type: "longtext", nullable: true),
                     Observation = table.Column<string>(type: "longtext", nullable: true),
                     Operative = table.Column<string>(type: "longtext", nullable: true),
+                    Updated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
                     WeekId = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -559,34 +560,6 @@ namespace CoTech.Bi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PartyEntity",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    DateIn = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    DateOut = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    GroupId = table.Column<long>(type: "bigint", nullable: false),
-                    UserId = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PartyEntity", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PartyEntity_Wer_Groups_GroupId",
-                        column: x => x.GroupId,
-                        principalTable: "Wer_Groups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PartyEntity_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "RootUsers",
                 columns: table => new
                 {
@@ -614,7 +587,9 @@ namespace CoTech.Bi.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     GroupId = table.Column<long>(type: "bigint", nullable: false),
                     Message = table.Column<string>(type: "longtext", nullable: true),
-                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                    Tags = table.Column<string>(type: "longtext", nullable: true),
+                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    WeekId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -627,6 +602,40 @@ namespace CoTech.Bi.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Wer_Messages_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Wer_Messages_Wer_Weeks_WeekId",
+                        column: x => x.WeekId,
+                        principalTable: "Wer_Weeks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Wer_Party",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DateIn = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DateOut = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    GroupId = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wer_Party", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Wer_Party_Wer_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Wer_Groups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Wer_Party_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -654,6 +663,26 @@ namespace CoTech.Bi.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Wer_Seen_Reports_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Wer_Token_User",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Token = table.Column<string>(type: "longtext", nullable: true),
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wer_Token_User", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Wer_Token_User_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -901,16 +930,6 @@ namespace CoTech.Bi.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PartyEntity_GroupId",
-                table: "PartyEntity",
-                column: "GroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PartyEntity_UserId",
-                table: "PartyEntity",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Permissions_CompanyId",
                 table: "Permissions",
                 column: "CompanyId");
@@ -1063,6 +1082,21 @@ namespace CoTech.Bi.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Wer_Messages_WeekId",
+                table: "Wer_Messages",
+                column: "WeekId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wer_Party_GroupId",
+                table: "Wer_Party",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wer_Party_UserId",
+                table: "Wer_Party",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Wer_Reports_CompanyId",
                 table: "Wer_Reports",
                 column: "CompanyId");
@@ -1095,6 +1129,11 @@ namespace CoTech.Bi.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Wer_Seen_Reports_UserId",
                 table: "Wer_Seen_Reports",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wer_Token_User_UserId",
+                table: "Wer_Token_User",
                 column: "UserId");
 
             migrationBuilder.AddForeignKey(
@@ -1585,9 +1624,6 @@ namespace CoTech.Bi.Migrations
                 name: "Notification_Receivers");
 
             migrationBuilder.DropTable(
-                name: "PartyEntity");
-
-            migrationBuilder.DropTable(
                 name: "Permissions");
 
             migrationBuilder.DropTable(
@@ -1603,10 +1639,16 @@ namespace CoTech.Bi.Migrations
                 name: "Wer_File");
 
             migrationBuilder.DropTable(
+                name: "Wer_Party");
+
+            migrationBuilder.DropTable(
                 name: "Wer_Seen_Messages");
 
             migrationBuilder.DropTable(
                 name: "Wer_Seen_Reports");
+
+            migrationBuilder.DropTable(
+                name: "Wer_Token_User");
 
             migrationBuilder.DropTable(
                 name: "ExpensesGroups");
