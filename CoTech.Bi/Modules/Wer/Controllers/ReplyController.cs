@@ -42,6 +42,24 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
         }
 
+        [HttpGet("groups/{idGroup}/messages/{idMessage}/count/{count}")]
+        [RequiresRole(WerRoles.Ceo, WerRoles.Director, WerRoles.Operator)]
+        public async Task<IActionResult> GetMessages(long idCompany, long idGroup, long idMessage, int count)
+        {
+            try
+            {
+                var messages = _replyRepository.GetMessage(HttpContext.UserId().Value, idGroup, idMessage, count);
+                return new ObjectResult(await messages)
+                {
+                    StatusCode = 200
+                };
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {message = e.Message}){StatusCode = 500};
+            }
+        }
+
         [HttpGet("reply/{type}/user/{idUser}")]
         [RequiresRole(WerRoles.Ceo, WerRoles.Director, WerRoles.Operator)]
         public async Task<IActionResult> UpdateParty([FromRoute] long idCompany, [FromRoute] int type,
@@ -53,7 +71,9 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 var party = _replyRepository.UpdateParty(idCompany, idUser, creator, type);
                 if (party != null)
                 {
-                    return new OkObjectResult(party);
+                    return new OkObjectResult(
+                        new GroupResponse(party.Group)
+                        );
                 }
                 return new ObjectResult(new {message = "no se encontro grupo de chat"}){StatusCode = 404};
             }

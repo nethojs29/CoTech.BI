@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CoTech.Bi.Core.Notifications.Models;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Modules.Wer.Models.Entities;
+using CoTech.Bi.Modules.Wer.Models.Responses;
 using EntityFrameworkCore.Rx;
 using Microsoft.EntityFrameworkCore;
 
@@ -49,6 +50,15 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 .ToListAsync();
         }
 
+        public Task<List<MessageResponse>> GetMessage(long user,long idGroup, long idMessage, int count)
+        {
+            return _Message.Include(m => m.User).Include(m => m.Group).ThenInclude(g => g.User)
+                .Where(m => m.Group.UsersList.Any(u => u.UserId == user))
+                .Where(m => m.GroupId == idGroup && m.Id < count).Select(m => new MessageResponse(m))
+                .OrderByDescending(m => m.Id)
+                .ToListAsync();
+        }
+
         public PartyEntity UpdateParty(long company, long user, long creator,
             int type)
         {
@@ -63,11 +73,14 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             var usr = group.UsersList.FirstOrDefault(u => u.UserId == creator);
             if (usr != null)
             {
-                var aux = usr;
+                var entity = _party.Include(g => g.Group)
+                    .ThenInclude(g => g.UsersList).ThenInclude(p => p.User)
+                    .First(u => u.Id == usr.Id);
+                var aux = entity;
                 aux.DateIn = DateTime.Now;
-                context.Entry(usr).CurrentValues.SetValues(aux);
+                context.Entry(entity).CurrentValues.SetValues(aux);
                 context.SaveChanges();
-                return usr;
+                return entity;
             }
             return null;
         }
