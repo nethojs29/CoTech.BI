@@ -11,6 +11,7 @@ namespace CoTech.Bi.Core.Notifications.Models
         public string Type { get; set; }
         public object Body { get; set; }
         public bool Seen { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public NotificationResponse(NotificationEntity entity, long userId){
             Id = entity.Id;
@@ -18,6 +19,7 @@ namespace CoTech.Bi.Core.Notifications.Models
             Type = entity.Body.GetType().ToString();
             Body = entity.Body;
             Seen = entity.Receivers.First(r => r.UserId == userId).Read;
+            CreatedAt = entity.CreatedAt;
         }
     }
 }
