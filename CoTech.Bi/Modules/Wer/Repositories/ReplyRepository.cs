@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CoTech.Bi.Core.Notifications.Models;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Modules.Wer.Models.Entities;
+using CoTech.Bi.Modules.Wer.Models.Responses;
 using EntityFrameworkCore.Rx;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,11 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             get { return context.Set<GroupEntity>(); }
         }
         
+        private DbSet<PartyEntity> _party
+        {
+            get { return context.Set<PartyEntity>(); }
+        }
+        
         public ReplyRepository(BiContext context){
             this.context = context;
         }
@@ -36,11 +42,54 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             return obs;
         }
 
+        public Task<List<GroupEntity>> SearchGroups(long user)
+        {
+            return _group.Include(g => g.UsersList)
+                .ThenInclude(u => u.User)
+                .Where(g => g.UsersList.Any(u => u.UserId == user))
+                .ToListAsync();
+        }
+
+        public Task<List<MessageResponse>> GetMessage(long user,long idGroup, long idMessage, int count)
+        {
+            return _Message.Include(m => m.User).Include(m => m.Group).ThenInclude(g => g.User)
+                .Where(m => m.Group.UsersList.Any(u => u.UserId == user))
+                .Where(m => m.GroupId == idGroup && m.Id < count).Select(m => new MessageResponse(m))
+                .OrderByDescending(m => m.Id)
+                .ToListAsync();
+        }
+
+        public PartyEntity UpdateParty(long company, long user, long creator,
+            int type)
+        {
+            var group = _group.Include(g => g.UsersList)
+                .Where( g=>
+                    g.UsersList.Any(u => u.UserId == user) &&
+                    g.UsersList.Any(u => u.UserId == creator))
+                .FirstOrDefault( g => 
+                    g.Category == type && 
+                    g.CompanyId == company
+                );
+            var usr = group.UsersList.FirstOrDefault(u => u.UserId == creator);
+            if (usr != null)
+            {
+                var entity = _party.Include(g => g.Group)
+                    .ThenInclude(g => g.UsersList).ThenInclude(p => p.User)
+                    .First(u => u.Id == usr.Id);
+                var aux = entity;
+                aux.DateIn = DateTime.Now;
+                context.Entry(entity).CurrentValues.SetValues(aux);
+                context.SaveChanges();
+                return entity;
+            }
+            return null;
+        }
+
         public async Task<MessageEntity> SearchOrCreateGroup(long company, long user, long creator,
             int type, MessageEntity message){
-            if (_group.Count(g =>
-                    g.Category == type && g.CompanyId == company && g.UsersList.Exists(u => u.UserId == user) &&
-                    g.UsersList.Exists(u => u.UserId == creator)) == 0)
+            if (_group.Include(g => g.UsersList).Where(g => g.UsersList.Any(u => u.UserId == creator) &&
+                    g.UsersList.Any(u => u.UserId == user)).Any(g =>
+                g.Category == type && g.CompanyId == company) == false)
             {
                 var group = new GroupEntity()
                 {
@@ -85,9 +134,14 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             }
             else
             {
-                var groupList = _group.FirstOrDefault(g =>
-                    g.Category == type && g.CompanyId == company && g.UsersList.Exists(u => u.UserId == user) &&
-                    g.UsersList.Exists(u => u.UserId == creator));
+                var groupList = _group.Include(g => g.UsersList)
+                    .Where( g=>
+                        g.UsersList.Any(u => u.UserId == user) &&
+                        g.UsersList.Any(u => u.UserId == creator))
+                    .FirstOrDefault( g => 
+                    g.Category == type && 
+                    g.CompanyId == company
+                    );
                 if (groupList != null)
                 {
                     message.GroupId = groupList.Id;
@@ -100,7 +154,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     };
                     _Message.Add(message);
                     context.SaveChanges();
-                    return _Message.Find(message.Id);
+                    return message;
                 }
                 else
                 {

@@ -18,9 +18,17 @@ namespace CoTech.Bi.Modules.Wer.Repositories
         {
             get { return this._context.Set<FileEntity>(); }
         }
+        private DbSet<FileCompanyEntity> _dbFilesCompanies
+        {
+            get { return this._context.Set<FileCompanyEntity>(); }
+        }
         private DbSet<ReportEntity> _dbReports
         {
             get { return this._context.Set<ReportEntity>(); }
+        }
+        private DbSet<WeekEntity> _dbWeeks
+        {
+            get { return this._context.Set<WeekEntity>(); }
         }
 
         public FilesRepository(BiContext biContext)
@@ -59,9 +67,23 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             return null;
         }
 
-        public Task<List<LibraryResponse>> GetLibrary(long idCompany,long idWeek)
+        public FileCompanyEntity createFile(FileCompanyEntity file)
         {
-            return _dbFiles.Where(
+            if (_dbWeeks.Any(w => w.Id == file.WeekId))
+            {
+                _dbFilesCompanies.Add(file);
+                _context.SaveChanges();
+                return file;
+            }
+            return null;
+        }
+
+        public List<LibraryResponse> GetLibrary(long idCompany,long idWeek)
+        {
+            var files = _dbFiles
+                .Include(f => f.Report)
+                .ThenInclude(f => f.User)
+                .Where(
                 f => f.Report.CompanyId == idCompany &&
                      f.Report.WeekId == idWeek
             ).OrderByDescending(f => f.Report.Week.EndTime).Select(
@@ -76,13 +98,35 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                         EndTime = data.Report.Week.EndTime,
                         StartTime = data.Report.Week.StartTime,
                         Type = data.Type,
-                        Mime = data.Mime
+                        Mime = data.Mime,
+                        Username = data.Report.User.Name,
+                        Userlastname = data.Report.User.Lastname
                     }
-            ).ToListAsync();
+            ).ToList();
+            var filesCompanies = _dbFilesCompanies.Where(f => f.CompanyId == idCompany && f.WeekId == idWeek)
+                .OrderByDescending(f => f.Week.EndTime)
+                .Select(data => new LibraryResponse()
+                {
+                    Id = data.Id,
+                    ReportId = 0,
+                    WeekId = data.WeekId,
+                    UserId = data.UserId,
+                    Name = data.Name,
+                    EndTime = data.Week.EndTime,
+                    StartTime = data.Week.StartTime,
+                    Mime = data.Mime,
+                    Username = data.User.Name,
+                    Userlastname = data.User.Lastname,
+                    Type = 2
+                }).ToList();
+            return files.Concat(filesCompanies).ToList();
         }
-        public Task<List<LibraryResponse>> GetLibraryCompany(long idCompany)
+        public List<LibraryResponse> GetLibraryCompany(long idCompany)
         {
-            return _dbFiles.Where(
+            var files =  _dbFiles
+                .Include(f => f.Report)
+                .ThenInclude(f => f.User)
+                .Where(
                 f => f.Report.CompanyId == idCompany)
                 .OrderByDescending(f => f.Report.Week.EndTime).Select(
                 data =>
@@ -96,9 +140,28 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                         EndTime = data.Report.Week.EndTime,
                         StartTime = data.Report.Week.StartTime,
                         Type = data.Type,
-                        Mime = data.Mime
+                        Mime = data.Mime,
+                        Username = data.Report.User.Name,
+                        Userlastname = data.Report.User.Lastname
                     }
-            ).ToListAsync();
+            ).ToList();
+            var filesCompanies = _dbFilesCompanies.Where(f => f.CompanyId == idCompany)
+                .OrderByDescending(f => f.Week.EndTime)
+                .Select(data => new LibraryResponse()
+                {
+                    Id = data.Id,
+                    ReportId = 0,
+                    WeekId = data.WeekId,
+                    UserId = data.UserId,
+                    Name = data.Name,
+                    EndTime = data.Week.EndTime,
+                    StartTime = data.Week.StartTime,
+                    Mime = data.Mime,
+                    Username = data.User.Name,
+                    Userlastname = data.User.Lastname,
+                    Type = 2
+                }).ToList();
+            return files.Concat(filesCompanies).ToList();
         }
         
     }
