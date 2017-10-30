@@ -52,7 +52,7 @@ namespace CoTech.Bi.Core.Companies.Repositories
                 .Include(c => c.Modules)
                 .ToListAsync();
               children.ForEach(child => {
-                permissions.Append(new PermissionEntity { 
+                permissions.Add(new PermissionEntity { 
                   CompanyId = child.Id,
                   RoleId = 1,
                   UserId = userId
@@ -61,7 +61,7 @@ namespace CoTech.Bi.Core.Companies.Repositories
               companies.AddRange(children);
             }
           }
-          return companies.Distinct().ToList();
+          return companies.Distinct().Where(c => c != null).ToList();
         }
 
         public Task<CompanyEntity> WithId(long id) {
