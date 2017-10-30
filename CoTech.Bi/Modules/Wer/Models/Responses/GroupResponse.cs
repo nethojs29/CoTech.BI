@@ -12,6 +12,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
         public long CompanyId { set; get; }
         public int Type { set; get; }
         public List<PartyResponse> Party { set; get; }
+        public List<MessageResponse> messages { set; get; } = new List<MessageResponse>();
 
         public GroupResponse(GroupEntity entity)
         {
@@ -20,6 +21,15 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
             this.Type = entity.Category;
             this.CompanyId = entity.CompanyId;
             this.Party = entity.UsersList.Select(u => new PartyResponse(u)).ToList();
+        }
+        public GroupResponse(GroupEntity entity,List<MessageResponse> messages)
+        {
+            this.Id = entity.Id;
+            this.UserId = entity.UserId;
+            this.Type = entity.Category;
+            this.CompanyId = entity.CompanyId;
+            this.Party = entity.UsersList.Select(u => new PartyResponse(u)).ToList();
+            this.messages = messages;
         }
     }
 

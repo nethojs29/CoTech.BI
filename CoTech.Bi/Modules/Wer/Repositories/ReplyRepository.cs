@@ -9,6 +9,8 @@ using CoTech.Bi.Modules.Wer.Models.Entities;
 using CoTech.Bi.Modules.Wer.Models.Responses;
 using EntityFrameworkCore.Rx;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Remotion.Linq.Clauses;
 
 namespace CoTech.Bi.Modules.Wer.Repositories
 {
@@ -28,6 +30,11 @@ namespace CoTech.Bi.Modules.Wer.Repositories
         private DbSet<PartyEntity> _party
         {
             get { return context.Set<PartyEntity>(); }
+        }
+        
+        private DbSet<SeenMessagesEntity> _seen
+        {
+            get { return context.Set<SeenMessagesEntity>(); }
         }
         
         public ReplyRepository(BiContext context){
@@ -70,19 +77,60 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     g.Category == type && 
                     g.CompanyId == company
                 );
-            var usr = group.UsersList.FirstOrDefault(u => u.UserId == creator);
-            if (usr != null)
+            if (group != null)
             {
-                var entity = _party.Include(g => g.Group)
-                    .ThenInclude(g => g.UsersList).ThenInclude(p => p.User)
-                    .First(u => u.Id == usr.Id);
-                var aux = entity;
-                aux.DateIn = DateTime.Now;
-                context.Entry(entity).CurrentValues.SetValues(aux);
-                context.SaveChanges();
-                return entity;
+                var usr = group.UsersList.FirstOrDefault(u => u.UserId == creator);
+                if (usr != null)
+                {
+                    var entity = _party.Include(g => g.Group)
+                        .ThenInclude(g => g.UsersList).ThenInclude(p => p.User)
+                        .First(u => u.Id == usr.Id);
+                    var aux = entity;
+                    aux.DateIn = DateTime.Now;
+                    context.Entry(entity).CurrentValues.SetValues(aux);
+                    context.SaveChanges();
+                    return entity;
+                }
             }
             return null;
+        }
+
+        public List<MessageResponse> messagesNotView(long user, long group)
+        {
+            var party = _party.FirstOrDefault(p => p.UserId == user && p.GroupId == group);
+            if (party != null)
+            {
+                var message = _Message
+                        .Include(m => m.Seen)
+                    .Include(m => m.Group)
+                    .Include(m => m.User)
+                    .Where(m => m.CreatedAt.Ticks >= party.DateIn.Ticks && m.GroupId == group)
+                    .Select(m => new MessageResponse(m))
+                    .ToList();
+                return message;
+            }
+            return null;
+        }
+
+        public void UpdateViewMessage(MessageEntity msg,long iduser)
+        {
+            try
+            {
+                if (_Message.Include(m => m.Seen).Any(m => m.Id == msg.Id && m.Seen.Any(s => s.UserId == iduser)) == false)
+                {
+                    _seen.Add(new SeenMessagesEntity()
+                    {
+                        UserId = iduser,
+                        MessageId = msg.Id
+                    });
+                    context.SaveChanges();
+                }
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         public async Task<MessageEntity> SearchOrCreateGroup(long company, long user, long creator,

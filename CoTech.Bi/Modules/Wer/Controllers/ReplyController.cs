@@ -69,11 +69,18 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             {
                 var creator = HttpContext.UserId().Value;
                 var party = _replyRepository.UpdateParty(idCompany, idUser, creator, type);
-                if (party != null)
+                if (party != null)    
                 {
+                    var message = _replyRepository.messagesNotView(creator, party.GroupId);
+                    if (message != null)
+                    {
+                        return new OkObjectResult(
+                            new GroupResponse(party.Group, message)
+                        );
+                    }
                     return new OkObjectResult(
                         new GroupResponse(party.Group)
-                        );
+                    );
                 }
                 return new ObjectResult(new {message = "no se encontro grupo de chat"}){StatusCode = 404};
             }
@@ -123,7 +130,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     var socket = await HttpContext.WebSockets.AcceptWebSocketAsync();
                     var userId = HttpContext.UserId().Value;
                     var messagesObs = _replyRepository.UserMessages(userId);
-                    var sender = new MessagesSender(socket);
+                    var sender = new MessagesSender(socket, userId,_replyRepository);
                     messagesObs.Subscribe(sender);
                     await sender.UntilWebsocketCloses();
                 }
@@ -144,8 +151,12 @@ namespace CoTech.Bi.Modules.Wer.Controllers
     public class MessagesSender : IObserver<MessageEntity>
     {
         private WebSocket webSocket;
-        public MessagesSender(WebSocket socket){
+        private long userId;
+        private ReplyRepository _reply;
+        public MessagesSender(WebSocket socket,long idUser, ReplyRepository _repo){
             this.webSocket = socket;
+            this.userId = idUser;
+            this._reply = _repo;
         }
         public void OnCompleted()
         {
@@ -182,6 +193,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             try
             {
                 if(webSocket.State == WebSocketState.Open){
+                    this._reply.UpdateViewMessage(entity,this.userId);
                     var res = new MessageResponse(entity);
                     var json = JsonConvert.SerializeObject(res, JsonConverterOptions.JsonSettings);
                     var bytes = Encoding.Unicode.GetBytes(json);
