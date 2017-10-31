@@ -21,10 +21,10 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
             return new OkObjectResult(await budgetRepo.getFromYear(year, idCompany));
         }
 
-        [HttpGet("limit/{groupId}")]
-        public async Task<IActionResult> getLimit(long groupId){
-            var totalBudgetExpenses = await budgetRepo.getAllByGroup(groupId);
-            var totalSpend = await expenseRepo.getAllApprovedExpensesByGroup(groupId);
+        [HttpGet("limit/{typeId}/{year}")]
+        public async Task<IActionResult> getLimit(long typeId, int year){
+            var totalBudgetExpenses = await budgetRepo.getAllByGroup(typeId, year);
+            var totalSpend = await expenseRepo.getAllApprovedExpensesByGroup(typeId, year);
 
             var t = totalBudgetExpenses.Select( b => b.Amount).Aggregate((a, b) => a + b);
             var s = 0.0;

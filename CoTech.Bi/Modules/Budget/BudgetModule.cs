@@ -19,10 +19,12 @@ namespace CoTech.Bi.Modules.Budget{
 
         public void ConfigureServices(IServiceCollection services){
             services.AddScoped<BudgetRepository>();
+            services.AddScoped<BudgetConceptRepository>();
         }
 
         public void ConfigureEntities(ModelBuilder modelBuilder){
             modelBuilder.Entity<BudgetEntity>().ToTable("Budgets");
+            modelBuilder.Entity<BudgetConceptEntity>().ToTable("Budget_Concepts");
         }
 
         public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager){

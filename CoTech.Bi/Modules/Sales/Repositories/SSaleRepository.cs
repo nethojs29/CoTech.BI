@@ -19,7 +19,7 @@ namespace CoTech.Bi.Modules.Sales.Repositories{
         }
 
         public Task<List<SSaleEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).ToListAsync();
+            return db.Where(p => !p.DeletedAt.HasValue).Include(p => p.Client).ToListAsync();
         }
 
         public Task<SSaleEntity> WithId(long id){

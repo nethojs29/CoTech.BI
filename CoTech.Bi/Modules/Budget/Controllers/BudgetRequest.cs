@@ -7,7 +7,7 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
     public class CreateBudgetReq : BudgetRequest{
         public int Month{ set; get; }
         public int Year{ set; get; }
-        public long ExpenseGroupId{ set; get; }
+        public long ExpenseTypeId{ set; get; }
         public int Type{ set; get; }
         public float Amount{ set; get; }
         public long CompanyId{ set; get; }
@@ -17,7 +17,7 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
                 Month = Month,
                 Year = Year,
                 Amount = Amount,
-                ExpenseGroupId = ExpenseGroupId,
+                ExpenseTypeId = ExpenseTypeId,
                 Type = Type,
                 CompanyId = CompanyId,
                 CreatedAt = DateTime.Now,
