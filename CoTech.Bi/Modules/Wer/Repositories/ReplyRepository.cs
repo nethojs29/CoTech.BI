@@ -59,9 +59,21 @@ namespace CoTech.Bi.Modules.Wer.Repositories
 
         public Task<List<MessageResponse>> GetMessage(long user,long idGroup, long idMessage, int count)
         {
+            if (idMessage == 0)
+            {
+                return _Message.Include(m => m.User).Include(m => m.Group).ThenInclude(g => g.User)
+                    .Where(m => m.Group.UsersList.Any(u => u.UserId == user))
+                    .Where(m => m.GroupId == idGroup)
+                    .Take(count)
+                    .Select(m => new MessageResponse(m))
+                    .OrderByDescending(m => m.Id)
+                    .ToListAsync();
+            }
             return _Message.Include(m => m.User).Include(m => m.Group).ThenInclude(g => g.User)
                 .Where(m => m.Group.UsersList.Any(u => u.UserId == user))
-                .Where(m => m.GroupId == idGroup && m.Id < count).Select(m => new MessageResponse(m))
+                .Where(m => m.GroupId == idGroup && m.Id < idMessage)
+                .Take(count)
+                .Select(m => new MessageResponse(m))
                 .OrderByDescending(m => m.Id)
                 .ToListAsync();
         }

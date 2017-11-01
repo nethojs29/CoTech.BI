@@ -45,9 +45,10 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
         }
 
-        [HttpGet("groups/{idGroup}/messages/{idMessage}/count/{count}")]
+        [HttpGet("groups/{idGroup}?idMessage&count")]
         [RequiresRole(WerRoles.Ceo, WerRoles.Director, WerRoles.Operator)]
-        public async Task<IActionResult> GetMessages(long idCompany, long idGroup, long idMessage, int count)
+        public async Task<IActionResult> GetMessages([FromRoute] long idCompany,[FromRoute] long idGroup,
+            [FromQuery] long idMessage = 0,[FromQuery] int count = 30)
         {
             try
             {
