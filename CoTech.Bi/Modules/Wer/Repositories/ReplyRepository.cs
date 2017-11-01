@@ -173,7 +173,13 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     };
                     _Message.Add(message);
                     context.SaveChanges();
-                    return message;
+                    return _Message
+                        .Include(m => m.Group)
+                        .ThenInclude(g => g.UsersList)
+                        .Include(m => m.User)
+                        .Include(m => m.Seen)
+                        .ThenInclude(s => s.User)
+                        .First(m => m.Id == message.Id);
                 }
                 else
                 {
@@ -202,7 +208,13 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     };
                     _Message.Add(message);
                     context.SaveChanges();
-                    return message;
+                    return _Message
+                        .Include(m => m.Group)
+                        .ThenInclude(g => g.UsersList)
+                        .Include(m => m.User)
+                        .Include(m => m.Seen)
+                        .ThenInclude(s => s.User)
+                        .First(m => m.Id == message.Id);
                 }
                 else
                 {

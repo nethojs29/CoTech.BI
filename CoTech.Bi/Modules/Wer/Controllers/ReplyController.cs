@@ -117,7 +117,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 var response = new MessageResponse(values);
                 string messageString = values.User.Name + " " + values.User.Lastname + ": " + response.Message; 
                 var userNotify = new List<long>(){idUser,creator};
-                _notifications.SendNotification(userNotify,messageString,response);
+                _notifications.SendNotification(userNotify,messageString.Substring(0,140),response);
                 return new ObjectResult(response){StatusCode = 201};
             }
             catch (Exception e)
