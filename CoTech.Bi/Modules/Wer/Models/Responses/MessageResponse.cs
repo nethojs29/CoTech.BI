@@ -26,7 +26,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
             this.GroupId = entity.GroupId;
             this.Message = entity.Message;
             this.Tags = entity.Tags;
-            this.Timestamp = entity.CreatedAt.Ticks;
+            this.Timestamp = (entity.CreatedAt.Ticks - 621355968000000000) / 10000000;
             this.Seen = entity.Seen.Select(s => new SeenMessageResponse(s)).ToList();
         }
     }
@@ -41,7 +41,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
         {
             this.SeenAt = entity.SeenAt;
             this.UserId = entity.UserId;
-            this.Timestamp = entity.SeenAt.Ticks;
+            this.Timestamp = (entity.SeenAt.Ticks - 621355968000000000) / 10000000;
         }
     }
 }
