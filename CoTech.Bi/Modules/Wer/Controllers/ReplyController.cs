@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
@@ -21,10 +22,12 @@ namespace CoTech.Bi.Modules.Wer.Controllers
     {
 
         private ReplyRepository _replyRepository;
+        private NotificationsIOSRepository _notifications;
 
-        public ReplyController(ReplyRepository replyRepository)
+        public ReplyController(ReplyRepository replyRepository, NotificationsIOSRepository _notifications)
         {
             this._replyRepository = replyRepository;
+            this._notifications = _notifications;
         }
 
         [HttpGet("groups")]
@@ -111,7 +114,11 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 {
                     return BadRequest(new {message = "Imposible crear con datos especificados."});
                 }
-                return new ObjectResult(new MessageResponse(values)){StatusCode = 201};
+                var response = new MessageResponse(values);
+                string messageString = values.User.Name + " " + values.User.Lastname + ": " + response.Message; 
+                var userNotify = new List<long>(){idUser,creator};
+                _notifications.SendNotification(userNotify,messageString,response);
+                return new ObjectResult(response){StatusCode = 201};
             }
             catch (Exception e)
             {

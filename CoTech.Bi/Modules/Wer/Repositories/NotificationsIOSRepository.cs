@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Modules.Wer.Models.Entities;
 using CoTech.Bi.Modules.Wer.Models.Responses;
+using CoTech.Bi.Util;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PushSharp;
 using PushSharp.Apple;
@@ -100,6 +102,35 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                                                         report.CompanyId.ToString(),
                                                         report.UserId.ToString(),
                                                         report.WeekId.ToString()
+                                                    }
+                                                }
+                                            },
+                                            sound = "default"
+                                        }
+                                    }
+                                )
+                            });
+                        }
+                        else if(data.GetType() == typeof(MessageResponse))
+                        {
+                            var messageData = (MessageResponse) data;
+                            var json = JsonConvert.SerializeObject(messageData, JsonConverterOptions.JsonSettings);
+                            apnsBroker.QueueNotification(new ApnsNotification
+                            {
+                                DeviceToken = deviceToken.Token,
+                                Payload = JObject.FromObject(
+                                    new
+                                    {
+                                        aps = new
+                                        {
+                                            alert = new Dictionary<string, object>()
+                                            {
+                                                {"title", "Nuevo mensaje"},
+                                                {"body",message},
+                                                {
+                                                    "loc-key", new string[]
+                                                    {
+                                                        json
                                                     }
                                                 }
                                             },
