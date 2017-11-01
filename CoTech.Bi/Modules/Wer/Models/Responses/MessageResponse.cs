@@ -15,6 +15,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
         public List<SeenMessageResponse> Seen { set; get; }
         public long UserId { set; get; }
         public long WeekId { set; get; }
+        public long Timestamp { set; get; }
 
         public MessageResponse(MessageEntity entity)
         {
@@ -25,6 +26,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
             this.GroupId = entity.GroupId;
             this.Message = entity.Message;
             this.Tags = entity.Tags;
+            this.Timestamp = entity.CreatedAt.Ticks;
             this.Seen = entity.Seen.Select(s => new SeenMessageResponse(s)).ToList();
         }
     }
@@ -33,11 +35,13 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
     {
         public long UserId { set; get; }
         public DateTime SeenAt { set; get; }
+        public long Timestamp { set; get; }
 
         public SeenMessageResponse(SeenMessagesEntity entity)
         {
             this.SeenAt = entity.SeenAt;
             this.UserId = entity.UserId;
+            this.Timestamp = entity.SeenAt.Ticks;
         }
     }
 }

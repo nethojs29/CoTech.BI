@@ -40,6 +40,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
         public string Lastname { set; get; }
         public string Email { set; get; }
         public DateTime DateIn { set; get; }
+        public long Timestamp { set; get; }
 
         public PartyResponse(PartyEntity entity)
         {
@@ -48,6 +49,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
             this.Lastname = entity.User.Lastname;
             this.DateIn = entity.DateIn;
             this.Email = entity.User.Email;
+            this.Timestamp = entity.DateIn.Ticks;
         }
     }
 }
