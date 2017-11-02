@@ -114,7 +114,6 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                         else if(data.GetType() == typeof(MessageResponse))
                         {
                             var messageData = (MessageResponse) data;
-                            var json = JsonConvert.SerializeObject(messageData, JsonConverterOptions.JsonSettings);
                             apnsBroker.QueueNotification(new ApnsNotification
                             {
                                 DeviceToken = deviceToken.Token,
@@ -130,7 +129,8 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                                                 {
                                                     "loc-key", new string[]
                                                     {
-                                                        json
+                                                        messageData.Id.ToString(),
+                                                        messageData.GroupId.ToString()
                                                     }
                                                 }
                                             },
