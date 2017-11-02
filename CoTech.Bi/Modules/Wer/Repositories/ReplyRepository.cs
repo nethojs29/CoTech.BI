@@ -61,7 +61,8 @@ namespace CoTech.Bi.Modules.Wer.Repositories
         {
             if (idMessage == 0)
             {
-                return _Message.Include(m => m.User).Include(m => m.Group).ThenInclude(g => g.User)
+                return _Message.Include(m => m.User).Include(m => m.Group).ThenInclude(g =>g.UsersList)
+                    .Include(m => m.Group).ThenInclude(g => g.User)
                     .Where(m => m.Group.UsersList.Any(u => u.UserId == user))
                     .Where(m => m.GroupId == idGroup)
                     .Take(count)
@@ -69,7 +70,8 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     .OrderByDescending(m => m.Id)
                     .ToListAsync();
             }
-            return _Message.Include(m => m.User).Include(m => m.Group).ThenInclude(g => g.User)
+            return _Message.Include(m => m.User).Include(m => m.Group).ThenInclude(g =>g.UsersList)
+                .Include(m => m.Group).ThenInclude(g => g.User)
                 .Where(m => m.Group.UsersList.Any(u => u.UserId == user))
                 .Where(m => m.GroupId == idGroup && m.Id < idMessage)
                 .Take(count)
