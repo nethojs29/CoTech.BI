@@ -921,6 +921,8 @@ namespace CoTech.Bi.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime?>("Createdat");
+
                     b.Property<DateTime>("DateIn");
 
                     b.Property<DateTime?>("DateOut");
@@ -966,26 +968,6 @@ namespace CoTech.Bi.Migrations
                     b.HasIndex("WeekId");
 
                     b.ToTable("Wer_Reports");
-                });
-
-            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.SeenMessagesEntity", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<long>("MessageId");
-
-                    b.Property<DateTime>("SeenAt");
-
-                    b.Property<long>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MessageId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Wer_Seen_Messages");
                 });
 
             modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.SeenReportsEntity", b =>
@@ -1472,19 +1454,6 @@ namespace CoTech.Bi.Migrations
                     b.HasOne("CoTech.Bi.Modules.Wer.Models.Entities.WeekEntity", "Week")
                         .WithMany()
                         .HasForeignKey("WeekId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("CoTech.Bi.Modules.Wer.Models.Entities.SeenMessagesEntity", b =>
-                {
-                    b.HasOne("CoTech.Bi.Modules.Wer.Models.Entities.MessageEntity", "Message")
-                        .WithMany("Seen")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
