@@ -20,6 +20,5 @@ namespace CoTech.Bi.Modules.Wer.Models.Entities
         public long GroupId { set; get; }
         public GroupEntity Group { set; get; }
         
-        public List<SeenMessagesEntity> Seen { set; get; }
     }
 }

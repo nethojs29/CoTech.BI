@@ -8,6 +8,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Entities
         public long Id { set; get; }
         public DateTime DateIn { set; get; } = DateTime.Now;
         public DateTime? DateOut { set; get; } = null;
+        public DateTime? Createdat { set; get; } = DateTime.Now;
         
         public long UserId { set; get; }
         public UserEntity User { set; get; }

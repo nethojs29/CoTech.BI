@@ -56,9 +56,7 @@ namespace CoTech.Bi.Modules.Wer
             modelBuilder.Entity<SeenReportsEntity>().ToTable("Wer_Seen_Reports");
             
             modelBuilder.Entity<MessageEntity>().ToTable("Wer_Messages");
-            
-            modelBuilder.Entity<SeenMessagesEntity>().ToTable("Wer_Seen_Messages");
-            
+                        
             modelBuilder.Entity<FileEntity>().ToTable("Wer_File");
             
             modelBuilder.Entity<IOSTokenEntity>().ToTable("Wer_Token_User");

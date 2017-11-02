@@ -32,11 +32,6 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             get { return context.Set<PartyEntity>(); }
         }
         
-        private DbSet<SeenMessagesEntity> _seen
-        {
-            get { return context.Set<SeenMessagesEntity>(); }
-        }
-        
         public ReplyRepository(BiContext context){
             this.context = context;
         }
@@ -115,7 +110,6 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             if (party != null)
             {
                 var message = _Message
-                        .Include(m => m.Seen)
                     .Include(m => m.Group)
                     .Include(m => m.User)
                     .Where(m => m.CreatedAt.Ticks >= party.DateIn.Ticks && m.GroupId == group)
@@ -124,27 +118,6 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 return message;
             }
             return null;
-        }
-
-        public void UpdateViewMessage(MessageEntity msg,long iduser)
-        {
-            try
-            {
-                if (_Message.Include(m => m.Seen).Any(m => m.Id == msg.Id && m.Seen.Any(s => s.UserId == iduser)) == false)
-                {
-                    _seen.Add(new SeenMessagesEntity()
-                    {
-                        UserId = iduser,
-                        MessageId = msg.Id
-                    });
-                    context.SaveChanges();
-                }
-                
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
         }
 
         public async Task<MessageEntity> SearchOrCreateGroup(long company, long user, long creator,
@@ -178,21 +151,12 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 if (group.Id > 0)
                 {
                     message.GroupId = group.Id;
-                    message.Seen = new List<SeenMessagesEntity>
-                    {
-                        new SeenMessagesEntity(){
-                            Message = message,
-                            UserId = creator
-                    }  
-                    };
                     _Message.Add(message);
                     context.SaveChanges();
                     return _Message
                         .Include(m => m.Group)
                         .ThenInclude(g => g.UsersList)
                         .Include(m => m.User)
-                        .Include(m => m.Seen)
-                        .ThenInclude(s => s.User)
                         .First(m => m.Id == message.Id);
                 }
                 else
@@ -213,21 +177,12 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 if (groupList != null)
                 {
                     message.GroupId = groupList.Id;
-                    message.Seen = new List<SeenMessagesEntity>
-                    {
-                        new SeenMessagesEntity(){
-                            Message = message,
-                            UserId = creator
-                        }  
-                    };
                     _Message.Add(message);
                     context.SaveChanges();
                     return _Message
                         .Include(m => m.Group)
                         .ThenInclude(g => g.UsersList)
                         .Include(m => m.User)
-                        .Include(m => m.Seen)
-                        .ThenInclude(s => s.User)
                         .First(m => m.Id == message.Id);
                 }
                 else

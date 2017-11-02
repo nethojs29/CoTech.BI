@@ -138,7 +138,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     var socket = await HttpContext.WebSockets.AcceptWebSocketAsync();
                     var userId = HttpContext.UserId().Value;
                     var messagesObs = _replyRepository.UserMessages(userId);
-                    var sender = new MessagesSender(socket, userId,_replyRepository);
+                    var sender = new MessagesSender(socket, userId);
                     messagesObs.Subscribe(sender);
                     await sender.UntilWebsocketCloses();
                 }
@@ -160,11 +160,9 @@ namespace CoTech.Bi.Modules.Wer.Controllers
     {
         private WebSocket webSocket;
         private long userId;
-        private ReplyRepository _reply;
-        public MessagesSender(WebSocket socket,long idUser, ReplyRepository _repo){
+        public MessagesSender(WebSocket socket,long idUser){
             this.webSocket = socket;
             this.userId = idUser;
-            this._reply = _repo;
         }
         public void OnCompleted()
         {
@@ -201,7 +199,6 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             try
             {
                 if(webSocket.State == WebSocketState.Open){
-                    this._reply.UpdateViewMessage(entity,this.userId);
                     var res = new MessageResponse(entity);
                     var json = JsonConvert.SerializeObject(res, JsonConverterOptions.JsonSettings);
                     var bytes = Encoding.Unicode.GetBytes(json);
