@@ -44,12 +44,18 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             return obs;
         }
 
-        public Task<List<GroupEntity>> SearchGroups(long user)
+        public async Task<List<GroupResponse>> SearchGroups(long user)
         {
-            return _group.Include(g => g.UsersList)
+            var groupsFound = new List<GroupResponse>();
+            var groups = await _group.Include(g => g.UsersList)
                 .ThenInclude(u => u.User)
                 .Where(g => g.UsersList.Any(u => u.UserId == user))
                 .ToListAsync();
+            foreach (var group in groups)
+            {
+                groupsFound.Add(new GroupResponse(group,this.messagesNotView(user,group.Id)));
+            }
+            return groupsFound;
         }
 
         public Task<List<MessageResponse>> GetMessage(long user,long idGroup, long idMessage, int count)
@@ -112,7 +118,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 var message = _Message
                     .Include(m => m.Group)
                     .Include(m => m.User)
-                    .Where(m => m.CreatedAt.Ticks >= party.DateIn.Ticks && m.GroupId == group)
+                    .Where(m => m.CreatedAt.CompareTo(party.DateIn) >= 0 && m.GroupId == group)
                     .Select(m => new MessageResponse(m))
                     .ToList();
                 return message;

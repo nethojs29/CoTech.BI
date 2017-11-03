@@ -37,7 +37,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             try
             {
                 var groups = await _replyRepository.SearchGroups(HttpContext.UserId().Value);
-                return new OkObjectResult(groups.Select(g => new GroupResponse(g)).ToList());
+                return new OkObjectResult(groups);
             }
             catch (Exception e)
             {

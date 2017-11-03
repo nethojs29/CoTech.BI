@@ -29,7 +29,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
             this.Type = entity.Category;
             this.CompanyId = entity.CompanyId;
             this.Party = entity.UsersList.Select(u => new PartyResponse(u)).ToList();
-            this.messages = messages;
+            this.messages = messages ?? this.messages;
         }
     }
 
@@ -49,7 +49,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
             this.Lastname = entity.User.Lastname;
             this.DateIn = entity.DateIn;
             this.Email = entity.User.Email;
-            this.Timestamp = (entity.DateIn.Ticks - 621355968000000000) / 10000000;
+            this.Timestamp = (long)entity.DateIn.Subtract(new DateTime(1970, 1,1)).TotalMilliseconds;
         }
     }
 }
