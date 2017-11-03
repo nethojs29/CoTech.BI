@@ -109,6 +109,29 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             }
             return null;
         }
+        public PartyEntity FindParty(long company, long user, long creator,
+            int type)
+        {
+            var group = _group.Include(g => g.UsersList)
+                .Where( g=>
+                    g.UsersList.Any(u => u.UserId == user) &&
+                    g.UsersList.Any(u => u.UserId == creator))
+                .FirstOrDefault( g => 
+                    g.Category == type && 
+                    g.CompanyId == company
+                );
+            if (group != null)
+            {
+                var usr = group.UsersList.FirstOrDefault(u => u.UserId == creator);
+                if (usr != null)
+                {
+                    var entity = _party
+                        .First(u => u.Id == usr.Id);
+                    return entity;
+                }
+            }
+            return null;
+        }
 
         public List<MessageResponse> messagesNotView(long user, long group)
         {

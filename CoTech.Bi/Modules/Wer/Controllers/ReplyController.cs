@@ -72,10 +72,11 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             try
             {
                 var creator = HttpContext.UserId().Value;
-                var party = _replyRepository.UpdateParty(idCompany, idUser, creator, type);
-                if (party != null)    
+                var partyFound = _replyRepository.FindParty(idCompany, idUser, creator, type);
+                if (partyFound != null)    
                 {
-                    var message = _replyRepository.messagesNotView(creator, party.GroupId);
+                    var message = _replyRepository.messagesNotView(creator, partyFound.GroupId);
+                    var party = _replyRepository.UpdateParty(idCompany, idUser, creator, type);
                     if (message != null)
                     {
                         return new OkObjectResult(
