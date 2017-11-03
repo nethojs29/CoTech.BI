@@ -49,7 +49,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
             this.Lastname = entity.User.Lastname;
             this.DateIn = entity.DateIn;
             this.Email = entity.User.Email;
-            this.Timestamp = (long)entity.DateIn.Subtract(new DateTime(1970, 1,1)).TotalMilliseconds;
+            this.Timestamp = (long)entity.DateIn.ToUniversalTime().Subtract(new DateTime(1970, 1,1)).TotalMilliseconds;
         }
     }
 }

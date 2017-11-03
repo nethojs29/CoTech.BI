@@ -25,7 +25,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
             this.GroupId = entity.GroupId;
             this.Message = entity.Message;
             this.Tags = entity.Tags;
-            this.Timestamp = (long)entity.CreatedAt.Subtract(new DateTime(1970, 1,1)).TotalMilliseconds;
+            this.Timestamp = (long)entity.CreatedAt.ToUniversalTime().Subtract(new DateTime(1970, 1,1)).TotalMilliseconds;
         }
     }
 }
