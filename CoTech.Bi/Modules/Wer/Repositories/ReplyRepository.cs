@@ -64,20 +64,20 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             {
                 return _Message.Include(m => m.User).Include(m => m.Group).ThenInclude(g =>g.UsersList)
                     .Include(m => m.Group).ThenInclude(g => g.User)
-                    .Where(m => m.Group.UsersList.Any(u => u.UserId == user))
                     .Where(m => m.GroupId == idGroup)
+                    .Where(m => m.Group.UsersList.Any(u => u.UserId == user))
                     .Take(count)
                     .Select(m => new MessageResponse(m))
-                    .OrderByDescending(m => m.Id)
+                    .OrderByDescending(m => m.CreatedAt)
                     .ToListAsync();
             }
             return _Message.Include(m => m.User).Include(m => m.Group).ThenInclude(g =>g.UsersList)
                 .Include(m => m.Group).ThenInclude(g => g.User)
+                .Where(m => m.GroupId == idGroup && m.Id > idMessage)
                 .Where(m => m.Group.UsersList.Any(u => u.UserId == user))
-                .Where(m => m.GroupId == idGroup && m.Id < idMessage)
                 .Take(count)
                 .Select(m => new MessageResponse(m))
-                .OrderByDescending(m => m.Id)
+                .OrderByDescending(m => m.CreatedAt)
                 .ToListAsync();
         }
 
@@ -90,7 +90,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     g.UsersList.Any(u => u.UserId == creator))
                 .FirstOrDefault( g => 
                     g.Category == type && 
-                    g.CompanyId == companyd
+                    g.CompanyId == company
                 );
             if (group != null)
             {
