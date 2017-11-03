@@ -68,7 +68,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     .Where(m => m.Group.UsersList.Any(u => u.UserId == user))
                     .Select(m => new MessageResponse(m))
                     .OrderByDescending(m => m.CreatedAt)
-                    .TakeLast(30)
+                    .Take(30)
                     .ToListAsync();
             }
             return _Message.Include(m => m.User).Include(m => m.Group).ThenInclude(g =>g.UsersList)
@@ -77,7 +77,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 .Where(m => m.Group.UsersList.Any(u => u.UserId == user))
                 .Select(m => new MessageResponse(m))
                 .OrderByDescending(m => m.CreatedAt)
-                .TakeLast(30)
+                .Take(30)
                 .ToListAsync();
         }
 
