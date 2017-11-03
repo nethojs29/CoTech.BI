@@ -90,7 +90,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     g.UsersList.Any(u => u.UserId == creator))
                 .FirstOrDefault( g => 
                     g.Category == type && 
-                    g.CompanyId == company
+                    g.CompanyId == companyd
                 );
             if (group != null)
             {
