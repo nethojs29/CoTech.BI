@@ -66,18 +66,18 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     .Include(m => m.Group).ThenInclude(g => g.User)
                     .Where(m => m.GroupId == idGroup)
                     .Where(m => m.Group.UsersList.Any(u => u.UserId == user))
-                    .Take(count)
                     .Select(m => new MessageResponse(m))
                     .OrderByDescending(m => m.CreatedAt)
+                    .TakeLast(30)
                     .ToListAsync();
             }
             return _Message.Include(m => m.User).Include(m => m.Group).ThenInclude(g =>g.UsersList)
                 .Include(m => m.Group).ThenInclude(g => g.User)
                 .Where(m => m.GroupId == idGroup && m.Id > idMessage)
                 .Where(m => m.Group.UsersList.Any(u => u.UserId == user))
-                .Take(count)
                 .Select(m => new MessageResponse(m))
                 .OrderByDescending(m => m.CreatedAt)
+                .TakeLast(30)
                 .ToListAsync();
         }
 
