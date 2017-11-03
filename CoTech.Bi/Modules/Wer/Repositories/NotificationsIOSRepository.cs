@@ -53,7 +53,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 var cert = Directory.GetCurrentDirectory() + "/wwwroot/Certs/RESPUSH .p12";
                 var MY_DEVICE_TOKENS = this._dbToken.Where(t => userIdsList.Any(usr => usr == t.UserId)).ToList();
                 // Configuration (NOTE: .pfx can also be used here)
-                var config = new ApnsConfiguration (ApnsConfiguration.ApnsServerEnvironment.Sandbox,cert, "");
+                var config = new ApnsConfiguration(ApnsConfiguration.ApnsServerEnvironment.Sandbox,cert, "soy codigo");
                     // Create a new broker
                     var apnsBroker = new ApnsServiceBroker (config);
                     // Wire up events

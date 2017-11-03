@@ -409,6 +409,31 @@ namespace CoTech.Bi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Wer_File_Company",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CompanyId = table.Column<long>(type: "bigint", nullable: false),
+                    Extension = table.Column<string>(type: "longtext", nullable: true),
+                    Mime = table.Column<string>(type: "longtext", nullable: true),
+                    Name = table.Column<string>(type: "longtext", nullable: true),
+                    Uri = table.Column<string>(type: "longtext", nullable: true),
+                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    WeekId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wer_File_Company", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Wer_File_Company_Wer_Weeks_WeekId",
+                        column: x => x.WeekId,
+                        principalTable: "Wer_Weeks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Wer_Groups",
                 columns: table => new
                 {
@@ -620,6 +645,7 @@ namespace CoTech.Bi.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Createdat = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     DateIn = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     DateOut = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     GroupId = table.Column<long>(type: "bigint", nullable: false),
@@ -710,33 +736,6 @@ namespace CoTech.Bi.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Notification_Receivers_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Wer_Seen_Messages",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    MessageId = table.Column<long>(type: "bigint", nullable: false),
-                    SeenAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UserId = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Wer_Seen_Messages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Wer_Seen_Messages_Wer_Messages_MessageId",
-                        column: x => x.MessageId,
-                        principalTable: "Wer_Messages",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Wer_Seen_Messages_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -1062,6 +1061,21 @@ namespace CoTech.Bi.Migrations
                 column: "ReportId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Wer_File_Company_CompanyId",
+                table: "Wer_File_Company",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wer_File_Company_UserId",
+                table: "Wer_File_Company",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wer_File_Company_WeekId",
+                table: "Wer_File_Company",
+                column: "WeekId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Wer_Groups_CompanyId",
                 table: "Wer_Groups",
                 column: "CompanyId");
@@ -1110,16 +1124,6 @@ namespace CoTech.Bi.Migrations
                 name: "IX_Wer_Reports_WeekId",
                 table: "Wer_Reports",
                 column: "WeekId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Wer_Seen_Messages_MessageId",
-                table: "Wer_Seen_Messages",
-                column: "MessageId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Wer_Seen_Messages_UserId",
-                table: "Wer_Seen_Messages",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Wer_Seen_Reports_ReportId",
@@ -1545,6 +1549,22 @@ namespace CoTech.Bi.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_Wer_File_Company_Companies_CompanyId",
+                table: "Wer_File_Company",
+                column: "CompanyId",
+                principalTable: "Companies",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Wer_File_Company_Users_UserId",
+                table: "Wer_File_Company",
+                column: "UserId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Wer_Groups_Companies_CompanyId",
                 table: "Wer_Groups",
                 column: "CompanyId",
@@ -1639,10 +1659,13 @@ namespace CoTech.Bi.Migrations
                 name: "Wer_File");
 
             migrationBuilder.DropTable(
-                name: "Wer_Party");
+                name: "Wer_File_Company");
 
             migrationBuilder.DropTable(
-                name: "Wer_Seen_Messages");
+                name: "Wer_Messages");
+
+            migrationBuilder.DropTable(
+                name: "Wer_Party");
 
             migrationBuilder.DropTable(
                 name: "Wer_Seen_Reports");
@@ -1669,7 +1692,7 @@ namespace CoTech.Bi.Migrations
                 name: "Providers");
 
             migrationBuilder.DropTable(
-                name: "Wer_Messages");
+                name: "Wer_Groups");
 
             migrationBuilder.DropTable(
                 name: "Wer_Reports");
@@ -1682,9 +1705,6 @@ namespace CoTech.Bi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Lenders");
-
-            migrationBuilder.DropTable(
-                name: "Wer_Groups");
 
             migrationBuilder.DropTable(
                 name: "Wer_Weeks");
