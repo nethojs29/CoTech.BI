@@ -105,6 +105,7 @@ namespace CoTech.Bi.Core.Users.Controllers
 			var jwtSecurityToken = _jwtTokenGenerator.CreateToken(claims);
 			return Ok(new AuthResponse {
 					Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+					Expiration = jwtSecurityToken.ValidTo,
 					User = new UserResponse(user),
 					IAmRoot = await permissionRepository.UserIsRoot(userId),
 					Permissions = (await permissionRepository.GetUserPermissions(userId)).Select(p => new PermissionResponse(p)).ToList(),
