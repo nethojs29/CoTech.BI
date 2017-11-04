@@ -52,11 +52,15 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         {
             try
             {
-                var messages = _replyRepository.GetMessage(HttpContext.UserId().Value, idGroup, idMessage, count);
-                return new ObjectResult(await messages)
+                var group = _replyRepository.GetGroup(idGroup);
+                if (group != null)
                 {
-                    StatusCode = 200
-                };
+                    group.messages = await _replyRepository.GetMessage(HttpContext.UserId().Value, idGroup, idMessage, count);
+                    return new ObjectResult(group)
+                    {
+                        StatusCode = 200
+                    };
+                }
             }
             catch (Exception e)
             {
