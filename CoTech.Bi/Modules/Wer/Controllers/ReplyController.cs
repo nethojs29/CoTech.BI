@@ -61,6 +61,13 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                         StatusCode = 200
                     };
                 }
+                else
+                {
+                    return new ObjectResult(new {message = "No se encontro grupo con esas caracteristicas."})
+                    {
+                        StatusCode = 404
+                    };
+                }
             }
             catch (Exception e)
             {
