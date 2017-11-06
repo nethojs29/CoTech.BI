@@ -206,7 +206,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 if(webSocket.State == WebSocketState.Open){
                     var res = new MessageResponse(entity);
                     var json = JsonConvert.SerializeObject(res, JsonConverterOptions.JsonSettings);
-                    var bytes = Encoding.Unicode.GetBytes(json);
+                    var bytes = Encoding.UTF8.GetBytes(json);
                     var segment = new ArraySegment<byte>(bytes);
                     await webSocket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
                 }
