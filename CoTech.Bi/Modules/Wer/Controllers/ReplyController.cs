@@ -114,24 +114,32 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             try
             {
                 var creator = HttpContext.UserId().Value;
-                var values =
-                    await _replyRepository.SearchOrCreateGroup(idCompany, idUser, creator, type,
-                        new MessageEntity()
-                        {
-                            Message = message.Message,
-                            Tags = message.Tags,
-                            UserId = creator,
-                            WeekId = message.WeekId
-                        });
-                if (values == null)
+                if (creator != idUser)
                 {
-                    return BadRequest(new {message = "Imposible crear con datos especificados."});
+                    var values =
+                        await _replyRepository.SearchOrCreateGroup(idCompany, idUser, creator, type,
+                            new MessageEntity()
+                            {
+                                Message = message.Message,
+                                Tags = message.Tags,
+                                UserId = creator,
+                                WeekId = message.WeekId
+                            });
+                    if (values == null)
+                    {
+                        return BadRequest(new {message = "Imposible crear con datos especificados."});
+                    }
+                    var response = new MessageResponse(values);
+                    string messageString = values.User.Name + " " + values.User.Lastname + ": " + response.Message; 
+                    var userNotify = new List<long>(){idUser};
+                    _notifications.SendNotification(userNotify,messageString,response);
+                    return new ObjectResult(response){StatusCode = 201};
                 }
-                var response = new MessageResponse(values);
-                string messageString = values.User.Name + " " + values.User.Lastname + ": " + response.Message; 
-                var userNotify = new List<long>(){idUser};
-                _notifications.SendNotification(userNotify,messageString,response);
-                return new ObjectResult(response){StatusCode = 201};
+                return new ObjectResult(
+                    new {message = "Los usuarios no deben ser iguales."})
+                {
+                    StatusCode = 404
+                };
             }
             catch (Exception e)
             {
