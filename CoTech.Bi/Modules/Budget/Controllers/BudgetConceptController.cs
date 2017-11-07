@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Budget.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
         }
 
         [HttpGet]
-        public async Task<IActionResult> getAllByBudgetId(long idBudget){
+        public async Task<IActionResult> getAllByBudgetIdbud(long idBudget){
             return new OkObjectResult(await repo.getAllByBudget(idBudget));
         }
 
@@ -32,7 +33,9 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id){
+            Console.WriteLine(id);
             var budget = await repo.WithId(id);
+            Console.WriteLine(budget);
             await repo.Delete(budget);
             return new OkObjectResult(budget);
         }

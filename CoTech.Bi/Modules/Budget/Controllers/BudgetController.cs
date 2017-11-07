@@ -21,6 +21,11 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
             return new OkObjectResult(await budgetRepo.getFromYear(year, idCompany));
         }
 
+        [HttpGet("{year}/{month}")]
+        public async Task<IActionResult> monthly(long year, long month, long idCompany){
+            return new OkObjectResult(await budgetRepo.monthly(year, month, idCompany));
+        }
+        
         [HttpGet("limit/{typeId}/{year}")]
         public async Task<IActionResult> getLimit(long typeId, int year){
             var totalBudgetExpenses = await budgetRepo.getAllByGroup(typeId, year);
@@ -35,10 +40,10 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
             return new OkObjectResult(t-s);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(long id){
-            return new OkObjectResult(await budgetRepo.WithId(id));
-        }
+//        [HttpGet("{id}")]
+//        public async Task<IActionResult> GetById(long id){
+//            return new OkObjectResult(await budgetRepo.WithId(id));
+//        }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateBudgetReq req){

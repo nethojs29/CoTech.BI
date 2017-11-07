@@ -1,6 +1,7 @@
 ﻿using System;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Modules.Expenses.Models;
 
 namespace CoTech.Bi.Modules.Budget.Models{
     public class BudgetConceptEntity{
@@ -14,7 +15,12 @@ namespace CoTech.Bi.Modules.Budget.Models{
         
         public long CreatorId{ set; get; }
         
+        public long ExpenseGroupId{ set; get; }
+        public long ExpenseTypeId{ set; get; }
+        
         public CompanyEntity Company{ set; get; }
+        public ExpenseGroupEntity ExpenseGroup{ set; get; }
+        public ExpenseTypeEntity ExpenseType{ set; get; }
         public BudgetEntity Budget{ set; get; }
         public UserEntity Creator{ set; get; }
         

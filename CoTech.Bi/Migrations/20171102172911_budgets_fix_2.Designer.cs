@@ -11,9 +11,10 @@ using System;
 namespace CoTech.Bi.Migrations
 {
     [DbContext(typeof(BiContext))]
-    partial class BiContextModelSnapshot : ModelSnapshot
+    [Migration("20171102172911_budgets_fix_2")]
+    partial class budgets_fix_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

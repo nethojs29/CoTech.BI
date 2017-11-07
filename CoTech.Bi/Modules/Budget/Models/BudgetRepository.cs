@@ -22,6 +22,10 @@ namespace CoTech.Bi.Modules.Budget.Models{
             return db.Where(p => !p.DeletedAt.HasValue && p.Year == year && p.CompanyId == idCompany).ToListAsync();
         }
 
+        public Task<List<BudgetEntity>> monthly(long year, long month, long idCompany){
+            return db.Where(b => !b.DeletedAt.HasValue && b.Year == year && b.Month == month && b.CompanyId == idCompany).OrderBy(b => b.ExpenseTypeId).ToListAsync();
+        }
+
         public Task<List<BudgetEntity>> getAllByGroup(long type, int year){
             return db.Where(p => !p.DeletedAt.HasValue && p.ExpenseTypeId == type && p.Year == year).ToListAsync();
         }

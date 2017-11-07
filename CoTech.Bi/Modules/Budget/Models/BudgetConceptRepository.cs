@@ -19,7 +19,7 @@ namespace CoTech.Bi.Modules.Budget.Models{
         }
 
         public Task<List<BudgetConceptEntity>> getAllByBudget(long budgetId){
-            return db.Where(b => b.BudgetId == budgetId && !b.DeletedAt.HasValue).ToListAsync();
+            return db.Where(b => b.BudgetId == budgetId && !b.DeletedAt.HasValue).Include(b => b.ExpenseGroup).ToListAsync();
         }
         
         public Task<BudgetConceptEntity> WithId(long id){
@@ -39,6 +39,8 @@ namespace CoTech.Bi.Modules.Budget.Models{
 
         public async Task Delete(BudgetConceptEntity entity){
             entity.DeletedAt = DateTime.Now;
+            db.Update(entity);
+            await context.SaveChangesAsync();
         }
     }
 }

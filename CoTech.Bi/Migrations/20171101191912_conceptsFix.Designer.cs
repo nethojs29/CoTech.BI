@@ -11,9 +11,10 @@ using System;
 namespace CoTech.Bi.Migrations
 {
     [DbContext(typeof(BiContext))]
-    partial class BiContextModelSnapshot : ModelSnapshot
+    [Migration("20171101191912_conceptsFix")]
+    partial class conceptsFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,8 +282,6 @@ namespace CoTech.Bi.Migrations
 
                     b.Property<long>("ExpenseGroupId");
 
-                    b.Property<long>("ExpenseTypeId");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BudgetId");
@@ -292,8 +291,6 @@ namespace CoTech.Bi.Migrations
                     b.HasIndex("CreatorId");
 
                     b.HasIndex("ExpenseGroupId");
-
-                    b.HasIndex("ExpenseTypeId");
 
                     b.ToTable("Budget_Concepts");
                 });
@@ -1246,11 +1243,6 @@ namespace CoTech.Bi.Migrations
                     b.HasOne("CoTech.Bi.Modules.Expenses.Models.ExpenseGroupEntity", "ExpenseGroup")
                         .WithMany()
                         .HasForeignKey("ExpenseGroupId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CoTech.Bi.Modules.Expenses.Models.ExpenseTypeEntity", "ExpenseType")
-                        .WithMany()
-                        .HasForeignKey("ExpenseTypeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
