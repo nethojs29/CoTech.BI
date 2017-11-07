@@ -1,3 +1,4 @@
+using System;
 using CoTech.Bi.Loader;
 using CoTech.Bi.Core.Companies.Models;
 using Microsoft.AspNetCore.Builder;

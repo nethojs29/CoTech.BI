@@ -1,4 +1,6 @@
-﻿namespace CoTech.Bi.Core.Companies.Models{
+﻿using System;
+
+namespace CoTech.Bi.Core.Companies.Models{
     public interface DepartmentRequest{}
 
     public class CreateDepartmentReq : DepartmentRequest{
@@ -8,7 +10,8 @@
         public DepartmentEntity toEntity(){
             return new DepartmentEntity {
                 Name = Name,
-                CompanyId = CompanyId
+                CompanyId = CompanyId,
+                CreatedAt = DateTime.Now
             };
         }
     }

@@ -5,7 +5,7 @@ using CoTech.Bi.Modules.Sales.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Sales.Controllers{
-    [Route("api/companies/{idCompany}/services/sales")]
+    [Route("api/companies/{idCompany}/services/daily-sales")]
     public class ServiceSaleController:Controller{
         private readonly ServiceSaleRepository serviceSaleRepo;
 

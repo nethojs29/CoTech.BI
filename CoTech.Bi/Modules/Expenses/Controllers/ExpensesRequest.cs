@@ -68,6 +68,7 @@ namespace CoTech.Bi.Modules.Expenses.Controllers{
                 Name = Name,
                 TypeId = TypeId,
                 CompanyId = CompanyId,
+                CreatorId = userId,
                 CreatedAt = DateTime.Now
             };
         }

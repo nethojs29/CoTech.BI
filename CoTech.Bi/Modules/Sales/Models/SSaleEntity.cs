@@ -2,20 +2,25 @@
 using System.ComponentModel.DataAnnotations;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Modules.Clients.Models;
 
-namespace CoTech.Bi.Modules.Expenses.Models{
-    public class ExpenseGroupEntity{
+namespace CoTech.Bi.Modules.Sales.Models{
+    public class SSaleEntity{
         public long Id{ set; get; }
         [Required]
-        public string Name{ set; get; }
+        public double Total{ set; get; }
         [Required]
-        public long TypeId{ set; get; }
-        public ExpenseTypeEntity Type{ set; get; }
-        [Required]
-        public int CompanyId{ set; get; }
+        public DateTime Date{ set; get; }
+        
+        public long ClientId{ set; get; }
+        public ClientEntity Client{ set; get; }
+        
+        public long CompanyId{ set; get; }
         public CompanyEntity Company{ set; get; }
+        
         public long CreatorId{ set; get; }
         public UserEntity Creator{ set; get; }
+        
         public DateTime CreatedAt{ set; get; }
         public DateTime? DeletedAt{ set; get; }
     }

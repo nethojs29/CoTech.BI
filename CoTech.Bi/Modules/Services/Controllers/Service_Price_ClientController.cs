@@ -17,9 +17,9 @@ namespace CoTech.Bi.Modules.Services.Controllers{
             return new OkObjectResult(await spcRepo.getAll());
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(long id){
-            return new OkObjectResult(await spcRepo.WithId(id));
+        [HttpGet("client/{clientId}")]
+        public async Task<IActionResult> GetById(long clientId){
+            return new OkObjectResult(await spcRepo.WithClientId(clientId));
         }
 
         [HttpPost]

@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Core.Companies.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Core.Companies.Models{
+    [Route("api/companies/{idCompany}/departments")]
     public class DepartmentController:Controller{
         private readonly DepartmentRepository departmentRepo;
 
@@ -16,11 +18,16 @@ namespace CoTech.Bi.Core.Companies.Models{
         public async Task<IActionResult> GetById(long id) {
             return new OkObjectResult(await departmentRepo.WithId(id));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll(){
+            return new OkObjectResult(await departmentRepo.getAll());
+        }
         
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateDepartmentReq req){
-            var cmd = new CreateDepartmentCmd(req, HttpContext.UserId().Value);
-            var department = await departmentRepo.Create(cmd);
+            var department = req.toEntity();
+            await departmentRepo.Create(department);
             return Created($"/api/departments/${department.Id}", department);
         }
         
