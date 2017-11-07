@@ -116,11 +116,16 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 var creator = HttpContext.UserId().Value;
                 if (creator != group.UserId)
                 {
-                    var response = _replyRepository.CreateGroup(group,creator);
+                    var response = await _replyRepository.CreateGroup(group,creator);
                     if (response != null)
                     {
                         return new ObjectResult(response);
                     }
+                    return new ObjectResult(
+                        new {message = "Grupo no es posible crear."})
+                    {
+                        StatusCode = 404
+                    };
                 }
                 return new ObjectResult(
                     new {message = "los usuarios no deben ser iguales."})

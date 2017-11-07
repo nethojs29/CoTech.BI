@@ -68,8 +68,13 @@ namespace CoTech.Bi.Modules.Wer.Repositories
 
         public GroupResponse GetGroup(long idGroup)
         {
-            return _group.Include(g => g.User).Include(g => g.UsersList).ThenInclude(u => u.User)
-                .Select(g => new GroupResponse(g)).FirstOrDefault(g => g.Id == idGroup);
+            return _group
+                .Where(g => g.Id == idGroup)
+                .Include(g => g.User)
+                .Include(g => g.UsersList)
+                .ThenInclude(u => u.User)
+                .Select(g => new GroupResponse(g))
+                .FirstOrDefault();
         }
 
         public Task<List<MessageResponse>> GetMessage(long user,long idGroup, long idMessage, int count)
