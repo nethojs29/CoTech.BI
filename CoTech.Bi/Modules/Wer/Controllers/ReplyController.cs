@@ -107,6 +107,32 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
         }
 
+        [HttpPost("reply/groups")]
+        [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
+        public async Task<IActionResult> CreateReply([FromRoute]long idCompany,[FromBody] GroupRequest group)
+        {
+            try
+            {
+                var creator = HttpContext.UserId().Value;
+                if (creator != group.UserId)
+                {
+                    var response = _replyRepository.CreateGroup(group,creator);
+                    if (response != null)
+                    {
+                        return new ObjectResult(response);
+                    }
+                }
+                return new ObjectResult(
+                    new {message = "los usuarios no deben ser iguales."})
+                {
+                    StatusCode = 404
+                };
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {messsage = e.Message}){StatusCode = 500};
+            }
+        }
         [HttpPost("reply/{type}/user/{idUser}")]
         [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
         public async Task<IActionResult> CreateReply([FromRoute]long idCompany,[FromRoute] int type,[FromRoute] long idUser,[FromBody] MessageRequest message)

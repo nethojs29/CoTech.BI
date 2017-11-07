@@ -4,8 +4,10 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Core.Notifications.Models;
+using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Modules.Wer.Models.Entities;
+using CoTech.Bi.Modules.Wer.Models.Requests;
 using CoTech.Bi.Modules.Wer.Models.Responses;
 using EntityFrameworkCore.Rx;
 using Microsoft.EntityFrameworkCore;
@@ -32,9 +34,15 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             get { return context.Set<PartyEntity>(); }
         }
         
+        private DbSet<PermissionEntity> _Permission
+        {
+            get { return context.Set<PermissionEntity>(); }
+        }
+        
         public ReplyRepository(BiContext context){
             this.context = context;
         }
+        
 
         public IObservable<MessageEntity> UserMessages(long userId) {
             
@@ -155,6 +163,45 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             return null;
         }
 
+        public async Task<GroupResponse> CreateGroup(GroupRequest group, long creator)
+        {
+            if (_Permission.Any(p =>
+                p.UserId == group.UserId && p.CompanyId == group.CompanyId && (p.RoleId > 600 && p.RoleId < 604)))
+            {
+                if (_group.Any(g =>
+                    g.Category == group.Type && g.CompanyId == group.CompanyId && g.UserId == group.UserId))
+                {
+                    return null;
+                }
+                var entity = new GroupEntity()
+                {
+                    Category = group.Type,
+                    UserId = group.UserId,
+                    CompanyId = group.CompanyId,
+                    UsersList = new List<PartyEntity>()
+                    {
+                        new PartyEntity()
+                        {
+                            UserId = creator
+                        },
+                        new PartyEntity()
+                        {
+                            UserId = group.UserId
+                        }
+                    }
+                };
+                _group.Add(entity);
+                context.SaveChanges();
+                return await _group
+                        .Include(g => g.User)
+                        .Include(g => g.UsersList)
+                        .ThenInclude(g => g.User)
+                    .Where(g => g.Id == entity.Id).Select(g => new GroupResponse(g))
+                    .FirstOrDefaultAsync();
+            }
+            return null;
+        }
+        
         public async Task<MessageEntity> SearchOrCreateGroup(long company, long user, long creator,
             int type, MessageEntity message){
             if (_group.Include(g => g.UsersList).Where(g => g.UsersList.Any(u => u.UserId == creator) &&
