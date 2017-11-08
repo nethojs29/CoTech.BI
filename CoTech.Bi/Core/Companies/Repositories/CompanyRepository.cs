@@ -40,9 +40,8 @@ namespace CoTech.Bi.Core.Companies.Repositories
           var permissions = await dbPermissions.Where(p => p.UserId == userId)
             .Include(p => p.Company)
               .ThenInclude(c => c.Modules)
-            .Distinct()
             .ToListAsync();
-          var companies = permissions.Select(p => p.Company).ToList();
+          var companies = permissions.Select(p => p.Company).Distinct().ToList();
           return companies;
           // var parents = permissions
           //   .Where(p => p.RoleId == 1)
