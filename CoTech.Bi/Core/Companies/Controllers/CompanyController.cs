@@ -117,7 +117,7 @@ namespace CoTech.Bi.Core.Companies.Controllers
         [RequiresAbsoluteRole(Role.Super)]
         public async Task<IActionResult> GetCompanyChildren(long id) {
           var children = await companyRepo.ChildrenOf(id);
-          return new OkObjectResult(children);
+          return new OkObjectResult(children.Select(c => new CompanyResult(c)));
         }
 
         [HttpGet("mines")]
