@@ -32,7 +32,20 @@ namespace CoTech.Bi.Modules.Wer.Repositories
 
         public IOSTokenEntity Create(long idUser,string token)
         {
-            if (_dbToken.Count(tkn => tkn.UserId == idUser && tkn.Token.Equals(token)) == 0 && !string.IsNullOrEmpty(token))
+            if (_dbToken.Any(t => t.Token == token))
+            {
+                var tokenEntity = _dbToken.First(t => t.Token == token);
+                _dbToken.Remove(tokenEntity);
+                var tkn = new IOSTokenEntity()
+                {
+                    UserId = idUser,
+                    Token = token
+                };
+                _dbToken.Add(tkn);
+                _context.SaveChanges();
+                return tkn;
+            }
+            else
             {
                 var tkn = new IOSTokenEntity()
                 {

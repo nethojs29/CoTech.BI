@@ -52,11 +52,22 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         {
             try
             {
-                var messages = _replyRepository.GetMessage(HttpContext.UserId().Value, idGroup, idMessage, count);
-                return new ObjectResult(await messages)
+                var group = _replyRepository.GetGroup(idGroup);
+                if (group != null)
                 {
-                    StatusCode = 200
-                };
+                    group.messages = await _replyRepository.GetMessage(HttpContext.UserId().Value, idGroup, idMessage, count);
+                    return new ObjectResult(group)
+                    {
+                        StatusCode = 200
+                    };
+                }
+                else
+                {
+                    return new ObjectResult(new {message = "No se encontro grupo con esas caracteristicas."})
+                    {
+                        StatusCode = 404
+                    };
+                }
             }
             catch (Exception e)
             {
@@ -96,6 +107,37 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
         }
 
+        [HttpPost("reply/groups")]
+        [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
+        public async Task<IActionResult> CreateReply([FromRoute]long idCompany,[FromBody] GroupRequest group)
+        {
+            try
+            {
+                var creator = HttpContext.UserId().Value;
+                if (creator != group.UserId)
+                {
+                    var response = await _replyRepository.CreateGroup(group,creator);
+                    if (response != null)
+                    {
+                        return new ObjectResult(response);
+                    }
+                    return new ObjectResult(
+                        new {message = "Grupo no es posible crear."})
+                    {
+                        StatusCode = 404
+                    };
+                }
+                return new ObjectResult(
+                    new {message = "los usuarios no deben ser iguales."})
+                {
+                    StatusCode = 404
+                };
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {messsage = e.Message}){StatusCode = 500};
+            }
+        }
         [HttpPost("reply/{type}/user/{idUser}")]
         [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
         public async Task<IActionResult> CreateReply([FromRoute]long idCompany,[FromRoute] int type,[FromRoute] long idUser,[FromBody] MessageRequest message)
@@ -103,24 +145,32 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             try
             {
                 var creator = HttpContext.UserId().Value;
-                var values =
-                    await _replyRepository.SearchOrCreateGroup(idCompany, idUser, creator, type,
-                        new MessageEntity()
-                        {
-                            Message = message.Message,
-                            Tags = message.Tags,
-                            UserId = creator,
-                            WeekId = message.WeekId
-                        });
-                if (values == null)
+                if (creator != idUser)
                 {
-                    return BadRequest(new {message = "Imposible crear con datos especificados."});
+                    var values =
+                        await _replyRepository.SearchOrCreateGroup(idCompany, idUser, creator, type,
+                            new MessageEntity()
+                            {
+                                Message = message.Message,
+                                Tags = message.Tags,
+                                UserId = creator,
+                                WeekId = message.WeekId
+                            });
+                    if (values == null)
+                    {
+                        return BadRequest(new {message = "Imposible crear con datos especificados."});
+                    }
+                    var response = new MessageResponse(values);
+                    string messageString = values.User.Name + " " + values.User.Lastname + ": " + response.Message; 
+                    var userNotify = new List<long>(){idUser};
+                    _notifications.SendNotification(userNotify,messageString,response);
+                    return new ObjectResult(response){StatusCode = 201};
                 }
-                var response = new MessageResponse(values);
-                string messageString = values.User.Name + " " + values.User.Lastname + ": " + response.Message; 
-                var userNotify = new List<long>(){idUser,creator};
-                _notifications.SendNotification(userNotify,messageString,response);
-                return new ObjectResult(response){StatusCode = 201};
+                return new ObjectResult(
+                    new {message = "Los usuarios no deben ser iguales."})
+                {
+                    StatusCode = 404
+                };
             }
             catch (Exception e)
             {
@@ -202,7 +252,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 if(webSocket.State == WebSocketState.Open){
                     var res = new MessageResponse(entity);
                     var json = JsonConvert.SerializeObject(res, JsonConverterOptions.JsonSettings);
-                    var bytes = Encoding.Unicode.GetBytes(json);
+                    var bytes = Encoding.UTF8.GetBytes(json);
                     var segment = new ArraySegment<byte>(bytes);
                     await webSocket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
                 }
