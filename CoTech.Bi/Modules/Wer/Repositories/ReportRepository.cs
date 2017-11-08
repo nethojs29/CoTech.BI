@@ -12,6 +12,7 @@ using CoTech.Bi.Entity;
 using Microsoft.EntityFrameworkCore;
 using CoTech.Bi.Modules.Wer.Models.Entities;
 using CoTech.Bi.Modules.Wer.Models.Events;
+using CoTech.Bi.Modules.Wer.Models.Files;
 using CoTech.Bi.Modules.Wer.Models.Requests;
 using CoTech.Bi.Modules.Wer.Models.Responses;
 using Microsoft.AspNetCore.Rewrite.Internal.UrlMatches;
@@ -416,6 +417,74 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 }
             }
             return list;
+        }
+
+        public WeekEntity getWeekById(long id)
+        {
+            return dbWeek.Find(id);
+        }
+        public List<ReportsPdf> PdfData(long idCompany,long idweek)
+        {
+            var company = dbCompaniesEntities.Find(idCompany);
+            if (company != null)
+                if(company.ParentId == null)
+                {
+                    var reports = new List<ReportsPdf>();
+                    var companies = dbCompaniesEntities.Where(c => c.ParentId == company.Id).ToList();
+                    foreach (var entity in companies)
+                    {
+                        var reportPdf = new ReportsPdf(entity);
+                        var users = dbPermissionEntities
+                            .Include(p => p.User)
+                            .Where(p => p.CompanyId == entity.Id 
+                                        && p.RoleId == 601).ToList();
+                        reportPdf.responsables
+                            .AddRange(
+                                    users
+                                    .Select(u => (u.UserId,
+                                            u.User.Name + " " + u.User.Lastname,
+                                            u.User.Name[0].ToString() + u.User.Lastname[0].ToString()+ ": "))
+                                 );
+                        var reportsData = db
+                            .Include(r => r.User)
+                            .Where(r => r.WeekId == idweek && r.CompanyId == entity.Id)
+                            .ToList();
+                        reportPdf.children = new List<ChildCompany>()
+                        {
+                            new ChildCompany(entity)
+                            {
+                                reports = reportsData.Select(r => new DataReport(r)).ToList()
+                            }
+                        };
+                        var children = dbCompaniesEntities.Where(c => c.ParentId == entity.Id).ToList();
+                        foreach (var child in children)
+                        {
+                            var usersChild = dbPermissionEntities
+                                .Include(p => p.User)
+                                .Where(p => p.CompanyId == child.Id 
+                                            && p.RoleId == 601).ToList();
+                            reportPdf.responsables
+                                .AddRange(
+                                    usersChild
+                                        .Select(u => (u.UserId,
+                                            u.User.Name + " " + u.User.Lastname,
+                                            u.User.Name[0].ToString() + u.User.Lastname[0].ToString() + ": ")
+                                        ));
+                            var reportsDataChild = db
+                                .Include(r => r.User)
+                                .Where(r => r.WeekId == idweek && r.CompanyId == child.Id)
+                                .ToList();
+                            reportPdf.children.Add(new ChildCompany(child)
+                            {
+                                reports = reportsDataChild.Select(r => new DataReport(r)).ToList()
+                            });
+                        }
+                        reportPdf.responsables = reportPdf.responsables.Distinct().ToList();
+                        reports.Add(reportPdf);
+                    }
+                    return reports;
+                }
+            return null;
         }
 
         public List<CompanyResponse> GetCompaniesRecursive(long idCompany)
