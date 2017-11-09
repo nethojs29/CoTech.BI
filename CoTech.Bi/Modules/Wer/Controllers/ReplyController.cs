@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
+using System.Reactive.Subjects;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -214,7 +215,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
         }
     }
-    public class MessagesSender : IObserver<MessageEntity>
+    public class MessagesSender : IObserver<MessageEntity>, IDisposable
     {
         private WebSocket webSocket;
         private long userId;
@@ -236,7 +237,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                this.Dispose();
             }
         }
 
@@ -248,8 +249,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine("\n\n CATCH OnNext");
-                Console.WriteLine(e);
+                this.Dispose();
             }
         }
 
@@ -266,7 +266,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine("\n\n CATCH SendNext");
+                this.Dispose();
             }
         }
 
@@ -276,14 +276,29 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 var bytes = new byte[1024*4];
                 do {
                     var res = await webSocket.ReceiveAsync(new ArraySegment<byte>(bytes), CancellationToken.None);
-                    if(res.MessageType == WebSocketMessageType.Close) break;
+                    if (res.MessageType == WebSocketMessageType.Close)
+                    {
+                        this.Dispose();
+                    };
                 } while (webSocket.State == WebSocketState.Open);
             }
             catch (Exception e)
             {
-                await webSocket.CloseAsync(WebSocketCloseStatus.Empty, "close", CancellationToken.None);
+                this.Dispose();
             }
         }
 
+        public async void Dispose()
+        {
+            try
+            {
+                await webSocket.CloseAsync(WebSocketCloseStatus.Empty, "close", CancellationToken.None);
+                this.webSocket.Dispose();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
     }
 }
