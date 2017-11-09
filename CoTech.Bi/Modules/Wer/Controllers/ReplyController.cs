@@ -287,6 +287,18 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 this.Dispose();
             }
         }
+        
+        ~MessagesSender()  
+        {  
+            try  
+            {  
+                this.Dispose();
+            }  
+            finally
+            {
+                this.webSocket = null;
+            }  
+        }
 
         public async void Dispose()
         {
