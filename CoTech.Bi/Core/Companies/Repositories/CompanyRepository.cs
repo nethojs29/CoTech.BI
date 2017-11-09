@@ -42,19 +42,18 @@ namespace CoTech.Bi.Core.Companies.Repositories
               .ThenInclude(c => c.Modules)
             .ToListAsync();
           var companies = permissions.Select(p => p.Company).Distinct().ToList();
-          return companies;
-          // var parents = permissions
-          //   .Where(p => p.RoleId == 1)
-          //   .Select(p => p.CompanyId)
-          //   .ToList();
-          // while(parents.Count > 0) {
-          //   var children = await db.Where(c => c.ParentId.HasValue && parents.Contains(c.ParentId.Value))
-          //     .Include(c => c.Modules)
-          //     .ToListAsync();
-          //   parents = children.Select(c => c.Id).ToList();
-          //   companies.AddRange(children);
-          // }
-          // return companies.Distinct().ToList();
+          var parents = permissions
+            .Where(p => p.RoleId == 1)
+            .Select(p => p.CompanyId)
+            .ToList();
+          while(parents.Count > 0) {
+            var children = await db.Where(c => c.ParentId.HasValue && parents.Contains(c.ParentId.Value))
+              .Include(c => c.Modules)
+              .ToListAsync();
+            parents = children.Select(c => c.Id).ToList();
+            companies.AddRange(children);
+          }
+          return companies.Distinct().ToList();
         }
 
         public Task<CompanyEntity> WithId(long id) {
