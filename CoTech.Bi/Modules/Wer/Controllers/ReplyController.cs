@@ -211,7 +211,6 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 byte[] byteArray = Encoding.UTF8.GetBytes(e.Message);
                 MemoryStream stream = new MemoryStream(byteArray);
                 HttpContext.Response.Body = stream;
-                HttpContext.Response.StatusCode = 500;
             }
         }
     }
@@ -268,7 +267,6 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             catch (Exception e)
             {
                 Console.WriteLine("\n\n CATCH SendNext");
-                Console.WriteLine(e);
             }
         }
 
@@ -283,8 +281,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine("\n\n CATCH UtilNext");
-                Console.WriteLine(e);
+                await webSocket.CloseAsync(WebSocketCloseStatus.Empty, "close", CancellationToken.None);
             }
         }
 

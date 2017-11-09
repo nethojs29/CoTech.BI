@@ -11,8 +11,8 @@ using System;
 namespace CoTech.Bi.Migrations
 {
     [DbContext(typeof(BiContext))]
-    [Migration("20171102205954_Init")]
-    partial class Init
+    [Migration("20171109173216_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

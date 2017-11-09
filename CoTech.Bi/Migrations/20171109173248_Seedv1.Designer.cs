@@ -11,7 +11,7 @@ using System;
 namespace CoTech.Bi.Migrations
 {
     [DbContext(typeof(BiContext))]
-    [Migration("20171102210037_Seedv1")]
+    [Migration("20171109173248_Seedv1")]
     partial class Seedv1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -178,12 +178,12 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                 {
                     return null;
                 }
-                var entity = new GroupEntity()
+                var entity = new GroupEntity
                 {
                     Category = group.Type,
                     UserId = group.UserId,
                     CompanyId = group.CompanyId,
-                    UsersList = new List<PartyEntity>()
+                    UsersList = new List<PartyEntity>
                     {
                         new PartyEntity()
                         {
@@ -196,7 +196,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     }
                 };
                 _group.Add(entity);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
                 return await _group
                         .Include(g => g.User)
                         .Include(g => g.UsersList)
