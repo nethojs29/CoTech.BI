@@ -11,7 +11,6 @@
     <Folder Include="wwwroot\" />
     <Folder Include="Entities\" />
     <Folder Include="Views\" />
-    <Folder Include="wwwroot\Certs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Hangfire" Version="1.6.16" />
