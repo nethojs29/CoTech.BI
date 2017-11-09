@@ -163,7 +163,15 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     var response = new MessageResponse(values);
                     string messageString = values.User.Name + " " + values.User.Lastname + ": " + response.Message; 
                     var userNotify = new List<long>(){idUser};
-                    _notifications.SendNotification(userNotify,messageString,response);
+                    try
+                    {
+                        _notifications.SendNotification(userNotify,messageString,response);
+
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
                     return new ObjectResult(response){StatusCode = 201};
                 }
                 return new ObjectResult(

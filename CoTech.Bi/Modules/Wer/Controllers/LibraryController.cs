@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Wer.Models.Entities;
+using CoTech.Bi.Modules.Wer.Models.Files;
 using CoTech.Bi.Modules.Wer.Repositories;
 using CoTech.Bi.Util;
 using Microsoft.AspNetCore.Http;
@@ -19,6 +22,8 @@ using iTextSharp.text;
 using iTextSharp.text.html.simpleparser;
 using iTextSharp.text.pdf;
 using iTextSharp;
+using Font = iTextSharp.text.Font;
+using Rectangle = iTextSharp.text.Rectangle;
 
 namespace CoTech.Bi.Modules.Wer.Controllers
 {
@@ -147,7 +152,115 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 return new ObjectResult(new {error = e.Message}){StatusCode = 500};
             }
         }
-        
+        [HttpGet("week/{idWeek}/generate")]
+        [RequiresRole(WerRoles.Ceo,WerRoles.Director,WerRoles.Operator)]
+        public async Task<IActionResult> GeneratePdf([FromRoute(Name = "idCompany")] long idCompany, [FromRoute(Name = "idWeek")] long idWeek)
+        {
+            try
+            {
+                var week = _reportRepository.getWeekById(idWeek);
+                if (week != null)
+                {
+                    var reports = _reportRepository.PdfData(idCompany, idWeek);
+                    if (reports != null)
+                    {
+                        var pdf = this.GeneretePDF(reports, week);
+                        return File(pdf,"application/pdf");
+                    }
+                }
+                return new ObjectResult(new {message = "parametros incorrectos."})
+                {
+                    StatusCode = 404
+                };
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(new {error = e.Message}){StatusCode = 500};
+            }
+        }
+
+        private byte[] GeneretePDF(List<ReportsPdf> data, WeekEntity week)
+        {
+            byte[] bPDF = null;
+            MemoryStream ms = new MemoryStream();
+            Document doc = new Document(PageSize.Letter,30,30,30,30);
+            PdfWriter oPdfWriter = PdfWriter.GetInstance(doc, ms);
+            doc.Open();
+            PdfPTable table = new PdfPTable(3);
+            table.SetTotalWidth(new float[]{5, 9, 9});
+            Font titleFont = FontFactory.GetFont("Arial", 20, Font.BOLD);
+            Font regularFont = FontFactory.GetFont("Arial", 16, Font.ITALIC);
+            Font titleTableFont = FontFactory.GetFont("Arial", 14, Font.BOLD);
+            Font regularTableFont = FontFactory.GetFont("Arial", 12);
+            Paragraph title;
+            Paragraph text;
+            title = new Paragraph("Reporte Empresarial Semanal \n", titleFont);
+            title.Alignment = Element.ALIGN_CENTER;
+            doc.Add(title);
+            text = new Paragraph(week.StartTime.ToString("dd/MM") + " al " + 
+                                 week.EndTime.ToString("dd/MM/yyyy") + "\n\n", regularFont);
+            text.Alignment = Element.ALIGN_CENTER;
+            doc.Add(text);
+            foreach (var company in data)
+            {
+                var cell = new PdfPCell();
+                cell.BackgroundColor = new BaseColor(this.FromHex(company.color));
+                table.AddCell(cell);
+                cell = new PdfPCell();
+                cell.Colspan = 2;
+                var titleTable = new Paragraph(company.company,titleTableFont);
+                titleTable.Alignment = Element.ALIGN_CENTER;
+                cell.AddElement(titleTable);
+                table.AddCell(cell);
+                cell = new PdfPCell();
+                cell.Colspan = 3;
+                var representantes = "";
+                foreach (var tuple in company.responsables)
+                {
+                    representantes += tuple.Item3 + tuple.Item2 + " | ";
+                }
+                cell.AddElement(new Paragraph(representantes, regularTableFont));
+                table.AddCell(cell);
+                cell = new PdfPCell();
+                cell.AddElement(new Paragraph("Unidad", regularTableFont));
+                table.AddCell(cell);
+                cell = new PdfPCell();
+                cell.AddElement(new Paragraph("Operativo", regularTableFont));
+                table.AddCell(cell);
+                cell = new PdfPCell();
+                cell.AddElement(new Paragraph("Financiero", regularTableFont));
+                table.AddCell(cell);
+                foreach (var child in company.children)
+                {
+                    cell = new PdfPCell();
+                    cell.AddElement(new Paragraph(child.company, regularTableFont));
+                    table.AddCell(cell);
+                    cell = new PdfPCell();
+                    cell.AddElement(new Paragraph(child.operative(), regularTableFont));
+                    table.AddCell(cell);
+                    cell = new PdfPCell();
+                    cell.AddElement(new Paragraph(child.finance(), regularTableFont));
+                    table.AddCell(cell);
+                }
+
+            }
+            doc.Add(table);
+            doc.Close();
+            bPDF = ms.ToArray();
+            return bPDF;
+        }
+        private Color FromHex(string hex)
+        {
+            if (hex.StartsWith("#"))
+                hex = hex.Substring(1);
+
+            if (hex.Length != 6) throw new Exception("Color not valid");
+
+            return Color.FromArgb(
+                int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber),
+                int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber),
+                int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber));
+        }
         private byte[] GetPDF(string pHTML) {
             byte[] bPDF = null;
             MemoryStream ms = new MemoryStream();
