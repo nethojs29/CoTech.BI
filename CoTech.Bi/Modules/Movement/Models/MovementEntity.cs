@@ -17,6 +17,9 @@ namespace CoTech.Bi.Modules.Movement.Models{
         public long ClientId{ set; get; }
         public int Type{ set; get; } // 0 egreso, 1 ingreso
         
+        public Boolean Iva{ set; get; }
+        
+        public DateTime Date{ set; get; }
         
         public CompanyEntity Company{ set; get; }
         public ClientEntity Client{ set; get; }

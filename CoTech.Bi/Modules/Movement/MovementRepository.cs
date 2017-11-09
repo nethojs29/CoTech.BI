@@ -20,7 +20,7 @@ namespace CoTech.Bi.Modules.Movement{
         }
 
         public Task<List<MovementEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).ToListAsync();
+            return db.Where(p => !p.DeletedAt.HasValue).Include(m => m.Client).ToListAsync();
         }
 
         public Task<MovementEntity> WithId(long id){
@@ -33,8 +33,14 @@ namespace CoTech.Bi.Modules.Movement{
         }
 
         public Task<int> Update(long id, UpdateMovementReq entity){
-            var provider = db.Find(id);
-            context.Entry(provider).CurrentValues.SetValues(entity);
+            var movement = db.Find(id);
+            movement.Amount = entity.Amount;
+            movement.Concept = entity.Concept;
+            movement.Date = entity.getDate();
+            movement.Type = entity.Type;
+            movement.ClientId = entity.ClientId;
+            movement.Iva = entity.Iva;
+            db.Update(movement);
             return context.SaveChangesAsync();
         }
 

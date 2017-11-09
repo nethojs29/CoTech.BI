@@ -33,7 +33,13 @@ namespace CoTech.Bi.Modules.SmallBox{
 
         public Task<int> Update(long id, UpdateSmallBoxEntryReq entity){
             var entry = db.Find(id);
-            context.Entry(entry).CurrentValues.SetValues(entity);
+            entry.Amount = entity.Amount;
+            entry.Concept = entity.Concept;
+            entry.Date = entity.getDate();
+            entry.Type = entity.Type;
+            entry.ClientId = entity.ClientId;
+            entry.ProviderId = entity.ProviderId;
+            db.Update(entry);
             return context.SaveChangesAsync();
         }
 

@@ -6,7 +6,7 @@ namespace CoTech.Bi.Modules.SmallBox.Models{
     public class CreateSmallBoxEntryReq : SmallBoxRequest{
         public string Concept{ set; get; }
         public float Amount{ set; get; }
-        public DateTime Date{ set; get; }
+        public float Date{ set; get; }
         public int Type{ set; get; } // 0 egreso, 1 ingreso
         public long CompanyId{ set; get; }
         
@@ -14,10 +14,13 @@ namespace CoTech.Bi.Modules.SmallBox.Models{
         public long? ClientId{ set; get; }
 
         public SmallBoxEntity toEntity(long userId){
+            DateTime date = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddMilliseconds(Date).ToLocalTime();
+            Console.WriteLine(ProviderId);
+            Console.WriteLine(ClientId);
             return new SmallBoxEntity {
                 Concept = Concept,
                 Amount = Amount,
-                Date = Date,
+                Date = date,
                 Type = Type,
                 CompanyId = CompanyId,
                 ProviderId = ProviderId,
@@ -31,10 +34,14 @@ namespace CoTech.Bi.Modules.SmallBox.Models{
     public class UpdateSmallBoxEntryReq : SmallBoxRequest{
         public string Concept{ set; get; }
         public float Amount{ set; get; }
-        public DateTime Date{ set; get; }
+        public float Date{ set; get; }
         public int Type{ set; get; } // 0 egreso, 1 ingreso
         
         public long? ProviderId{ set; get; }
         public long? ClientId{ set; get; }
+        
+        public DateTime getDate(){
+            return new DateTime(1970, 1, 1, 0, 0, 0, 0).AddMilliseconds(Date).ToLocalTime();
+        }
     }
 }

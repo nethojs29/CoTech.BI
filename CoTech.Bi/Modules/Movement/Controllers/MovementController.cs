@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoTech.Bi.Modules.Movement.Controllers{
-    [Route("api/companies/{idCompany}/movements")]
+    [Route("api/companies/{idCompany}/clients/movements")]
     public class MovementController:Controller{
         private readonly MovementRepository movementRepo;
 
@@ -30,6 +31,7 @@ namespace CoTech.Bi.Modules.Movement.Controllers{
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(long id, [FromBody] UpdateMovementReq req){
+            Console.WriteLine(req);
             var result = await movementRepo.Update(id, req);
             return Ok(result);
         }
