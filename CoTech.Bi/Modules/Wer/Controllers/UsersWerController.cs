@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CoTech.Bi.Authorization;
+using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Modules.Wer.Models.Responses;
 using CoTech.Bi.Modules.Wer.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -8,13 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoTech.Bi.Modules.Wer.Controllers
 {
     [Route("/api/companies/{idCompany}/res")]
-    public class UsersController : Controller
+    public class UsersWerController : Controller
     {
         
         
         private UsersRepository _repository;
 
-        public UsersController(UsersRepository _repository)
+        public UsersWerController(UsersRepository _repository)
         {
             this._repository = _repository;
         }
@@ -25,7 +26,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
         {
             try
             {
-                var users = _repository.GetUsersByCompany(idCompany, new List<WerUserAndPermissions>());
+                var users = _repository.GetUsersByCompany(idCompany, new List<UserResponse>());
                 return new ObjectResult(users);
             }
             catch (Exception e)

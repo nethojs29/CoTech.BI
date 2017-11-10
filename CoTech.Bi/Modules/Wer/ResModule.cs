@@ -35,6 +35,7 @@ namespace CoTech.Bi.Modules.Wer
             services.AddScoped<FilesRepository>();
             services.AddScoped<ReplyRepository>();
             services.AddScoped<NotificationsIOSRepository>();
+            services.AddScoped<UsersRepository>();
             services.AddSingleton(new ReportEventProcessor());
             services.AddSingleton(new ReportNotifier());
         }

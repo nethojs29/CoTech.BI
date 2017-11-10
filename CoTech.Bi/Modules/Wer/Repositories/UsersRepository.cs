@@ -2,6 +2,7 @@
 using System.Linq;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Permissions.Models;
+using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Modules.Wer.Models.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -27,16 +28,16 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             this._context = _context;
         }
 
-        public List<WerUserAndPermissions> GetUsersByCompany(long idCompany, List<WerUserAndPermissions> usersList)
+        public List<UserResponse> GetUsersByCompany(long idCompany, List<UserResponse> usersList)
         {
-            var users = usersList ?? new List<WerUserAndPermissions>();
+            var users = usersList ?? new List<UserResponse>();
             var company = _Company.Find(idCompany);
             if (company != null)
             {
                 var userFound = _Permission
                     .Include(p => p.User)
-                    .Where(p => p.CompanyId == idCompany && p.RoleId == 603)
-                    .Select(p => new WerUserAndPermissions(p.User)).ToList();
+                    .Where(p => p.CompanyId == idCompany && (p.RoleId == 603 || p.RoleId == 602))
+                    .Select(p => new UserResponse(p.User)).ToList();
                 users = users.Concat(userFound).ToList();
                 if (company.ParentId != null)
                 {
