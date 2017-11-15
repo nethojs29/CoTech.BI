@@ -23,22 +23,11 @@ namespace CoTech.Bi.Core.Notifications.Repositories
             this.context = context;
         }
 
-        public IObservable<NotificationEntity> UserNotifications(long userId) {
-            
-            var obs = Observable.Create<NotificationEntity>(async observable => {
-                var myNotifs = await db
-                    .Where(n => n.Receivers.Any(u => u.UserId == userId))
-                    .Include(n => n.Receivers)
-                    .OrderByDescending(n => n.CreatedAt)
-                    .ToListAsync();
-                myNotifs.ForEach(n => observable.OnNext(n));
-                observable.OnCompleted();
-            });
+        public IObservable<NotificationEntity> Listen(long userId) {
 
-            var obs2 = DbObservable<BiContext>.FromInserted<NotificationEntity>()
+            return DbObservable<BiContext>.FromInserted<NotificationEntity>()
                 .Where(n => n.Entity.Receivers.Any(u => u.UserId == userId))
                 .Select(n => n.Entity);
-            return obs.Concat(obs2);
         }
 
         public async Task Create(NotificationEntity entity){

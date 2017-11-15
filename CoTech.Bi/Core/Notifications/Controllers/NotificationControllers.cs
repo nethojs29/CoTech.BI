@@ -28,7 +28,7 @@ namespace CoTech.Bi.Core.Notifications.Controllers
             if(HttpContext.WebSockets.IsWebSocketRequest){
                 var socket = await HttpContext.WebSockets.AcceptWebSocketAsync();
                 var userId = HttpContext.UserId().Value;
-                var notificationObs = notificationRepository.UserNotifications(userId);
+                var notificationObs = notificationRepository.Listen(userId);
                 var sender = new NotificationSender(socket, userId);
                 notificationObs.Subscribe(sender);
                 await sender.UntilWebsocketCloses();
