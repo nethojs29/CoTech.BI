@@ -117,7 +117,7 @@ namespace CoTech.Bi.Core.Companies.Controllers
         [RequiresAbsoluteRole(Role.Super)]
         public async Task<IActionResult> GetCompanyChildren(long id) {
           var children = await companyRepo.ChildrenOf(id);
-          return new OkObjectResult(children);
+          return new OkObjectResult(children.Select(c => new CompanyResult(c)));
         }
 
         [HttpGet("mines")]
@@ -147,7 +147,7 @@ namespace CoTech.Bi.Core.Companies.Controllers
         public async Task<IActionResult> Update(long id, [FromBody] UpdateCompanyReq req) {
           var updateCmd = new UpdateCompanyCmd(id, req, HttpContext.UserId().Value);
           var company = await companyRepo.Update(updateCmd);
-          return Ok(company);
+          return Ok(new CompanyResult(company));
         }
 
         [HttpPost("{id}/modules/{moduleId}")]

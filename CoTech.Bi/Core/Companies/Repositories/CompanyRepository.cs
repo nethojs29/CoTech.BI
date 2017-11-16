@@ -36,12 +36,24 @@ namespace CoTech.Bi.Core.Companies.Repositories
             .Include(c => c.Modules).ToListAsync();
         }
 
-        public Task<List<CompanyEntity>> GetUserCompanies(long userId) {
-          return dbPermissions.Where(p => p.UserId == userId)
-            .Select(p => p.Company)
-            .Include(c => c.Modules)
-            .Distinct()
+        public async Task<List<CompanyEntity>> GetUserCompanies(long userId) {
+          var permissions = await dbPermissions.Where(p => p.UserId == userId)
+            .Include(p => p.Company)
+              .ThenInclude(c => c.Modules)
             .ToListAsync();
+          var companies = permissions.Select(p => p.Company).Distinct().ToList();
+          var parents = permissions
+            .Where(p => p.RoleId == 1)
+            .Select(p => p.CompanyId)
+            .ToList();
+          while(parents.Count > 0) {
+            var children = await db.Where(c => c.ParentId.HasValue && parents.Contains(c.ParentId.Value))
+              .Include(c => c.Modules)
+              .ToListAsync();
+            parents = children.Select(c => c.Id).ToList();
+            companies.AddRange(children);
+          }
+          return companies.Distinct().ToList();
         }
 
         public Task<CompanyEntity> WithId(long id) {
@@ -70,7 +82,7 @@ namespace CoTech.Bi.Core.Companies.Repositories
         public async Task<CompanyEntity> Update(UpdateCompanyCmd cmd){
           var evt = CompanyUpdatedEvt.MakeEventEntity(cmd);
           var insertions = await eventRepository.Create(evt);
-          return await db.FirstAsync(c => c.Id == evt.Id);
+          return await db.FirstAsync(c => c.Id == cmd.Id);
         }
 
         public async Task<bool> AddModule(AddModuleCmd cmd) {

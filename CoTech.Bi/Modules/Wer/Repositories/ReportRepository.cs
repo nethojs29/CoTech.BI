@@ -4,11 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Companies.Repositories;
+using CoTech.Bi.Core.EventSourcing.Models;
+using CoTech.Bi.Core.EventSourcing.Repositories;
 using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Entity;
 using Microsoft.EntityFrameworkCore;
 using CoTech.Bi.Modules.Wer.Models.Entities;
+using CoTech.Bi.Modules.Wer.Models.Events;
+using CoTech.Bi.Modules.Wer.Models.Files;
 using CoTech.Bi.Modules.Wer.Models.Requests;
 using CoTech.Bi.Modules.Wer.Models.Responses;
 using Microsoft.AspNetCore.Rewrite.Internal.UrlMatches;
@@ -60,44 +64,79 @@ namespace CoTech.Bi.Modules.Wer.Repositories
         private WeekRepository _weekRepository;
 
         private CompanyRepository _companyRepository;
+        private EventRepository _eventRepository;
         
-        public ReportRepository(BiContext context, WeekRepository repository,CompanyRepository companyRepository){
+        public ReportRepository(BiContext context, WeekRepository repository,CompanyRepository companyRepository, EventRepository eventRepository){
             this.context = context;
             this._weekRepository = repository;
             this._companyRepository = companyRepository;
+            this._eventRepository = eventRepository;
+        }
+
+        public Task<List<ReportPdfResponse>> getPdfData(long idCompany, long idWeek)
+        {
+            return db.Where(r => r.CompanyId == idCompany && r.WeekId == idWeek).Select(
+                r =>
+                    new ReportPdfResponse()
+                    {
+                        
+                    }
+            ).ToListAsync();
         }
 
         public async Task<ReportEntity> SearchOrCreate(long idCompany, long idUser, long idWeek,long idCreator)
         {
-            var report = await db.Include(r => r.Seen).Include(r => r.User).Include(r => r.Files).Where(r => r.WeekId == idWeek && r.UserId == idUser && r.CompanyId == idCompany)
-                .FirstOrDefaultAsync();
-            if (report == null)
+            if (dbPermissionEntities.Count(p => p.CompanyId == idCompany && p.RoleId == 601 && p.UserId == idUser) > 0)
             {
-                report = new ReportEntity()
+                var report = await db.Include(r => r.Seen).Include(r => r.User).Include(r => r.Files).Where(r => r.WeekId == idWeek && r.UserId == idUser && r.CompanyId == idCompany)
+                    .FirstOrDefaultAsync();
+                if (report == null)
                 {
-                    CompanyId = idCompany,
-                    UserId = idUser,
-                    WeekId = idWeek
-                };
-                db.Add(report);
-                context.SaveChanges();
-                report.Seen = new List<SeenReportsEntity>();
-                report.Files = new List<FileEntity>();
-            }
-            if(report != null)
-                if (report.Id > 0 && !report.Seen.Exists(s => s.UserId == idCreator))
-                {
-                    dbSeenReportsEntities.Add(new SeenReportsEntity()
+                    report = new ReportEntity()
                     {
-                        Report = report,
-                        UserId = idCreator
-                    });
+                        CompanyId = idCompany,
+                        UserId = idUser,
+                        WeekId = idWeek
+                    };
+                    db.Add(report);
                     context.SaveChanges();
-                    var aux = db.Include(r => r.Seen).Include(r => r.User).Include(r => r.Files).FirstOrDefault(r=> r.Id == report.Id);
-                    report = aux;
-                    return report;
+                    report.Seen = new List<SeenReportsEntity>();
+                    report.Files = new List<FileEntity>();
                 }
-            return report;
+                if(report != null)
+                    if (report.Id > 0 && !report.Seen.Exists(s => s.UserId == idCreator) &&
+                        (!string.IsNullOrEmpty(report.Financial) || !string.IsNullOrEmpty(report.Operative)))
+                    {
+                        dbSeenReportsEntities.Add(new SeenReportsEntity()
+                        {
+                            Report = report,
+                            UserId = idCreator
+                        });
+                        context.SaveChanges();
+                        var aux = db.Include(r => r.Seen).Include(r => r.User).Include(r => r.Files)
+                            .FirstOrDefault(r => r.Id == report.Id);
+                        report = aux;
+                        return report;
+                    }
+                    else
+                    {
+                        var seen = report.Seen.FirstOrDefault(s => s.UserId == idCreator);
+                        if (seen != null)
+                        {
+                            context.Entry(seen).CurrentValues.SetValues(new SeenReportsEntity()
+                            {
+                                Id = seen.Id,
+                                UserId = seen.UserId,
+                                ReportId = seen.ReportId,
+                                SeenAt = DateTime.Now
+                            });
+                            context.SaveChanges();
+                            return report;
+                        }
+                    }
+                return report;
+            }
+            return null;
         }
 
         public Task<List<ReportEntity>> getAll()
@@ -141,26 +180,29 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             await context.SaveChangesAsync();
             return report;
         }
-        public ReportEntity Update(ReportRequest request,long idreport)
+        public async Task<ReportEntity> Update(ReportRequest request,long idreport,long idUser)
         {
-            var report = db.Find(idreport);
-            if (report != null)
+            var evt = new EventEntity()
             {
-                var updateReport = new ReportEntity()
+                UserId = idUser,
+                Body = new ReportUpdatedEvt()
                 {
                     Id = idreport,
-                    CompanyId = request.CompanyId,
-                    UserId = request.UserId,
-                    Financial = request.Financial,
                     Observation = request.Observation,
                     Operative = request.Operative,
-                    WeekId = request.WeekId
-                };
-                context.Entry(report).CurrentValues.SetValues(updateReport);
-                context.SaveChanges();
-                return report;
+                    Financial = request.Financial
+                }
+            };
+            var updating = await _eventRepository.Create(evt);
+            if (updating == 0)
+            {
+                return null;
             }
-            return null;
+            else
+            {
+                return db.Include(r => r.User).Include(r => r.Files).Include(r => r.Seen).First(r => r.Id == idreport);
+            }
+
         }
 
         public bool Delete(long IdReport)
@@ -230,6 +272,219 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             return db.Where(r => r.CompanyId == company && r.UserId == user)
                 .OrderByDescending(r => r.WeekId)
                 .ToListAsync();
+        }
+        
+        public List<ReportPdfResponse> GetReportRecursive(long idCompany, long idWeek)
+        {
+            List<ReportPdfResponse> list = new List<ReportPdfResponse>();
+            var company = dbCompaniesEntities.Include(c => c.Children).FirstOrDefault(c => c.Id == idCompany);
+            if (company != null)
+            {
+                var users = dbUsersEntities
+                    .Where(u => u.Permissions.Where(p => p.RoleId > 600 && p.RoleId < 700).Any(p => p.CompanyId == idCompany))
+                    .ToList();
+                foreach (var user in users)
+                {
+                    var report = db.Include(r => r.Company).Include(r => r.User).Include(r => r.Week).FirstOrDefault(r =>
+                        r.UserId == user.Id && r.CompanyId == idCompany && r.WeekId == idWeek);
+                    if (report != null)
+                    {
+                        string color = "";
+                        if (!string.IsNullOrEmpty(report.Company.Color))
+                        {
+                            color = report.Company.Color;
+                        }
+                        list.Add(new ReportPdfResponse()
+                        {
+                            EndTime = report.Week.EndTime,
+                            StarTime = report.Week.StartTime,
+                            Finantial = report.Financial,
+                            Operative = report.Operative,
+                            Observations = report.Observation,
+                            User = report.User.Name + " " + report.User.Lastname,
+                            Company = report.Company.Name,
+                            Color = color
+                        });
+                    }
+                    else
+                    {
+                        var week = dbWeek.First(w => w.Id == idWeek);
+                        list.Add(new ReportPdfResponse()
+                        {
+                            EndTime = week.EndTime,
+                            StarTime = week.StartTime,
+                            Finantial = "",
+                            Operative = "",
+                            Observations = "",
+                            User = user.Name + " " + user.Lastname,
+                            Company = company.Name,
+                            Color = company.Color
+                        });
+                    }
+                }
+                
+                foreach (CompanyEntity child in company.Children)
+                {
+                    var returned = this.GetReportRecursive(child.Id,idWeek);
+                    list = list.Concat(returned).ToList();
+                }
+            }
+            return list;
+        }
+        public List<ReportPendingsResponse> GetReportSeensRecursive(long idCompany, long idUser, List<WeekEntity> weeks)
+        {
+            var week = weeks == null ? dbWeek.OrderByDescending(r => r.EndTime).Take(10).ToList() : weeks;
+            List<ReportPendingsResponse> list = new List<ReportPendingsResponse>();
+            var company = dbCompaniesEntities.Include(c => c.Children).FirstOrDefault(c => c.Id == idCompany);
+            if (company != null)
+            {
+                if (company.ParentId != null)
+                {
+                    var users = dbUsersEntities
+                        .Where(u => u.Permissions.Where(p => p.RoleId == 601).Any(p => p.CompanyId == idCompany))
+                        .ToList();
+                    foreach (var user in users)
+                    {
+                        foreach (var weekEntity in week)
+                        {
+                            var report = db
+                                .Where(r => r.WeekId == weekEntity.Id && r.CompanyId == idCompany && r.UserId == user.Id)
+                                .Include(r => r.Company)
+                                .Include(r => r.User)
+                                .Include(r => r.Week)
+                                .Include(r => r.Seen)
+                                .FirstOrDefault();
+                            if (report != null)
+                            {
+                                if (string.IsNullOrEmpty(report.Financial) && string.IsNullOrEmpty(report.Operative))
+                                {
+                                    list.Add(new ReportPendingsResponse()
+                                    {
+                                        idWeek = report.WeekId,
+                                        idCompany = report.CompanyId,
+                                        idUser = report.UserId,
+                                        User = report.User.Name + " " + report.User.Lastname,
+                                        create = false
+                                    });
+                                }
+                                else if (report.Seen.Count(seen => seen.UserId == idUser) == 0)
+                                {
+                                    list.Add(new ReportPendingsResponse()
+                                    {
+                                        idWeek = report.WeekId,
+                                        idCompany = report.CompanyId,
+                                        idUser = report.UserId,
+                                        User = report.User.Name + " " + report.User.Lastname,
+                                        create = true
+                                    });
+                                }
+                                else
+                                {
+                                    var seen = report.Seen.First(see => see.UserId == idUser);
+                                    if (seen.SeenAt.Ticks < report.Updated.Ticks)
+                                    {
+                                        list.Add(new ReportPendingsResponse()
+                                        {
+                                            idWeek = report.WeekId,
+                                            idCompany = report.CompanyId,
+                                            idUser = report.UserId,
+                                            User = report.User.Name + " " + report.User.Lastname,
+                                            create = true
+                                        });
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                list.Add(new ReportPendingsResponse()
+                                {
+                                    idWeek = weekEntity.Id,
+                                    idCompany = company.Id,
+                                    idUser = user.Id,
+                                    User = user.Name + " " + user.Lastname,
+                                    create = false
+                                });
+                            }
+                        }
+                    }
+                }
+                
+                
+                foreach (CompanyEntity child in company.Children)
+                {
+                    var returned = GetReportSeensRecursive(child.Id,idUser,week);
+                    list = list.Concat(returned).ToList();
+                }
+            }
+            return list;
+        }
+
+        public WeekEntity getWeekById(long id)
+        {
+            return dbWeek.Find(id);
+        }
+        public List<ReportsPdf> PdfData(long idCompany,long idweek)
+        {
+            var company = dbCompaniesEntities.Find(idCompany);
+            if (company != null)
+                if(company.ParentId == null)
+                {
+                    var reports = new List<ReportsPdf>();
+                    var companies = dbCompaniesEntities.Where(c => c.ParentId == company.Id).ToList();
+                    foreach (var entity in companies)
+                    {
+                        var reportPdf = new ReportsPdf(entity);
+                        var users = dbPermissionEntities
+                            .Include(p => p.User)
+                            .Where(p => p.CompanyId == entity.Id 
+                                        && p.RoleId == 601).ToList();
+                        reportPdf.responsables
+                            .AddRange(
+                                    users
+                                    .Select(u => (u.UserId,
+                                            u.User.Name + " " + u.User.Lastname,
+                                            u.User.Name[0].ToString() + u.User.Lastname[0].ToString()+ ": "))
+                                 );
+                        var reportsData = db
+                            .Include(r => r.User)
+                            .Where(r => r.WeekId == idweek && r.CompanyId == entity.Id)
+                            .ToList();
+                        reportPdf.children = new List<ChildCompany>()
+                        {
+                            new ChildCompany(entity)
+                            {
+                                reports = reportsData.Select(r => new DataReport(r)).ToList()
+                            }
+                        };
+                        var children = dbCompaniesEntities.Where(c => c.ParentId == entity.Id).ToList();
+                        foreach (var child in children)
+                        {
+                            var usersChild = dbPermissionEntities
+                                .Include(p => p.User)
+                                .Where(p => p.CompanyId == child.Id 
+                                            && p.RoleId == 601).ToList();
+                            reportPdf.responsables
+                                .AddRange(
+                                    usersChild
+                                        .Select(u => (u.UserId,
+                                            u.User.Name + " " + u.User.Lastname,
+                                            u.User.Name[0].ToString() + u.User.Lastname[0].ToString() + ": ")
+                                        ));
+                            var reportsDataChild = db
+                                .Include(r => r.User)
+                                .Where(r => r.WeekId == idweek && r.CompanyId == child.Id)
+                                .ToList();
+                            reportPdf.children.Add(new ChildCompany(child)
+                            {
+                                reports = reportsDataChild.Select(r => new DataReport(r)).ToList()
+                            });
+                        }
+                        reportPdf.responsables = reportPdf.responsables.Distinct().ToList();
+                        reports.Add(reportPdf);
+                    }
+                    return reports;
+                }
+            return null;
         }
 
         public List<CompanyResponse> GetCompaniesRecursive(long idCompany)

@@ -60,5 +60,11 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 return new ObjectResult(new {error = e.Message}){StatusCode = 500};
             }
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> WithId(long id) {
+            var week = await _weekRepository.withId(id);
+            return Ok(week);
+        }
     }
 }

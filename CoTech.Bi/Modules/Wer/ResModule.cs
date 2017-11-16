@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
+using CoTech.Bi.Modules.Wer.EventProcessors;
+using CoTech.Bi.Modules.Wer.Notifiers;
 
 namespace CoTech.Bi.Modules.Wer
 {
@@ -23,7 +25,7 @@ namespace CoTech.Bi.Modules.Wer
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            RecurringJob.AddOrUpdate("crear semanas",(WeekRepository repository)=>repository.AddWeek(),Cron.Weekly(DayOfWeek.Saturday));
+            RecurringJob.AddOrUpdate("crear semanas",(WeekRepository repository)=>repository.AddWeek(),Cron.Weekly(DayOfWeek.Saturday,20));
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -32,6 +34,10 @@ namespace CoTech.Bi.Modules.Wer
             services.AddScoped<ReportRepository>();
             services.AddScoped<FilesRepository>();
             services.AddScoped<ReplyRepository>();
+            services.AddScoped<NotificationsIOSRepository>();
+            services.AddScoped<UsersRepository>();
+            services.AddSingleton(new ReportEventProcessor());
+            services.AddSingleton(new ReportNotifier());
         }
 
         public void ConfigureEntities(ModelBuilder modelBuilder)
@@ -42,15 +48,19 @@ namespace CoTech.Bi.Modules.Wer
             
             modelBuilder.Entity<FileEntity>().ToTable("Wer_File");
             
+            modelBuilder.Entity<FileCompanyEntity>().ToTable("Wer_File_Company");
+            
+            modelBuilder.Entity<PartyEntity>().ToTable("Wer_Party");
+            
             modelBuilder.Entity<GroupEntity>().ToTable("Wer_Groups");
             
             modelBuilder.Entity<SeenReportsEntity>().ToTable("Wer_Seen_Reports");
             
             modelBuilder.Entity<MessageEntity>().ToTable("Wer_Messages");
-            
-            modelBuilder.Entity<SeenMessagesEntity>().ToTable("Wer_Seen_Messages");
-            
+                        
             modelBuilder.Entity<FileEntity>().ToTable("Wer_File");
+            
+            modelBuilder.Entity<IOSTokenEntity>().ToTable("Wer_Token_User");
             
         }
 
@@ -61,7 +71,7 @@ namespace CoTech.Bi.Modules.Wer
 
         public List<ISeed> ConfigureSeeds(BiContext context)
         {
-            return new List<ISeed> { new WerSeed1() };
+            return new List<ISeed> { new WerSeed1(), new WerSeed1Weeks() };
         }
     }
 }

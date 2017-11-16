@@ -28,6 +28,13 @@ namespace CoTech.Bi.Core.Users.Controllers {
       return new OkObjectResult(users.Select(u => new UserResponse(u)));
     }
 
+    [HttpGet("{user}")]
+    [RequiresAbsoluteRoleAnywhere(Role.Super, Role.Admin)]
+      public async Task<IActionResult> GetUserInCompany(long company, long user) {
+          var userEntity = await userRepository.WithId(user);
+          return Ok(userEntity);
+    }
+
     [HttpPost]
     [RequiresRoot]
     public async Task<IActionResult> Create([FromBody] CreateUserReq req){
@@ -39,6 +46,18 @@ namespace CoTech.Bi.Core.Users.Controllers {
           return Created($"/api/users/{entity.Id}", new UserResponse(entity));
         else
           return StatusCode(500);
+      } else {
+        return BadRequest();
+      }
+    }
+
+    [HttpPut("{id}")]
+    [RequiresAuth]
+    public async Task<IActionResult> Update(long id, [FromBody] UpdateUserReq req) {
+      var cmd = new UpdateUserCmd(req, id, HttpContext.UserId().Value);
+      var updated = await userRepository.Update(cmd);
+      if (updated) {
+        return Ok();
       } else {
         return BadRequest();
       }

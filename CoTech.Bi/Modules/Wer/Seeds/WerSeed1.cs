@@ -305,7 +305,11 @@ namespace CoTech.Bi.Modules.Wer.Seeds
                     {
                         RoleId = 603,
                         CompanyId = companies["gde"].Id
-                    }
+                    }, new PermissionEntity()
+                  {
+                      RoleId = 601,
+                      CompanyId = companies["grupo-mazon"].Id
+                  }
                 }
                 
             },new UserEntity(){
@@ -657,6 +661,10 @@ namespace CoTech.Bi.Modules.Wer.Seeds
                   {
                       RoleId = 601,
                       CompanyId = companies["gme"].Id
+                  }, new PermissionEntity()
+                  {
+                      RoleId = 601,
+                      CompanyId = companies["grupo-mazon"].Id
                   }
                 }
             },new UserEntity(){
@@ -691,6 +699,11 @@ namespace CoTech.Bi.Modules.Wer.Seeds
                 Name = "Corporativo Operador de Empresas",
                 Url = "opessa-corp",
                 Activity = "Sin especificar",
+                Modules = new List<CompanyToModule> {
+                    new CompanyToModule {
+                        ModuleId = 6
+                    }
+                },
                 Children = new List<CompanyEntity> {
                   new CompanyEntity()
                   {
@@ -1471,6 +1484,11 @@ namespace CoTech.Bi.Modules.Wer.Seeds
                 Name = "GME Desarrollos Empresariales",
                 Url = "gde",
                 Activity = "Sin especificar",
+                Modules = new List<CompanyToModule> {
+                    new CompanyToModule {
+                        ModuleId = 6
+                    }
+                },
                 Children = new List<CompanyEntity> {
                   new CompanyEntity()
                   {

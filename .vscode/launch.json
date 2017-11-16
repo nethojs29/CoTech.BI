@@ -16,23 +16,6 @@
             "stopAtEntry": false,
             "justMyCode": false,
             "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "name": ".NET Core Launch (dev)",
-            "type": "coreclr",
-            "request": "launch",
-            // If you have changed target frameworks, make sure to update the program path.
-            "program": "/usr/local/share/dotnet/dotnet",
-            "args": ["run"],
-            "cwd": "${workspaceRoot}/CoTech.Bi",
-            "stopAtEntry": false,
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
         }
     ]
 }
