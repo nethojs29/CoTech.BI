@@ -351,6 +351,8 @@ namespace CoTech.Bi.Migrations
 
                     b.Property<DateTime?>("DeletedAt");
 
+                    b.Property<long?>("DinningRoomId");
+
                     b.Property<string>("Email")
                         .IsRequired();
 
@@ -376,6 +378,8 @@ namespace CoTech.Bi.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatorId");
+
+                    b.HasIndex("DinningRoomId");
 
                     b.ToTable("Clients");
                 });
@@ -430,18 +434,13 @@ namespace CoTech.Bi.Migrations
 
                     b.Property<DateTime?>("DeletedAt");
 
-                    b.Property<string>("Description")
-                        .IsRequired();
-
                     b.Property<long>("ExpenseGroupId");
-
-                    b.Property<string>("ImageUrl");
 
                     b.Property<string>("Observations");
 
                     b.Property<float>("Price");
 
-                    b.Property<long?>("ProviderId");
+                    b.Property<long>("ProviderId");
 
                     b.Property<int>("Quantity");
 
@@ -762,6 +761,10 @@ namespace CoTech.Bi.Migrations
 
                     b.Property<DateTime?>("DeletedAt");
 
+                    b.Property<long>("DinningRoomId");
+
+                    b.Property<string>("Keyword");
+
                     b.Property<long?>("LenderId");
 
                     b.Property<string>("MotiveSurplus");
@@ -774,6 +777,8 @@ namespace CoTech.Bi.Migrations
 
                     b.Property<int>("Status");
 
+                    b.Property<float>("Total");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ApproveUserId");
@@ -785,6 +790,8 @@ namespace CoTech.Bi.Migrations
                     b.HasIndex("ComprobateUserId");
 
                     b.HasIndex("CreatorId");
+
+                    b.HasIndex("DinningRoomId");
 
                     b.HasIndex("LenderId");
 
@@ -1291,6 +1298,10 @@ namespace CoTech.Bi.Migrations
                         .WithMany()
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Modules.DinningRooms.Models.DinningRoomEntity", "DinningRoom")
+                        .WithMany()
+                        .HasForeignKey("DinningRoomId");
                 });
 
             modelBuilder.Entity("CoTech.Bi.Modules.DinningRooms.Models.DinningRoomEntity", b =>
@@ -1320,7 +1331,8 @@ namespace CoTech.Bi.Migrations
 
                     b.HasOne("CoTech.Bi.Modules.Providers.Models.ProviderEntity", "Provider")
                         .WithMany()
-                        .HasForeignKey("ProviderId");
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CoTech.Bi.Modules.Requisitions.Models.RequisitionEntity", "Requisition")
                         .WithMany()
@@ -1445,6 +1457,11 @@ namespace CoTech.Bi.Migrations
                     b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Modules.DinningRooms.Models.DinningRoomEntity", "DinningRoom")
+                        .WithMany()
+                        .HasForeignKey("DinningRoomId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CoTech.Bi.Modules.Lender.Models.LenderEntity", "Lender")

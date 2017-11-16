@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Modules.DinningRooms.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace CoTech.Bi.Modules.Clients.Models {
@@ -37,6 +38,9 @@ namespace CoTech.Bi.Modules.Clients.Models {
         [Required]
         public DateTime CreatedAt{set; get;}
         public DateTime? DeletedAt{set; get;}
+        
+        public long? DinningRoomId{ set; get; }
+        public DinningRoomEntity DinningRoom{ set; get; }
 
     }
 }

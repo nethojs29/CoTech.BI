@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Users.Models;
 using CoTech.Bi.Modules.Banks.Models;
+using CoTech.Bi.Modules.DinningRooms.Models;
 using CoTech.Bi.Modules.Lender.Models;
 
 namespace CoTech.Bi.Modules.Requisitions.Models{
@@ -20,6 +21,11 @@ namespace CoTech.Bi.Modules.Requisitions.Models{
         public long CreatorId{ set; get; }
         [Required]
         public int Status{ set; get; }
+        
+        public long DinningRoomId{ set; get; }
+        
+        public float Total{ set; get; }
+        public string Keyword{ set; get; }
         
         public long? ApproveUserId{ set; get; }
         public DateTime? ApproveDate{ set; get; }
@@ -39,6 +45,7 @@ namespace CoTech.Bi.Modules.Requisitions.Models{
         public BankEntity Bank{ set; get; }
         public LenderEntity Lender{ set; get; }
         public CompanyEntity Company{ set; get; }
+        public DinningRoomEntity DinningRoom{ set; get; }
         
         [Required]
         public DateTime CreatedAt{ set; get; }

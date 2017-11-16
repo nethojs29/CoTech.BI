@@ -19,6 +19,11 @@ namespace CoTech.Bi.Modules.Expenses.Controllers{
             return new OkObjectResult(await expenseRepo.getAll());
         }
 
+        [HttpGet("requisition/{requisitionId}")]
+        public async Task<IActionResult> getAllByRequisition(long requisitionId){
+            return new OkObjectResult(await expenseRepo.getAllByRequisition(requisitionId));
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(long id){
             return new OkObjectResult(await expenseRepo.WithId(id));

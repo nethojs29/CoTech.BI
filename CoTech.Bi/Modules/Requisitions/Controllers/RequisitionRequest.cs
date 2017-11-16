@@ -8,42 +8,41 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
     public class CreateRequisitionReq : RequisitionRequest{
         public long ResponsableId{ set; get; }
         public long CompanyId{ set; get; }
-        public long? LenderId{ set; get; }
-        public long? BankId{ set; get; }
+        public float ApplicationDate{ set; get; }
+        public long DinningRoomId{ set; get; }
 
         public RequisitionEntity toEntity(long creatorId){
-            Console.WriteLine(creatorId);
+            DateTime appDate = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddMilliseconds(ApplicationDate).ToLocalTime();
             return new RequisitionEntity {
-                ApplicationDate = DateTime.Now,
+                ApplicationDate = appDate,
+                PaymentMethod = "",
                 ResponsableId = ResponsableId,
+                DinningRoomId = DinningRoomId,
                 CompanyId = CompanyId,
                 CreatorId = creatorId,
                 CreatedAt = DateTime.Now,
-                Status = 1,
-                LenderId = LenderId,
-                BankId = BankId
+                Total = 0,
+                Status = 1 //1 Pendiente, 2 Aprobada, 3 Comprobada, 0 Denegada
             };
         }
     }
 
     public class UpdateRequisitionReq : RequisitionRequest{
-        public DateTime ApplicationDate{ set; get; }
+        public float ApplicationDate{ set; get; }
         public string PaymentMethod{ set; get; }
         public long ResponsableId{ set; get; }
         public int Status{ set; get; }
+        public long DinningRoomId{ set; get; }
+        public float Total{ set; get; }
 
-        public RequisitionEntity toEntity(){
-            return new RequisitionEntity {
-                ApplicationDate = ApplicationDate,
-                PaymentMethod = PaymentMethod,
-                ResponsableId = ResponsableId,
-                Status = Status
-            };
+        public DateTime getDate(){
+            return new DateTime(1970, 1, 1, 0, 0, 0, 0).AddMilliseconds(ApplicationDate).ToLocalTime();
         }
     }
 
     public class ApproveRequisitionReq : RequisitionRequest{
-        public string MotiveSurplus{ set; get; }
+        public string PaymentMethod{ set; get; }
+        public long BankId{ set; get; }
     }
 
     public class ComprobateRequisitionReq : RequisitionRequest{

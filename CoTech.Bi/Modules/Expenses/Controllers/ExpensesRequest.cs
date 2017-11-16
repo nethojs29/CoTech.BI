@@ -5,11 +5,9 @@ namespace CoTech.Bi.Modules.Expenses.Controllers{
     public interface ExpensesRequest{}
 
     public class CreateExpenseReq : ExpensesRequest{
-        public string Description{ set; get; }
         public float Price{ set; get; }
         public int Quantity{ set; get; }
         public string Observations{ set; get; }
-        public string ImageUrl{ set; get; }
         public long ProviderId{ set; get; }
         public long ExpenseGroupId{ set; get; }
         public long CompanyId{ set; get; }
@@ -17,11 +15,10 @@ namespace CoTech.Bi.Modules.Expenses.Controllers{
 
         public ExpenseEntity toEntity(){
             return new ExpenseEntity {
-                Description = Description,
                 Price = Price,
                 Quantity = Quantity,
+                ProviderId = ProviderId,
                 Observations = Observations,
-                ImageUrl = ImageUrl,
                 ExpenseGroupId = ExpenseGroupId,
                 RequisitionId = RequisitionId,
                 CompanyId = CompanyId,

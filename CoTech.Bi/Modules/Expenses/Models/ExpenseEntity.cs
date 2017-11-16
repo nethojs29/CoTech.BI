@@ -8,19 +8,16 @@ namespace CoTech.Bi.Modules.Expenses.Models{
     public class ExpenseEntity{
         public long Id{ set; get; }
         [Required]
-        public string Description{ set; get; }
-        [Required]
         public float Price{ set; get; }
         [Required]
         public int Quantity{ set; get; }
         
         public string Observations{ set; get; }
-        public string ImageUrl{ set; get; }
         
         public long RequisitionId{ set; get; }
         public RequisitionEntity Requisition{ set; get; }
         
-        public long? ProviderId{ set; get; }
+        public long ProviderId{ set; get; }
         public ProviderEntity Provider{ set; get; }
         [Required]
         public long ExpenseGroupId{ set; get; }

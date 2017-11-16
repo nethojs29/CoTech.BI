@@ -4,6 +4,8 @@ using System.IO;
 using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Requisitions.Models;
+using CoTech.Bi.Modules.SmallBox;
+using CoTech.Bi.Modules.SmallBox.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +13,11 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
     [Route("api/companies/{idCompany}/requisitions")]
     public class RequisitionController :Controller{
         private readonly RequisitionRepository requisitionRepo;
+        private readonly SmallBoxRepository smallRepo;
 
-        public RequisitionController(RequisitionRepository requisitionRepo){
+        public RequisitionController(RequisitionRepository requisitionRepo, SmallBoxRepository smallRepo){
             this.requisitionRepo = requisitionRepo;
+            this.smallRepo = smallRepo;
         }
         
         [HttpGet]
@@ -28,7 +32,7 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateRequisitionReq req){
-            var requisition =req.toEntity(HttpContext.UserId().Value);
+            var requisition = req.toEntity(HttpContext.UserId().Value);
             await requisitionRepo.Create(requisition);
             return Created($"/api/requisitions/${requisition.Id}", requisition);
         }
@@ -42,11 +46,22 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
         [HttpPut("{id}/approve")]
         public async Task<IActionResult> Approve(long id, [FromBody] ApproveRequisitionReq req){
             var requisition = await requisitionRepo.WithId(id);
-            if (req.MotiveSurplus != null) requisition.MotiveSurplus = req.MotiveSurplus;
+            requisition.PaymentMethod = req.PaymentMethod;
             requisition.ApproveUserId = HttpContext.UserId();
             requisition.ApproveDate = DateTime.Now;
             requisition.Status = 2;
             await requisitionRepo.Approve(requisition);
+            var mov = new SmallBoxEntity {
+                Concept = String.Format("Pago de Requisición {0}", requisition.Keyword),
+                Amount = requisition.Total,
+                Date = DateTime.Now,
+                Type = 0,
+                RequisitionId = requisition.Id,
+                CreatedAt = DateTime.Now,
+                CompanyId = requisition.CompanyId,
+                CreatorId = HttpContext.UserId().Value
+            };
+            await smallRepo.Create(mov);
             return new OkObjectResult(requisition);
         }
 
