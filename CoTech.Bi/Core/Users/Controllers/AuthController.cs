@@ -18,7 +18,6 @@ using CoTech.Bi.Core.Users.Repositories;
 using Newtonsoft.Json;
 using CoTech.Bi.Core.Permissions.Repositories;
 using CoTech.Bi.Core.Companies.Repositories;
-using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Core.Companies.Models;
 using System.Collections.Generic;
 using CoTech.Bi.Authorization;
