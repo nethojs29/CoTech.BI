@@ -46,9 +46,6 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
     }
 
     public class ComprobateRequisitionReq : RequisitionRequest{
-        public long ComprobateUserId{ set; get; }
-        public DateTime ComprobateDate = DateTime.Now;
-        public string ComprobateFileUrl{ set; get; }
         public float Refund{ set; get; }
     }
 }

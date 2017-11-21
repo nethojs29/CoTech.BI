@@ -6,6 +6,7 @@ using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Requisitions.Models;
 using CoTech.Bi.Modules.SmallBox;
 using CoTech.Bi.Modules.SmallBox.Models;
+using CoTech.Bi.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -70,32 +71,73 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
             [FromForm(Name = "file")] IFormFile formFile){
             var requisition = await requisitionRepo.WithId(id);
             //No sé cómo subir archivos (8
+            requisition.Refund = req.Refund;
+            requisition.ComprobateDate = DateTime.Now;
+            requisition.ComprobateUserId = HttpContext.UserId();
+            requisition.Status = 3;
+            await requisitionRepo.Comprobate(requisition);
+            return new OkObjectResult(requisition);
+//            try {
+//                if (formFile != null) {
+//                    var directory = Directory.GetCurrentDirectory();
+//                    var filePath = directory + Guid.NewGuid() + Path.GetExtension(formFile.FileName);
+//                    if (formFile.Length > 0) {
+//                        using (var stream = new FileStream(filePath, FileMode.Create)) {
+//                            await formFile.CopyToAsync(stream);
+//                        }
+//                    }
+//                    requisition.Refund = req.Refund;
+//                    requisition.ComprobateFileUrl = filePath;
+//                    requisition.ComprobateDate = DateTime.Now;
+//                    requisition.ComprobateUserId = HttpContext.UserId();
+//            
+//                    return new OkObjectResult(requisition);        
+//                } else {
+//                    return new BadRequestResult();
+//                }
+//            }
+//            catch (Exception exception) {
+//                Console.WriteLine(exception);
+//                return StatusCode(500);
+//            }
 
+
+        }
+
+        [HttpPost("{id}/addFile")]
+        public async Task<IActionResult> AddFile(long id, [FromForm(Name = "file")] IFormFile formFile){
             try {
                 if (formFile != null) {
-                    var directory = Directory.GetCurrentDirectory();
+                    var directory = Directory.GetCurrentDirectory() + "/storage/requisition/" + id + "/";
+                    if (!Directory.Exists(directory)) {
+                        Directory.CreateDirectory(directory);
+                    }
                     var filePath = directory + Guid.NewGuid() + Path.GetExtension(formFile.FileName);
                     if (formFile.Length > 0) {
                         using (var stream = new FileStream(filePath, FileMode.Create)) {
                             await formFile.CopyToAsync(stream);
                         }
                     }
-                    requisition.Refund = req.Refund;
-                    requisition.ComprobateFileUrl = filePath;
-                    requisition.ComprobateDate = DateTime.Now;
-                    requisition.ComprobateUserId = HttpContext.UserId();
-            
-                    return new OkObjectResult(requisition);        
-                } else {
-                    return new BadRequestResult();
+                    var file = requisitionRepo.AddFile(new RequisitionFileEntity() {
+                        Mime = MimeReader.GetMimeType(Path.GetExtension(formFile.FileName)),
+                        Name = formFile.FileName,
+                        Uri = filePath,
+                        Extension = Path.GetExtension(formFile.FileName),
+                        RequisitionId = id
+                    });
+                    if (file != null) {
+                        return new ObjectResult(file) {StatusCode = 201};
+                    }
+                    else {
+                        System.IO.File.Delete(filePath);
+                        return StatusCode(500);
+                    }
                 }
-            }
-            catch (Exception exception) {
+                return new BadRequestResult();
+            }catch (Exception exception){
                 Console.WriteLine(exception);
-                return StatusCode(500);
+                return StatusCode(500); // 500 is generic server error
             }
-            
-            
         }
 
         [HttpDelete("{id}")]

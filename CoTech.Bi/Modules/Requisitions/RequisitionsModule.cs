@@ -20,6 +20,7 @@ namespace CoTech.Bi.Modules.Requisitions{
 
         public void ConfigureEntities(ModelBuilder modelBuilder){
             modelBuilder.Entity<RequisitionEntity>().ToTable("Requisitions");
+            modelBuilder.Entity<RequisitionFileEntity>().ToTable("Requisitions_Files");
         }
 
         public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager){

@@ -14,6 +14,10 @@ namespace CoTech.Bi.Modules.Requisitions.Models{
             get { return context.Set<RequisitionEntity>(); }
         }
 
+        private DbSet<RequisitionFileEntity> dbFile{
+            get { return context.Set<RequisitionFileEntity>(); }
+        }
+
         public RequisitionRepository(BiContext context){
             this.context = context;
         }
@@ -50,6 +54,16 @@ namespace CoTech.Bi.Modules.Requisitions.Models{
 
         public async Task Approve(RequisitionEntity entity){
             db.Update(entity);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task Comprobate(RequisitionEntity entity){
+            db.Update(entity);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task AddFile(RequisitionFileEntity entity){
+            dbFile.Add(entity);
             await context.SaveChangesAsync();
         }
 

@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PushSharp;
 using PushSharp.Apple;
-using PushSharp.Core;
+//using PushSharp.Core;
 
 namespace CoTech.Bi.Modules.Wer.Repositories
 {
