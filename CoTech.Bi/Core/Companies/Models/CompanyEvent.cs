@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CoTech.Bi.Core.EventSourcing.Models;
 
 namespace CoTech.Bi.Core.Companies.Models
@@ -9,11 +10,16 @@ namespace CoTech.Bi.Core.Companies.Models
         public string Name {get; set;}
         public string Activity { get; set; }
         public string Url { get; set; }
-
+        public long? ParentId { get; set; }
+        public string Color { get; set; }
+        public List<long> Modules { get; set; }
         public CompanyCreatedEvt(CreateCompanyCmd cmd) { 
             Name = cmd.Name;
             Activity = cmd.Activity;
             Url = cmd.Url;
+            ParentId = cmd.ParentId;
+            Color = cmd.Color;
+            Modules = cmd.Modules;
         }
 
         public static EventEntity MakeEventEntity(CreateCompanyCmd cmd) {

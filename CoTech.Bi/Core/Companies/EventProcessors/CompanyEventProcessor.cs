@@ -38,7 +38,12 @@ namespace CoTech.Bi.Core.Companies.EventProcessors
                 CreatorEventId = entry.Entity.Id,
                 Name = eventBody.Name,
                 Activity = eventBody.Activity,
-                Url = eventBody.Url
+                Url = eventBody.Url,
+                ParentId = eventBody.ParentId,
+                Color = eventBody.Color,
+                Modules = eventBody.Modules
+                    .Select(mid => new CompanyToModule { ModuleId = mid })
+                    .ToList()
             };
             db.Add(companyEntity);
         }

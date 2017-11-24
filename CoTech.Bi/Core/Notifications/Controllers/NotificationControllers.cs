@@ -24,6 +24,7 @@ namespace CoTech.Bi.Core.Notifications.Controllers
 
         [HttpGet("mine")]
         [RequiresAuth]
+        [ProducesResponseType(typeof(NotificationResponse), 200)]
         public async Task GetMyNotifications(){
             if(HttpContext.WebSockets.IsWebSocketRequest){
                 var socket = await HttpContext.WebSockets.AcceptWebSocketAsync();

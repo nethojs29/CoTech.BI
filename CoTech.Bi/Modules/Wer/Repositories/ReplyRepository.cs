@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Notifications.Models;
 using CoTech.Bi.Core.Permissions.Models;
 using CoTech.Bi.Entity;
@@ -168,13 +169,35 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             return null;
         }
 
+        public async Task<bool> isResUser(long userId, long companyId) {
+            var companyDb = context.Set<CompanyEntity>();
+            var company = await companyDb.FindAsync(companyId);
+            var lowerBound = 600;
+            while(company != null) {
+                var permission = await _Permission
+                    .FirstOrDefaultAsync(p => p.UserId == userId 
+                        && p.CompanyId == company.Id 
+                        && p.RoleId > lowerBound
+                        && p.RoleId < 604
+                    );
+                if (permission != null) return true;
+                if (!company.ParentId.HasValue) return false;
+                company = await companyDb.FindAsync(company.ParentId.Value);
+                lowerBound = 601;
+            }
+            return false;
+        }
+
         public async Task<GroupResponse> CreateGroup(GroupRequest group, long creator)
         {
-            if (_Permission.Any(p =>
-                p.UserId == group.UserId && p.CompanyId == group.CompanyId && (p.RoleId > 600 && p.RoleId < 604)))
+            if (await isResUser(group.UserId, group.CompanyId))
             {
-                if (_group.Any(g =>
-                    g.Category == group.Type && g.CompanyId == group.CompanyId && g.UserId == group.UserId))
+                var groupExists = await _group
+                    .AnyAsync(g => g.Category == group.Type 
+                        && g.CompanyId == group.CompanyId 
+                        && g.UserId == group.UserId
+                    );
+                if (groupExists)
                 {
                     return null;
                 }

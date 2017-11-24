@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using CoTech.Bi.Core.EventSourcing.Models;
 
 namespace CoTech.Bi.Core.Companies.Models
@@ -8,12 +9,18 @@ namespace CoTech.Bi.Core.Companies.Models
     public string Name { get; set; }
     public string Activity { get; set; }
     public string Url { get; set; }
+    public long? ParentId { get; set; }
+    public string Color { get; set; }
+    public List<long> Modules { get; set; }
 
     public CreateCompanyCmd(CreateCompanyReq req, long userId) {
       UserId = userId;
       Name = req.Name;
       Activity = req.Activity;
       Url = req.Url;
+      ParentId = req.ParentId;
+      Color = req.Color;
+      Modules = req.Modules;
     }
 
   }
