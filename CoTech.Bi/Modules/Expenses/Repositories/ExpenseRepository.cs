@@ -26,9 +26,24 @@ namespace CoTech.Bi.Modules.Expenses.Models{
             return db.Where(p=> !p.DeletedAt.HasValue && p.RequisitionId == requisitionId).Include(e => e.Provider).Include(e => e.ExpenseGroup).ToListAsync();
         }
 
-        public Task<List<ExpenseEntity>> getAllApprovedExpensesByGroup(long type, int year){
+        public Task<List<ExpenseEntity>> getAllApprovedExpensesByGroupInYear(long type, int year){
             return db.Where(e => e.ExpenseGroup.TypeId == type && !e.DeletedAt.HasValue && e.Requisition.Status == 2 
                                  && e.Requisition.ApproveDate.Value.Year == year).ToListAsync();
+        }
+        
+        public Task<List<ExpenseEntity>> getAllExpensesInMonth(int year, int month){
+            return db.Where(e => expenseInMonth(e, month, year)).ToListAsync();
+        }
+
+        private bool expenseInMonth(ExpenseEntity e, int month, int year){
+            if (e.Requisition.Status > 1) {
+                return !e.DeletedAt.HasValue && e.Requisition.ApproveDate.Value.Month == month 
+                       && e.Requisition.ApproveDate.Value.Year == year;
+            }
+            
+            return !e.DeletedAt.HasValue
+                   && e.Requisition.ApplicationDate.Month == month 
+                   && e.Requisition.ApplicationDate.Year == year;
         }
 
         public Task<ExpenseEntity> WithId(long id){

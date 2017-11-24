@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Authorization;
 using CoTech.Bi.Modules.Budget.Models;
@@ -26,18 +27,32 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
             return new OkObjectResult(await budgetRepo.monthly(year, month, idCompany));
         }
         
-        [HttpGet("limit/{typeId}/{year}")]
-        public async Task<IActionResult> getLimit(long typeId, int year){
-            var totalBudgetExpenses = await budgetRepo.getAllByGroup(typeId, year);
-            var totalSpend = await expenseRepo.getAllApprovedExpensesByGroup(typeId, year);
+//        [HttpGet("limit/{typeId}/{year}")]
+//        public async Task<IActionResult> getLimit(long typeId, int year){
+//            var totalBudgetExpenses = await budgetRepo.getAllByGroup(typeId, year);
+//            var totalSpend = await expenseRepo.getAllApprovedExpensesByGroupInYear(typeId, year);
+//
+//            var t = totalBudgetExpenses.Select(b => b.Amount).Aggregate((a, b) => a + b);
+//            var s = 0.0;
+//            totalSpend.ForEach(e => {
+//                s += e.Quantity * e.Price;
+//            });
+//            
+//            return new OkObjectResult(t-s);
+//        }
 
-            var t = totalBudgetExpenses.Select( b => b.Amount).Aggregate((a, b) => a + b);
-            var s = 0.0;
-            totalSpend.ForEach(e => {
-                s += e.Quantity * e.Price;
+        [HttpGet("limit/{year}/{month}")]
+        public async Task<IActionResult> getMonthLimit(int year, int month, long idCompany){
+            var budgetArray = await budgetRepo.monthly(year, month, idCompany);
+            var totalBudget = budgetArray.Select(b => b.Amount).Aggregate((a, b) => a + b);
+            var spent = await expenseRepo.getAllExpensesInMonth(year, month);
+            var totalSpent = 0.0;
+            spent.ForEach(e => {
+                totalSpent += e.Price * e.Quantity;
             });
-            
-            return new OkObjectResult(t-s);
+            Console.WriteLine(totalBudget-totalSpent);
+            return new OkObjectResult(totalBudget - totalSpent);
+
         }
 
 //        [HttpGet("{id}")]
