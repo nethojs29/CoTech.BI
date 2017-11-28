@@ -196,6 +196,7 @@ namespace CoTech.Bi.Modules.Wer.Repositories
                     .AnyAsync(g => g.Category == group.Type 
                         && g.CompanyId == group.CompanyId 
                         && g.UserId == group.UserId
+                        && g.UsersList.Any(u => u.Id == creator)
                     );
                 if (groupExists)
                 {
