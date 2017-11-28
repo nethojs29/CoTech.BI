@@ -50,6 +50,22 @@ namespace CoTech.Bi.Core.Users.Controllers {
         return BadRequest();
       }
     }
+    
+    [HttpPost("password")]
+    [RequiresRoot]
+    public async Task<IActionResult> CreateWithPassword([FromBody] CreateUserPasswordReq req){
+      var cmd = new CreateUserCmd(req, HttpContext.UserId().Value);
+      var entity = await userRepository.Create(cmd);
+      if(entity != null) {
+        var sent = MailsHelpers.MailPassword("lmoya@cotecnologias.com", cmd.Password);
+        if(sent)
+          return Created($"/api/users/{entity.Id}", new UserResponse(entity));
+        else
+          return StatusCode(500);
+      } else {
+        return BadRequest();
+      }
+    }
 
     [HttpPut("{id}")]
     [RequiresAuth]
