@@ -233,19 +233,21 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 table.AddCell(cell);
                 foreach (var child in company.children)
                 {
+                    var height = 200f;
+                    if (child.finance().Length > 400 || child.operative().Length > 400)
+                        height = 400f;
+                    if (child.finance().Length > 800 || child.operative().Length > 800)
+                        height = 600f;
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.company ?? "", regularTableFont));
-                    var height = 500f;
                     cell.FixedHeight = height;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.operative(), regularTableFont));
-                    height = 500f;
                     cell.FixedHeight = height;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.finance(), regularTableFont));
-                    height = 500f;
                     cell.FixedHeight = height;
                     table.AddCell(cell);
                 }
