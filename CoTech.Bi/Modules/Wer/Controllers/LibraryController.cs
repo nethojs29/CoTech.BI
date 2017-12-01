@@ -164,7 +164,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     var reports = _reportRepository.PdfData(idCompany, idWeek);
                     if (reports != null)
                     {
-                        return new ObjectResult(reports);
+                        //return new ObjectResult(reports);
                         var pdf = this.GeneretePDF(reports, week);
                         return File(pdf,"application/pdf");
                     }
@@ -234,7 +234,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 foreach (var child in company.children)
                 {
                     cell = new PdfPCell();
-                    cell.AddElement(new Paragraph(child.company, regularTableFont));
+                    cell.AddElement(new Paragraph(child.company ?? "", regularTableFont));
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.operative(), regularTableFont));
