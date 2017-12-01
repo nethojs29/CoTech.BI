@@ -164,6 +164,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     var reports = _reportRepository.PdfData(idCompany, idWeek);
                     if (reports != null)
                     {
+                        return new ObjectResult(reports);
                         var pdf = this.GeneretePDF(reports, week);
                         return File(pdf,"application/pdf");
                     }
