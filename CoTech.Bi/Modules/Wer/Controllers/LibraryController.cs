@@ -175,7 +175,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
             catch (Exception e)
             {
-                return new ObjectResult(new {error = e.Message}){StatusCode = 500};
+                return new ObjectResult(new {error = e}){StatusCode = 500};
             }
         }
 
