@@ -192,7 +192,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             Font titleFont = FontFactory.GetFont("Arial", 20, Font.BOLD);
             Font regularFont = FontFactory.GetFont("Arial", 16, Font.ITALIC);
             Font titleTableFont = FontFactory.GetFont("Arial", 14, Font.BOLD);
-            Font regularTableFont = FontFactory.GetFont("Arial", 12);
+            Font regularTableFont = FontFactory.GetFont("Arial", 9);
             Paragraph title;
             Paragraph text;
             title = new Paragraph("Reporte Empresarial Semanal \n", titleFont);
