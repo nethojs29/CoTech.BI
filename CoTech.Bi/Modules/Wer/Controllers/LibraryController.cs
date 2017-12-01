@@ -235,12 +235,15 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 {
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.company ?? "", regularTableFont));
+                    cell.FixedHeight = 75f;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.operative(), regularTableFont));
+                    cell.FixedHeight = 75f;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.finance(), regularTableFont));
+                    cell.FixedHeight = 75f;
                     table.AddCell(cell);
                 }
 
