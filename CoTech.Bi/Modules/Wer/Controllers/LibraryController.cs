@@ -246,7 +246,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.finance(), regularTableFont));
                     if(child.finance().Length/100 > 0)
-                        cell.FixedHeight = 100 + (child.finance().Length/100) * 75f;
+                        cell.FixedHeight = 100 + ((child.finance().Length/100) * 75f);
                     table.AddCell(cell);
                 }
 
