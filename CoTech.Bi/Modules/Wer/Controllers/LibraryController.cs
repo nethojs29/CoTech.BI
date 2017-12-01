@@ -236,17 +236,17 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.company ?? "", regularTableFont));
                     if(child.company.Length/100 > 0)
-                        cell.FixedHeight = 200f;
+                        cell.FixedHeight = 300f;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.operative(), regularTableFont));
                     if(child.operative().Length/100 > 0)
-                        cell.FixedHeight = 200f;
+                        cell.FixedHeight = 300f;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.finance(), regularTableFont));
                     if(child.finance().Length/100 > 0)
-                        cell.FixedHeight = 200f;
+                        cell.FixedHeight = 300f;
                     table.AddCell(cell);
                 }
 
