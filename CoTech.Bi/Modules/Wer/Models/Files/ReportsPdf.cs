@@ -36,7 +36,10 @@ namespace CoTech.Bi.Modules.Wer.Models.Files
             var data = "";
             foreach (var report in reports)
             {
-                data += report.operative + "\n";
+                if (report.operative != null)
+                {
+                    data += report.operative + "\n";
+                }
             }
             return data;
         }
@@ -45,7 +48,10 @@ namespace CoTech.Bi.Modules.Wer.Models.Files
             var data = "";
             foreach (var report in reports)
             {
-                data += report.finance + "\n";
+                if (report != null)
+                {
+                    data += report.finance + "\n";
+                }
             }
             return data;
         }
