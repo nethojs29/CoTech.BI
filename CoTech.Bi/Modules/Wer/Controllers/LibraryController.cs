@@ -247,7 +247,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     if(child.company.Length > 1450) height = 1100f;
                     if(child.company.Length > 1600) height = 1200f;
                     if(child.company.Length > 1900) height = 1300f;
-                    cell.FixedHeight = child.company.Length;
+                    cell.FixedHeight = height;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.operative(), regularTableFont));
@@ -263,7 +263,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     if(child.operative().Length > 1450) height = 1100f;
                     if(child.operative().Length > 1600) height = 1200f;
                     if(child.operative().Length > 1900) height = 1300f;
-                    cell.FixedHeight = child.operative().Length;
+                    cell.FixedHeight = height;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.finance(), regularTableFont));
@@ -279,7 +279,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     if(child.finance().Length > 1450) height = 1100f;
                     if(child.finance().Length > 1600) height = 1200f;
                     if(child.finance().Length > 1900) height = 1300f;
-                    cell.FixedHeight = child.finance().Length;
+                    cell.FixedHeight = height;
                     table.AddCell(cell);
                 }
 
