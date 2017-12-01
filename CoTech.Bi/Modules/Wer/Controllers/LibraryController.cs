@@ -236,9 +236,6 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.company ?? "", regularTableFont));
                     var height = 200f;
-                    if(child.company.Length > 200) height = 300f;
-                    if(child.company.Length > 350) height = 400f;
-                    if(child.company.Length > 500) height = 500f;
                     cell.FixedHeight = height;
                     table.AddCell(cell);
                     cell = new PdfPCell();
@@ -246,7 +243,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     height = 200f;
                     if(child.operative().Length > 200) height = 300f;
                     if(child.operative().Length > 350) height = 400f;
-                    if(child.operative().Length > 500) height = 500f;
+                    if(child.operative().Length > 500) height = 800f;
                     cell.FixedHeight = height;
                     table.AddCell(cell);
                     cell = new PdfPCell();
@@ -254,7 +251,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     height = 200f;
                     if(child.finance().Length > 200) height = 300f;
                     if(child.finance().Length > 350) height = 400f;
-                    if(child.finance().Length > 500) height = 500f;
+                    if(child.finance().Length > 500) height = 800f;
                     cell.FixedHeight = height;
                     table.AddCell(cell);
                 }
