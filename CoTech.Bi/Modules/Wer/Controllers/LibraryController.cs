@@ -235,18 +235,27 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 {
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.company ?? "", regularTableFont));
-                    if(child.company.Length/100 > 0)
-                        cell.FixedHeight = 300f;
+                    if(child.company.Length < 200) cell.FixedHeight = 200f;
+                    if(child.company.Length < 350 && child.company.Length > 200) cell.FixedHeight = 300f;
+                    if(child.company.Length < 500 && child.company.Length > 350) cell.FixedHeight = 400f;
+                    if(child.company.Length < 650 && child.company.Length > 500) cell.FixedHeight = 500f;
+                    if(child.company.Length < 850 && child.company.Length > 650) cell.FixedHeight = 600f;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.operative(), regularTableFont));
-                    if(child.operative().Length/100 > 0)
-                        cell.FixedHeight = 300f;
+                    if(child.operative().Length < 200) cell.FixedHeight = 200f;
+                    if(child.operative().Length < 350 && child.operative().Length > 200) cell.FixedHeight = 300f;
+                    if(child.operative().Length < 500 && child.operative().Length > 350) cell.FixedHeight = 400f;
+                    if(child.operative().Length < 650 && child.operative().Length > 500) cell.FixedHeight = 500f;
+                    if(child.operative().Length < 850 && child.operative().Length > 650) cell.FixedHeight = 600f;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.finance(), regularTableFont));
-                    if(child.finance().Length/100 > 0)
-                        cell.FixedHeight = 300f;
+                    if(child.finance().Length < 200) cell.FixedHeight = 200f;
+                    if(child.finance().Length < 350 && child.finance().Length > 200) cell.FixedHeight = 300f;
+                    if(child.finance().Length < 500 && child.finance().Length > 350) cell.FixedHeight = 400f;
+                    if(child.finance().Length < 650 && child.finance().Length > 500) cell.FixedHeight = 500f;
+                    if(child.finance().Length < 850 && child.finance().Length > 650) cell.FixedHeight = 600f;
                     table.AddCell(cell);
                 }
 
