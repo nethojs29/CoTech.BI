@@ -235,15 +235,42 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 {
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.company ?? "", regularTableFont));
-                    cell.FixedHeight = 500f;
+                    var height = 100f;
+                    if(child.company.Length < 200) height = 200f;
+                    if(child.company.Length < 350 && child.company.Length > 200) height = 300f;
+                    if(child.company.Length < 500 && child.company.Length > 350) height = 400f;
+                    if(child.company.Length < 650 && child.company.Length > 500) height = 500f;
+                    if(child.company.Length < 850 && child.company.Length > 650) height = 600f;
+                    if(child.company.Length < 1000 && child.company.Length > 850) height = 700f;
+                    if(child.company.Length < 1150 && child.company.Length > 1000) height = 800f;
+                    if(child.company.Length < 1300 && child.company.Length > 1150) height = 900f;
+                    cell.FixedHeight = height;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.operative(), regularTableFont));
-                    cell.FixedHeight = 500f;
+                    height = 100f;
+                    if(child.operative().Length < 200) height = 200f;
+                    if(child.operative().Length < 350 && child.operative().Length > 200) height = 300f;
+                    if(child.operative().Length < 500 && child.operative().Length > 350) height = 400f;
+                    if(child.operative().Length < 650 && child.operative().Length > 500) height = 500f;
+                    if(child.operative().Length < 850 && child.operative().Length > 650) height = 600f;
+                    if(child.operative().Length < 1000 && child.operative().Length > 850) height = 700f;
+                    if(child.operative().Length < 1150 && child.operative().Length > 1000) height = 800f;
+                    if(child.operative().Length < 1300 && child.operative().Length > 1150) height = 900f;
+                    cell.FixedHeight = height;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.finance(), regularTableFont));
-                    cell.FixedHeight = 500f;
+                    height = 100f;
+                    if(child.finance().Length < 200) height = 200f;
+                    if(child.finance().Length < 350 && child.finance().Length > 200) height = 300f;
+                    if(child.finance().Length < 500 && child.finance().Length > 350) height = 400f;
+                    if(child.finance().Length < 650 && child.finance().Length > 500) height = 500f;
+                    if(child.finance().Length < 850 && child.finance().Length > 650) height = 600f;
+                    if(child.finance().Length < 1000 && child.finance().Length > 850) height = 700f;
+                    if(child.finance().Length < 1150 && child.finance().Length > 1000) height = 800f;
+                    if(child.finance().Length < 1300 && child.finance().Length > 1150) height = 900f;
+                    cell.FixedHeight = height;
                     table.AddCell(cell);
                 }
 
