@@ -244,6 +244,10 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     if(child.company.Length < 1000 && child.company.Length > 850) height = 700f;
                     if(child.company.Length < 1150 && child.company.Length > 1000) height = 800f;
                     if(child.company.Length < 1300 && child.company.Length > 1150) height = 900f;
+                    if(child.company.Length < 1450 && child.company.Length > 1300) height = 1000f;
+                    if(child.company.Length < 1600 && child.company.Length > 1450) height = 1100f;
+                    if(child.company.Length < 1750 && child.company.Length > 1600) height = 1200f;
+                    if(child.company.Length < 1900 && child.company.Length > 1900) height = 1300f;
                     cell.FixedHeight = height;
                     table.AddCell(cell);
                     cell = new PdfPCell();
@@ -257,6 +261,10 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     if(child.operative().Length < 1000 && child.operative().Length > 850) height = 700f;
                     if(child.operative().Length < 1150 && child.operative().Length > 1000) height = 800f;
                     if(child.operative().Length < 1300 && child.operative().Length > 1150) height = 900f;
+                    if(child.operative().Length < 1450 && child.operative().Length > 1300) height = 1000f;
+                    if(child.operative().Length < 1600 && child.operative().Length > 1450) height = 1100f;
+                    if(child.operative().Length < 1750 && child.operative().Length > 1600) height = 1200f;
+                    if(child.operative().Length < 1900 && child.operative().Length > 1900) height = 1300f;
                     cell.FixedHeight = height;
                     table.AddCell(cell);
                     cell = new PdfPCell();
@@ -270,6 +278,10 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     if(child.finance().Length < 1000 && child.finance().Length > 850) height = 700f;
                     if(child.finance().Length < 1150 && child.finance().Length > 1000) height = 800f;
                     if(child.finance().Length < 1300 && child.finance().Length > 1150) height = 900f;
+                    if(child.finance().Length < 1450 && child.finance().Length > 1300) height = 1000f;
+                    if(child.finance().Length < 1600 && child.finance().Length > 1450) height = 1100f;
+                    if(child.finance().Length < 1750 && child.finance().Length > 1600) height = 1200f;
+                    if(child.finance().Length < 1900 && child.finance().Length > 1900) height = 1300f;
                     cell.FixedHeight = height;
                     table.AddCell(cell);
                 }
