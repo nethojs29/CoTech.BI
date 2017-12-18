@@ -59,24 +59,32 @@ namespace CoTech.Bi.Modules.Wer.Models.Files
 
     public class DataReport
     {
-        public string operative { set; get; }
-        public string finance { set; get; }
+        public string operative { set; get; } = "";
+        public string finance { set; get; } = "";
 
         public DataReport(ReportEntity entity)
         {
-            if(entity.Financial.Equals("")){
+            if(entity.Financial == null){
                 this.finance = "";
             }
             else{
-                this.finance = entity.User.Name[0].ToString() + 
+                if(entity.Financial.Equals("")){
+                    this.finance = "";
+                }else{
+                    this.finance = entity.User.Name[0].ToString() + 
                            entity.User.Lastname[0].ToString() + ": " + entity.Financial;
+                }
             }
-            if(entity.Operative.Equals("")){
+            if(entity.Operative == null){
                 this.operative = "";
             }
             else{
-                this.operative = entity.User.Name[0].ToString() + 
+                if(entity.Operative.Equals("")){
+                    this.operative = "";
+                }else{
+                    this.operative = entity.User.Name[0].ToString() + 
                              entity.User.Lastname[0].ToString() + ": " + entity.Operative;
+                }
             }
         }
     }

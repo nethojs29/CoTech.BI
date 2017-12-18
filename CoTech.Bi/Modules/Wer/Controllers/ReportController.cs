@@ -12,7 +12,6 @@ using CoTech.Bi.Modules.Wer.Models.Requests;
 using CoTech.Bi.Modules.Wer.Repositories;
 using CoTech.Bi.Util;
 using Microsoft.AspNetCore.Http;
-using CoTech.Bi.Authorization;
 using CoTech.Bi.Core.Users.Repositories;
 using CoTech.Bi.Modules.Wer.Models.Responses;
 using Microsoft.Azure.KeyVault.Models;
