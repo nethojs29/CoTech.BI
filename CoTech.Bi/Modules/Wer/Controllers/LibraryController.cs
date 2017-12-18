@@ -233,7 +233,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 table.AddCell(cell);
                 foreach (var child in company.children)
                 {
-                    if(child.operative().Equals("") && child.finance().Equals("")){
+                    if(child.operative().Trim().Length < 3 && child.finance().Trim().Length < 3){
                         cell = new PdfPCell();
                         cell.Colspan = 3;
                         cell.AddElement(new Paragraph(child.company ?? "", regularTableFont));
