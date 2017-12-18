@@ -176,7 +176,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
             catch (Exception e)
             {
-                return new ObjectResult(new {error = e, reports = _reportRepository.PdfData(idCompany, idWeek)}){StatusCode = 500};
+                return new ObjectResult(new {error = e){StatusCode = 500};
             }
         }
 
