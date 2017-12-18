@@ -64,12 +64,10 @@ namespace CoTech.Bi.Modules.Wer.Models.Files
 
         public DataReport(ReportEntity entity)
         {
-            this.finance = entity.Financial.Equals("") ? "" : entity.User.Name[0].ToString() + 
-                           entity.User.Lastname[0].ToString() + ": " +
-                entity.Financial;
-            this.operative = entity.Operative.Equals("") ? "" : entity.User.Name[0].ToString() + 
-                             entity.User.Lastname[0].ToString() + ": " +
-                entity.Operative;
+            this.finance = entity.Financial.Trim().Equals("") == true ? "" : entity.User.Name[0].ToString() + 
+                           entity.User.Lastname[0].ToString() + ": " + entity.Financial;
+            this.operative = entity.Operative.Trim().Equals("") == true ? "" : entity.User.Name[0].ToString() + 
+                             entity.User.Lastname[0].ToString() + ": " + entity.Operative;
         }
     }
 }
