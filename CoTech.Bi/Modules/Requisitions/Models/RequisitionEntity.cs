@@ -30,7 +30,6 @@ namespace CoTech.Bi.Modules.Requisitions.Models{
         public long? ApproveUserId{ set; get; }
         public DateTime? ApproveDate{ set; get; }
         public long? LenderId{ set; get; }
-        public long? BankId{ set; get; }
         public string MotiveSurplus{ set; get; }
         
         public long? ComprobateUserId{ set; get; }
@@ -42,7 +41,6 @@ namespace CoTech.Bi.Modules.Requisitions.Models{
         public UserEntity Responsable{ set; get; }
         public UserEntity ApproveUser{ set; get; }
         public UserEntity ComprobateUSer{ set; get; }
-        public BankEntity Bank{ set; get; }
         public LenderEntity Lender{ set; get; }
         public CompanyEntity Company{ set; get; }
         public DinningRoomEntity DinningRoom{ set; get; }

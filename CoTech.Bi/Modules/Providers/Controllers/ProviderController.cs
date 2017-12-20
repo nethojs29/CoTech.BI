@@ -14,8 +14,8 @@ namespace CoTech.Bi.Modules.Providers.Controllers{
         }
 
         [HttpGet]
-        public async Task<IActionResult> getAll(){
-            return new OkObjectResult(await providerRepo.getAll());
+        public async Task<IActionResult> getAll(long idCompany){
+            return new OkObjectResult(await providerRepo.getAll(idCompany));
         }
 
         [HttpGet("{id}")]

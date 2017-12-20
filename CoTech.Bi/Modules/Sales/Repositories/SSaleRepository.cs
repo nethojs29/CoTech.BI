@@ -18,8 +18,12 @@ namespace CoTech.Bi.Modules.Sales.Repositories{
             this.context = context;
         }
 
-        public Task<List<SSaleEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).Include(p => p.Client).ToListAsync();
+        public Task<List<SSaleEntity>> getAll(long idCompany){
+            return db.Where(p => !p.DeletedAt.HasValue && idCompany == p.CompanyId).Include(p => p.Client).ToListAsync();
+        }
+        
+        public Task<List<SSaleEntity>> getAllByClient(long idClient){
+            return db.Where(s => !s.DeletedAt.HasValue && s.ClientId == idClient).Include(s => s.Client).ToListAsync();
         }
 
         public Task<SSaleEntity> WithId(long id){

@@ -18,8 +18,8 @@ namespace CoTech.Bi.Modules.SmallBox{
             this.context = context;
         }
 
-        public Task<List<SmallBoxEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).ToListAsync();
+        public Task<List<SmallBoxEntity>> getAll(long idCompany){
+            return db.Where(p => !p.DeletedAt.HasValue && idCompany == p.CompanyId).ToListAsync();
         }
 
         public Task<SmallBoxEntity> WithId(long id){

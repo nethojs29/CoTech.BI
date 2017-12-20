@@ -313,6 +313,8 @@ namespace CoTech.Bi.Migrations
 
                     b.Property<DateTime?>("DeletedAt");
 
+                    b.Property<long>("DinningRoomId");
+
                     b.Property<long>("ExpenseTypeId");
 
                     b.Property<int>("Month");
@@ -326,6 +328,8 @@ namespace CoTech.Bi.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatorId");
+
+                    b.HasIndex("DinningRoomId");
 
                     b.HasIndex("ExpenseTypeId");
 
@@ -515,6 +519,52 @@ namespace CoTech.Bi.Migrations
                     b.HasIndex("CreatorId");
 
                     b.ToTable("ExpenseTypes");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Invoices.Models.InvoiceEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("BankId");
+
+                    b.Property<long>("ClientId");
+
+                    b.Property<long>("CompanyId");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<long>("CreatorId");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<DateTime>("EndPeriodDate");
+
+                    b.Property<string>("InvoiceCode");
+
+                    b.Property<string>("Observations");
+
+                    b.Property<double>("PaidAmount");
+
+                    b.Property<DateTime>("StartPeriodDate");
+
+                    b.Property<int>("Status");
+
+                    b.Property<double>("Total");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BankId");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("CoTech.Bi.Modules.Lender.Models.LenderEntity", b =>
@@ -745,8 +795,6 @@ namespace CoTech.Bi.Migrations
 
                     b.Property<long?>("ApproveUserId");
 
-                    b.Property<long?>("BankId");
-
                     b.Property<long>("CompanyId");
 
                     b.Property<DateTime?>("ComprobateDate");
@@ -782,8 +830,6 @@ namespace CoTech.Bi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApproveUserId");
-
-                    b.HasIndex("BankId");
 
                     b.HasIndex("CompanyId");
 
@@ -952,6 +998,8 @@ namespace CoTech.Bi.Migrations
 
                     b.Property<float>("Amount");
 
+                    b.Property<long>("BankId");
+
                     b.Property<long?>("ClientId");
 
                     b.Property<long>("CompanyId");
@@ -974,6 +1022,8 @@ namespace CoTech.Bi.Migrations
                     b.Property<int>("Type");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BankId");
 
                     b.HasIndex("ClientId");
 
@@ -1339,6 +1389,11 @@ namespace CoTech.Bi.Migrations
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("CoTech.Bi.Modules.DinningRooms.Models.DinningRoomEntity", "DinningRoom")
+                        .WithMany()
+                        .HasForeignKey("DinningRoomId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("CoTech.Bi.Modules.Expenses.Models.ExpenseTypeEntity", "ExpenseType")
                         .WithMany()
                         .HasForeignKey("ExpenseTypeId")
@@ -1427,6 +1482,29 @@ namespace CoTech.Bi.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("CoTech.Bi.Modules.Invoices.Models.InvoiceEntity", b =>
+                {
+                    b.HasOne("CoTech.Bi.Modules.Banks.Models.BankEntity", "Bank")
+                        .WithMany()
+                        .HasForeignKey("BankId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Modules.Clients.Models.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("CoTech.Bi.Modules.Lender.Models.LenderEntity", b =>
                 {
                     b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
@@ -1498,10 +1576,6 @@ namespace CoTech.Bi.Migrations
                     b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "ApproveUser")
                         .WithMany()
                         .HasForeignKey("ApproveUserId");
-
-                    b.HasOne("CoTech.Bi.Modules.Banks.Models.BankEntity", "Bank")
-                        .WithMany()
-                        .HasForeignKey("BankId");
 
                     b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
                         .WithMany()
@@ -1619,6 +1693,11 @@ namespace CoTech.Bi.Migrations
 
             modelBuilder.Entity("CoTech.Bi.Modules.SmallBox.Models.SmallBoxEntity", b =>
                 {
+                    b.HasOne("CoTech.Bi.Modules.Banks.Models.BankEntity", "Bank")
+                        .WithMany()
+                        .HasForeignKey("BankId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("CoTech.Bi.Modules.Clients.Models.ClientEntity", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId");

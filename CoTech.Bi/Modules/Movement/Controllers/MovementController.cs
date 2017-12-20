@@ -13,13 +13,18 @@ namespace CoTech.Bi.Modules.Movement.Controllers{
         }
 
         [HttpGet]
-        public async Task<IActionResult> getAll(){
-            return new OkObjectResult(await movementRepo.getAll());
+        public async Task<IActionResult> getAll(long idCompany){
+            return new OkObjectResult(await movementRepo.getAll(idCompany));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(long id){
             return new OkObjectResult(await movementRepo.WithId(id));
+        }
+        
+        [HttpGet("client/{idClient}")]
+        public async Task<IActionResult> GetByClient(long idClient){
+            return new OkObjectResult(await movementRepo.byClient(idClient));
         }
 
         [HttpPost]

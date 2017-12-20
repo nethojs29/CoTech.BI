@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using CoTech.Bi.Core.Companies.Models;
 using CoTech.Bi.Core.Users.Models;
+using CoTech.Bi.Modules.DinningRooms.Models;
 using CoTech.Bi.Modules.Expenses.Models;
 
 namespace CoTech.Bi.Modules.Budget.Models{
@@ -17,6 +18,8 @@ namespace CoTech.Bi.Modules.Budget.Models{
         public long ExpenseTypeId{ set; get; }
         [Required]
         public long CompanyId{ set; get; }
+        [Required]
+        public long DinningRoomId { set; get; }
         
         public long CreatorId{ set; get; }
         
@@ -25,6 +28,7 @@ namespace CoTech.Bi.Modules.Budget.Models{
         public CompanyEntity Company{ set; get; }
         public ExpenseTypeEntity ExpenseType{ set; get; }
         public UserEntity Creator{ set; get; }
+        public DinningRoomEntity DinningRoom { set; get; }
         
         public DateTime CreatedAt{ set; get; }
         public DateTime? DeletedAt{ set; get; }

@@ -19,8 +19,12 @@ namespace CoTech.Bi.Modules.Movement{
             this.context = context;
         }
 
-        public Task<List<MovementEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).Include(m => m.Client).ToListAsync();
+        public Task<List<MovementEntity>> getAll(long idCompany){
+            return db.Where(p => !p.DeletedAt.HasValue && p.CompanyId == idCompany).Include(m => m.Client).ToListAsync();
+        }
+
+        public Task<List<MovementEntity>> byClient(long idClient){
+            return db.Where(m => !m.DeletedAt.HasValue && m.ClientId == idClient).ToListAsync();
         }
 
         public Task<MovementEntity> WithId(long id){

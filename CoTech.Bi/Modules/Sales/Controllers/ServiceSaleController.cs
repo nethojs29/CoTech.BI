@@ -14,13 +14,18 @@ namespace CoTech.Bi.Modules.Sales.Controllers{
         }
 
         [HttpGet]
-        public async Task<IActionResult> getAll(){
-            return new OkObjectResult(await serviceSaleRepo.getAll());
+        public async Task<IActionResult> getAll(long idCompany){
+            return new OkObjectResult(await serviceSaleRepo.getAll(idCompany));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(long id){
             return new OkObjectResult(await serviceSaleRepo.WithId(id));
+        }
+
+        [HttpGet("client/{idClient}")]
+        public async Task<IActionResult> getAllByClient(long idClient){
+            return new OkObjectResult(await serviceSaleRepo.getAllByClient(idClient));
         }
 
         [HttpPost]

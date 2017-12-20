@@ -13,8 +13,8 @@ namespace CoTech.Bi.Modules.Lender.Controllers{
         }
         
         [HttpGet]
-        public async Task<IActionResult> getAll(){
-            return new OkObjectResult(await lenderRepo.getAll());
+        public async Task<IActionResult> getAll(long idCompany){
+            return new OkObjectResult(await lenderRepo.getAll(idCompany));
         }
 
         [HttpGet("{id}")]

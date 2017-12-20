@@ -22,8 +22,8 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
         }
         
         [HttpGet]
-        public async Task<IActionResult> getAll(){
-            return new OkObjectResult(await requisitionRepo.getAll());
+        public async Task<IActionResult> getAll(long idCompany){
+            return new OkObjectResult(await requisitionRepo.getAll(idCompany));
         }
 
         [HttpGet("{id}")]
@@ -48,6 +48,7 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
         public async Task<IActionResult> Approve(long id, [FromBody] ApproveRequisitionReq req){
             var requisition = await requisitionRepo.WithId(id);
             requisition.PaymentMethod = req.PaymentMethod;
+            requisition.LenderId = req.LenderId;
             requisition.ApproveUserId = HttpContext.UserId();
             requisition.ApproveDate = DateTime.Now;
             requisition.Status = 2;
@@ -57,6 +58,7 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
                 Amount = requisition.Total,
                 Date = DateTime.Now,
                 Type = 0,
+                BankId = req.BankId,
                 RequisitionId = requisition.Id,
                 CreatedAt = DateTime.Now,
                 CompanyId = requisition.CompanyId,

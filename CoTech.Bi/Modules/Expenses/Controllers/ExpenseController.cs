@@ -13,11 +13,6 @@ namespace CoTech.Bi.Modules.Expenses.Controllers{
         public ExpenseController(ExpenseRepository expenseRepo){
             this.expenseRepo = expenseRepo;
         }
-        
-        [HttpGet]
-        public async Task<IActionResult> getAll(){
-            return new OkObjectResult(await expenseRepo.getAll());
-        }
 
         [HttpGet("requisition/{requisitionId}")]
         public async Task<IActionResult> getAllByRequisition(long requisitionId){

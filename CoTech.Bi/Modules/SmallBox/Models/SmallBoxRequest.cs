@@ -9,6 +9,7 @@ namespace CoTech.Bi.Modules.SmallBox.Models{
         public float Date{ set; get; }
         public int Type{ set; get; } // 0 egreso, 1 ingreso
         public long CompanyId{ set; get; }
+        public long BankId { set; get; }
         
         public long? ProviderId{ set; get; }
         public long? ClientId{ set; get; }
@@ -21,6 +22,7 @@ namespace CoTech.Bi.Modules.SmallBox.Models{
                 Concept = Concept,
                 Amount = Amount,
                 Date = date,
+                BankId = BankId,
                 Type = Type,
                 CompanyId = CompanyId,
                 ProviderId = ProviderId,

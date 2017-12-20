@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoTech.Bi.Entity;
 using CoTech.Bi.Modules.Expenses.Controllers;
+using CoTech.Bi.Modules.Requisitions.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoTech.Bi.Modules.Expenses.Models{
@@ -17,33 +18,26 @@ namespace CoTech.Bi.Modules.Expenses.Models{
         public ExpenseRepository(BiContext context){
             this.context = context;
         }
-        
-        public Task<List<ExpenseEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).ToListAsync();
-        }
 
         public Task<List<ExpenseEntity>> getAllByRequisition(long requisitionId){
             return db.Where(p=> !p.DeletedAt.HasValue && p.RequisitionId == requisitionId).Include(e => e.Provider).Include(e => e.ExpenseGroup).ToListAsync();
         }
 
         public Task<List<ExpenseEntity>> getAllApprovedExpensesByGroupInYear(long type, int year){
-            return db.Where(e => e.ExpenseGroup.TypeId == type && !e.DeletedAt.HasValue && e.Requisition.Status == 2 
+            return db.Where(e => e.ExpenseGroupId == type && !e.DeletedAt.HasValue && e.Requisition.Status == 2 
                                  && e.Requisition.ApproveDate.Value.Year == year).ToListAsync();
         }
         
         public Task<List<ExpenseEntity>> getAllExpensesInMonth(int year, int month){
-            return db.Where(e => expenseInMonth(e, month, year)).ToListAsync();
+            return db.Where(e => e.Requisition.Status <= 1 && !e.DeletedAt.HasValue && reqInMonth(e.Requisition, month, year)).ToListAsync();
         }
 
-        private bool expenseInMonth(ExpenseEntity e, int month, int year){
-            if (e.Requisition.Status > 1) {
-                return !e.DeletedAt.HasValue && e.Requisition.ApproveDate.Value.Month == month 
-                       && e.Requisition.ApproveDate.Value.Year == year;
-            }
-            
-            return !e.DeletedAt.HasValue
-                   && e.Requisition.ApplicationDate.Month == month 
-                   && e.Requisition.ApplicationDate.Year == year;
+        private bool reqInMonth(RequisitionEntity req, int month, int year){
+            return req.ApplicationDate.Month == month && req.ApplicationDate.Year == year;
+        }
+
+        public Task<List<ExpenseEntity>> getAllExpensesByGroupInMonth(long groupId, int year, int month){
+            return db.Where(e => e.Requisition.Status <= 1 && !e.DeletedAt.HasValue && reqInMonth(e.Requisition, month, year) && e.ExpenseGroupId == groupId).Include(e => e.Requisition).ToListAsync();
         }
 
         public Task<ExpenseEntity> WithId(long id){

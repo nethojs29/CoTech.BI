@@ -14,8 +14,8 @@ namespace CoTech.Bi.Modules.Services.Controllers{
         }
         
         [HttpGet]
-        public async Task<IActionResult> getAll(){
-            return new OkObjectResult(await serviceRepo.getAll());
+        public async Task<IActionResult> getAll(long idCompany){
+            return new OkObjectResult(await serviceRepo.getAll(idCompany));
         }
 
         [HttpGet("{id}")]
