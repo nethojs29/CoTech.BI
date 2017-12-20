@@ -96,14 +96,28 @@ namespace CoTech.Bi.Core.Users.Controllers
 		[RequiresAuth]
 		public async Task<IActionResult> GetMyInfo() {
 			var userId = HttpContext.UserId().Value;
+			var user = await _userRepository.WithId(userId);
+			var claims = new[] {
+					new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+					new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+					new Claim(JwtRegisteredClaimNames.Email, user.Email)
+			};
+			var jwtSecurityToken = _jwtTokenGenerator.CreateToken(claims);
 			return Ok(new AuthResponse {
-					User = new UserResponse(await _userRepository.WithId(userId)),
+					Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+					Expiration = jwtSecurityToken.ValidTo,
+					User = new UserResponse(user),
 					IAmRoot = await permissionRepository.UserIsRoot(userId),
 					Permissions = (await permissionRepository.GetUserPermissions(userId)).Select(p => new PermissionResponse(p)).ToList(),
 					Companies = (await companyRepository.GetUserCompanies(userId)).Select(c => new CompanyResult(c)).ToList()
 				});
 		}
 
+			/// <summary>
+			/// PRE-Alpha v-0.10
+			/// </summary>
+			/// <param name="request"></param>
+			/// <returns></returns>
 	    [HttpPost("reset")]
 	    public async Task<IActionResult> ResetPassword([FromBody] ResetRequest request)
 	    {
@@ -112,8 +126,9 @@ namespace CoTech.Bi.Core.Users.Controllers
 			    var user = await _userRepository.WithEmail(request.email);
 			    var password = PasswordGenerator.CreateRandomPassword(8);
 			    user.Password = _passwordHasher.HashPassword(user, password);
-			    var result = await _userRepository.Update(user);
-			    if (result > 0)
+					var cmd = new ChangePasswordCmd(user.Password, user.Id);
+			    var result = await _userRepository.ChangePassword(cmd);
+			    if (result)
 			    {
 				    bool response = MailsHelpers.MailPassword(user.Email,password);
 				    if (response)

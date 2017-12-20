@@ -14,10 +14,16 @@ namespace CoTech.Bi.Authorization
             var userClaim = context.User.FindFirstValue("sub");
             if(userClaim != null) return Int64.Parse(userClaim);
             string authHeader = context.Request.Headers["Authorization"];
+            string token = null; 
             if(authHeader == null || !authHeader.StartsWith("Bearer ")){
-                return null;
+                if (context.Request.Query["token"].Count == 0) {
+                    return null;
+                }
+                token = context.Request.Query["token"].ToString();
+            } else {
+                token = authHeader.Substring(7);
             }
-            var token = authHeader.Substring(7);
+
             var tokenHandler = new JwtSecurityTokenHandler();
             if(!tokenHandler.CanReadToken(token)){
                 return null;

@@ -19,7 +19,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
         
         public SeenReportsEntity[] Seen { set; get; }
 
-        public ReportResponse(ReportEntity report, UserRepository _users)
+        public ReportResponse(ReportEntity report)
         {
             this.Id = report.Id;
             this.CompanyId = report.CompanyId;
@@ -39,7 +39,7 @@ namespace CoTech.Bi.Modules.Wer.Models.Responses
                 ReportId = r.ReportId,
                 SeenAt = r.SeenAt,
                 UserId = r.UserId,
-                User = _users.WithId(r.UserId).Result
+                User = r.User
             }).ToArray();
             this.Financial = report.Financial == null ? "": report.Financial;
             this.Observation = report.Observation == null ? "": report.Observation;

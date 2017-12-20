@@ -10,8 +10,8 @@ namespace CoTech.Bi.Modules.Wer.Models.Entities
         public long Id { set; get; }
         public string Operative { set; get; }
         public string Financial { set; get; }
-        public string Observation{ set; get; }
-        
+        public string Observation { set; get; }
+        public DateTime Updated { set; get; } = DateTime.Now;
         
         public long UserId { set; get; }
         public UserEntity User { set; get; }

@@ -25,6 +25,10 @@ namespace CoTech.Bi.Modules.Wer.Repositories
             return db.ToListAsync();
         }
 
+        public Task<WeekEntity> withId(long id) {
+            return db.FindAsync(id);
+        }
+
         public void AddWeek()
         {
             var monday = DateTime.Now.AddDays(2);

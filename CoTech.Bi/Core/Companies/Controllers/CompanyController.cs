@@ -147,7 +147,7 @@ namespace CoTech.Bi.Core.Companies.Controllers
         public async Task<IActionResult> Update(long id, [FromBody] UpdateCompanyReq req) {
           var updateCmd = new UpdateCompanyCmd(id, req, HttpContext.UserId().Value);
           var company = await companyRepo.Update(updateCmd);
-          return Ok(company);
+          return Ok(new CompanyResult(company));
         }
 
         [HttpPost("{id}/modules/{moduleId}")]

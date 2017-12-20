@@ -86,7 +86,7 @@ namespace CoTech.Bi
             // services.AddScoped<IDbInitializer, DbInitializer>();
             
             services.AddHangfire(config => config.UseStorage(new MySqlStorage("Server=localhost;User Id=bi;Password=bi-core;Database=bi-core;Allow User Variables=True;")));
-
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
