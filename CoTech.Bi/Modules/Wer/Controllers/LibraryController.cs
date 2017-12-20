@@ -164,6 +164,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                     var reports = _reportRepository.PdfData(idCompany, idWeek);
                     if (reports != null)
                     {
+                        //return new ObjectResult(reports);
                         var pdf = this.GeneretePDF(reports, week);
                         return File(pdf,"application/pdf");
                     }
@@ -175,7 +176,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             }
             catch (Exception e)
             {
-                return new ObjectResult(new {error = e.Message}){StatusCode = 500};
+                return new ObjectResult(new {error = e}){StatusCode = 500};
             }
         }
 
@@ -191,7 +192,7 @@ namespace CoTech.Bi.Modules.Wer.Controllers
             Font titleFont = FontFactory.GetFont("Arial", 20, Font.BOLD);
             Font regularFont = FontFactory.GetFont("Arial", 16, Font.ITALIC);
             Font titleTableFont = FontFactory.GetFont("Arial", 14, Font.BOLD);
-            Font regularTableFont = FontFactory.GetFont("Arial", 12);
+            Font regularTableFont = FontFactory.GetFont("Arial", 9);
             Paragraph title;
             Paragraph text;
             title = new Paragraph("Reporte Empresarial Semanal \n", titleFont);
@@ -232,15 +233,30 @@ namespace CoTech.Bi.Modules.Wer.Controllers
                 table.AddCell(cell);
                 foreach (var child in company.children)
                 {
+                    if(child.operative().Trim().Length < 3 && child.finance().Trim().Length < 3){
+                        cell = new PdfPCell();
+                        cell.Colspan = 3;
+                        cell.AddElement(new Paragraph(child.company ?? "", regularTableFont));
+                        table.AddCell(cell);
+                    }else{
+                        var height = 200f;
+                    if (child.finance().Length > 400 || child.operative().Length > 400)
+                        height = 400f;
+                    if (child.finance().Length > 800 || child.operative().Length > 800)
+                        height = 600f;
                     cell = new PdfPCell();
-                    cell.AddElement(new Paragraph(child.company, regularTableFont));
+                    cell.AddElement(new Paragraph(child.company ?? "", regularTableFont));
+                    cell.FixedHeight = height;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.operative(), regularTableFont));
+                    cell.FixedHeight = height;
                     table.AddCell(cell);
                     cell = new PdfPCell();
                     cell.AddElement(new Paragraph(child.finance(), regularTableFont));
+                    cell.FixedHeight = height;
                     table.AddCell(cell);
+                    }
                 }
 
             }

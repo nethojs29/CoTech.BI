@@ -36,7 +36,10 @@ namespace CoTech.Bi.Modules.Wer.Models.Files
             var data = "";
             foreach (var report in reports)
             {
-                data += report.operative + "\n";
+                if (report.operative != null)
+                {
+                    data += report.operative + "\n";
+                }
             }
             return data;
         }
@@ -45,7 +48,10 @@ namespace CoTech.Bi.Modules.Wer.Models.Files
             var data = "";
             foreach (var report in reports)
             {
-                data += report.finance + "\n";
+                if (report != null)
+                {
+                    data += report.finance + "\n";
+                }
             }
             return data;
         }
@@ -53,17 +59,33 @@ namespace CoTech.Bi.Modules.Wer.Models.Files
 
     public class DataReport
     {
-        public string operative { set; get; }
-        public string finance { set; get; }
+        public string operative { set; get; } = "";
+        public string finance { set; get; } = "";
 
         public DataReport(ReportEntity entity)
         {
-            this.finance = entity.User.Name[0].ToString() + 
-                           entity.User.Lastname[0].ToString() + ": " +
-                entity.Financial;
-            this.operative = entity.User.Name[0].ToString() + 
-                             entity.User.Lastname[0].ToString() + ": " +
-                entity.Operative;
+            if(entity.Financial == null){
+                this.finance = "";
+            }
+            else{
+                if(entity.Financial.Equals("")){
+                    this.finance = "";
+                }else{
+                    this.finance = entity.User.Name[0].ToString() + 
+                           entity.User.Lastname[0].ToString() + ": " + entity.Financial;
+                }
+            }
+            if(entity.Operative == null){
+                this.operative = "";
+            }
+            else{
+                if(entity.Operative.Equals("")){
+                    this.operative = "";
+                }else{
+                    this.operative = entity.User.Name[0].ToString() + 
+                             entity.User.Lastname[0].ToString() + ": " + entity.Operative;
+                }
+            }
         }
     }
 }
