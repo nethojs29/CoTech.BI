@@ -47,4 +47,9 @@ namespace CoTech.Bi.Core.Users.Models
   {
     public string email { set; get; }
   }
+
+  public class ChangePasswordReq : IUserRequest {
+    public string OldPassword { get; set; }
+    public string NewPassword { get; set; }
+  }
 }

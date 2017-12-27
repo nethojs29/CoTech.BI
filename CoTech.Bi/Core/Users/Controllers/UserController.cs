@@ -15,10 +15,12 @@ namespace CoTech.Bi.Core.Users.Controllers {
     public class UserController : Controller
   {
     private readonly UserRepository userRepository;
+    private readonly IPasswordHasher<UserEntity> passwordHasher;
 
-    public UserController(UserRepository userRepository)
+    public UserController(UserRepository userRepository, IPasswordHasher<UserEntity> passwordHasher)
     {
       this.userRepository = userRepository;
+      this.passwordHasher = passwordHasher;
     }
 
     [HttpGet]
@@ -72,11 +74,26 @@ namespace CoTech.Bi.Core.Users.Controllers {
     public async Task<IActionResult> Update(long id, [FromBody] UpdateUserReq req) {
       var cmd = new UpdateUserCmd(req, id, HttpContext.UserId().Value);
       var updated = await userRepository.Update(cmd);
+      var user = await userRepository.WithId(id);
       if (updated) {
-        return Ok();
+        return Ok(user);
       } else {
         return BadRequest();
       }
+    }
+
+    [HttpPut("{id}/password")]
+    public async Task<IActionResult> ChangePassword(long id, [FromBody] ChangePasswordReq req) {
+      var user = await userRepository.WithId(id);
+      var result = passwordHasher.VerifyHashedPassword(user, user.Password, req.OldPassword);
+      if (result == PasswordVerificationResult.Failed) {
+        return BadRequest();
+      }
+      var hashedPass = passwordHasher.HashPassword(user, req.NewPassword);
+      var cmd = new ChangePasswordCmd(hashedPass, id);
+      var changed = await userRepository.ChangePassword(cmd);
+      if (changed) return Ok();
+      return BadRequest();
     }
   }
 }
