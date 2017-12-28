@@ -18,10 +18,12 @@ namespace CoTech.Bi.Modules.Invoices{
 
         public void ConfigureServices(IServiceCollection services){
             services.AddScoped<InvoiceRepository>();
+            services.AddScoped<InvoicePaymentRepository>();
         }
 
         public void ConfigureEntities(ModelBuilder mBuilder){
             mBuilder.Entity<InvoiceEntity>().ToTable("Invoices");
+            mBuilder.Entity<InvoicePayment>().ToTable("Invoice_Payments");
         }
         
         public void ConfigureInitializer(BiContext context, UserManager<UserEntity> userManager){}
