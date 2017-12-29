@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -25,7 +26,16 @@ namespace CoTech.Bi.Core.Notifications.Controllers
         [HttpGet("mine")]
         [RequiresAuth]
         [ProducesResponseType(typeof(NotificationResponse), 200)]
-        public async Task GetMyNotifications(){
+        public async Task<IActionResult> GetAllMyNotifications() {
+            var userId = HttpContext.UserId().Value;
+            var notifications = await notificationRepository.AllForUser(userId);
+            return Ok(notifications.Select(n => new NotificationResponse(n, userId)));
+        }
+
+        [HttpGet("mine/listen")]
+        [RequiresAuth]
+        [ProducesResponseType(typeof(NotificationResponse), 200)]
+        public async Task ListenMyNotifications(){
             if(HttpContext.WebSockets.IsWebSocketRequest){
                 var socket = await HttpContext.WebSockets.AcceptWebSocketAsync();
                 var userId = HttpContext.UserId().Value;

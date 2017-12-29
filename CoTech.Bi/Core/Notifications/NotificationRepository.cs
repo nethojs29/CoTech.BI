@@ -23,8 +23,13 @@ namespace CoTech.Bi.Core.Notifications.Repositories
             this.context = context;
         }
 
-        public IObservable<NotificationEntity> Listen(long userId) {
+        public Task<List<NotificationEntity>> AllForUser(long userId) {
+            return db.Where(n => n.Receivers.Any(r => r.UserId == userId))
+                .Include(n => n.Receivers)
+                .ToListAsync();
+        }
 
+        public IObservable<NotificationEntity> Listen(long userId) {
             return DbObservable<BiContext>.FromInserted<NotificationEntity>()
                 .Where(n => n.Entity.Receivers.Any(u => u.UserId == userId))
                 .Select(n => n.Entity);

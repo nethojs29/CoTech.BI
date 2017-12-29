@@ -31,7 +31,7 @@ namespace CoTech.Bi.Core.Users.Controllers {
     }
 
     [HttpGet("{user}")]
-    [RequiresAbsoluteRoleAnywhere(Role.Super, Role.Admin)]
+    [RequiresAuth]
       public async Task<IActionResult> GetUserInCompany(long company, long user) {
           var userEntity = await userRepository.WithId(user);
           return Ok(userEntity);
