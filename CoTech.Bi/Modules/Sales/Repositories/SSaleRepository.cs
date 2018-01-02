@@ -21,6 +21,14 @@ namespace CoTech.Bi.Modules.Sales.Repositories{
         public Task<List<SSaleEntity>> getAll(long idCompany){
             return db.Where(p => !p.DeletedAt.HasValue && idCompany == p.CompanyId).Include(p => p.Client).ToListAsync();
         }
+
+        public Task<List<SSaleEntity>> getAllInMonth(long idCompany, int month, int year){
+            return db.Where(p => !p.DeletedAt.HasValue && idCompany == p.CompanyId && p.Date.Month == month && p.Date.Year == year).ToListAsync();
+        }
+
+        public Task<List<SSaleEntity>> getAllInYear(long idCompany, int year){
+            return db.Where(p => !p.DeletedAt.HasValue && idCompany == p.CompanyId && p.Date.Year == year).ToListAsync();
+        }
         
         public Task<List<SSaleEntity>> getAllByClient(long idClient){
             return db.Where(s => !s.DeletedAt.HasValue && s.ClientId == idClient).Include(s => s.Client).ToListAsync();
