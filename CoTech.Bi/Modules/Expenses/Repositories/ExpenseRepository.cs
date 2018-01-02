@@ -23,13 +23,26 @@ namespace CoTech.Bi.Modules.Expenses.Models{
             return db.Where(p=> !p.DeletedAt.HasValue && p.RequisitionId == requisitionId).Include(e => e.Provider).Include(e => e.ExpenseGroup).ToListAsync();
         }
 
-        public Task<List<ExpenseEntity>> getAllApprovedExpensesByGroupInYear(long type, int year){
-            return db.Where(e => e.ExpenseGroupId == type && !e.DeletedAt.HasValue && e.Requisition.Status == 2 
+        public Task<List<ExpenseEntity>> getAllApprovedExpensesByGroupInYear(long group, int year){
+            return db.Where(e => e.ExpenseGroupId == group && !e.DeletedAt.HasValue && e.Requisition.Status > 2 
+                                 && e.Requisition.ApproveDate.Value.Year == year).ToListAsync();
+        }
+
+        public Task<List<ExpenseEntity>> getAllByGroupInMonth(long group, int year, int month){
+            return db.Where(e => e.Requisition.Status >= 1 && e.ExpenseGroupId == group && !e.DeletedAt.HasValue && reqInMonth(e.Requisition, month, year)).ToListAsync();
+        }
+
+        public Task<List<ExpenseEntity>> getAllApprovedExpensesByTypeInYear(long type, int year){
+            return db.Where(e => e.ExpenseGroup.TypeId == type && !e.DeletedAt.HasValue && e.Requisition.Status > 2 
                                  && e.Requisition.ApproveDate.Value.Year == year).ToListAsync();
         }
         
+        public Task<List<ExpenseEntity>> getAllByTypeInMonth(long type, int year, int month){
+            return db.Where(e => e.Requisition.Status >= 1 && e.ExpenseGroup.TypeId == type && !e.DeletedAt.HasValue && reqInMonth(e.Requisition, month, year)).ToListAsync();
+        }
+        
         public Task<List<ExpenseEntity>> getAllExpensesInMonth(int year, int month){
-            return db.Where(e => e.Requisition.Status <= 1 && !e.DeletedAt.HasValue && reqInMonth(e.Requisition, month, year)).ToListAsync();
+            return db.Where(e => e.Requisition.Status >= 1 && !e.DeletedAt.HasValue && reqInMonth(e.Requisition, month, year)).ToListAsync();
         }
 
         private bool reqInMonth(RequisitionEntity req, int month, int year){
@@ -37,7 +50,7 @@ namespace CoTech.Bi.Modules.Expenses.Models{
         }
 
         public Task<List<ExpenseEntity>> getAllExpensesByGroupInMonth(long groupId, int year, int month){
-            return db.Where(e => e.Requisition.Status <= 1 && !e.DeletedAt.HasValue && reqInMonth(e.Requisition, month, year) && e.ExpenseGroupId == groupId).Include(e => e.Requisition).ToListAsync();
+            return db.Where(e => e.Requisition.Status >= 1 && !e.DeletedAt.HasValue && reqInMonth(e.Requisition, month, year) && e.ExpenseGroupId == groupId).Include(e => e.Requisition).ToListAsync();
         }
 
         public Task<ExpenseEntity> WithId(long id){
