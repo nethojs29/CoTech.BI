@@ -63,10 +63,10 @@ namespace CoTech.Bi.Modules.Wer.Repositories
         {
             try
             {
-                var cert = Directory.GetCurrentDirectory() + "/wwwroot/Certs/Res_Push.p12";
+                var cert = Directory.GetCurrentDirectory() + "/wwwroot/Certs/RES_PUSH_PROD.p12";
                 var MY_DEVICE_TOKENS = this._dbToken.Where(t => userIdsList.Any(usr => usr == t.UserId)).ToList();
                 // Configuration (NOTE: .pfx can also be used here)
-                var config = new ApnsConfiguration(ApnsConfiguration.ApnsServerEnvironment.Sandbox,cert,"");
+                var config = new ApnsConfiguration(ApnsConfiguration.ApnsServerEnvironment.Production,cert,"");
                     // Create a new broker
                     var apnsBroker = new ApnsServiceBroker (config);
                     // Wire up events
