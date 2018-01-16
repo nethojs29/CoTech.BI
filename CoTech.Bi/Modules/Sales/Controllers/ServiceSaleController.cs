@@ -10,7 +10,7 @@ namespace CoTech.Bi.Modules.Sales.Controllers{
         private readonly ServiceSaleRepository serviceSaleRepo;
 
         public ServiceSaleController(ServiceSaleRepository provierRepo){
-            this.serviceSaleRepo = provierRepo;
+            serviceSaleRepo = provierRepo;
         }
 
         [HttpGet]
