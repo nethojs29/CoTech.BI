@@ -22,8 +22,8 @@ namespace CoTech.Bi.Modules.Requisitions.Models{
             this.context = context;
         }
 
-        public Task<List<RequisitionEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).Include(r => r.Responsable).Include(r => r.DinningRoom).ToListAsync();
+        public Task<List<RequisitionEntity>> getAll(long idCompany){
+            return db.Where(p => !p.DeletedAt.HasValue && idCompany == p.CompanyId).Include(r => r.Responsable).Include(r => r.DinningRoom).Include(r => r.ApproveUser).ToListAsync();
         }
 
         public Task<RequisitionEntity> WithId(long id){

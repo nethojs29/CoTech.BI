@@ -19,8 +19,8 @@ namespace CoTech.Bi.Modules.Expenses.Models{
             this.context = context;
         }
 
-        public Task<List<ExpenseTypeEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).ToListAsync();
+        public Task<List<ExpenseTypeEntity>> getAll(long companyId){
+            return db.Where(p => !p.DeletedAt.HasValue && p.CompanyId == companyId).ToListAsync();
         }
 
         public Task<ExpenseTypeEntity> WithId(long id){

@@ -13,15 +13,30 @@ namespace CoTech.Bi.Modules.Expenses.Controllers{
         public ExpenseController(ExpenseRepository expenseRepo){
             this.expenseRepo = expenseRepo;
         }
-        
-        [HttpGet]
-        public async Task<IActionResult> getAll(){
-            return new OkObjectResult(await expenseRepo.getAll());
-        }
 
         [HttpGet("requisition/{requisitionId}")]
         public async Task<IActionResult> getAllByRequisition(long requisitionId){
             return new OkObjectResult(await expenseRepo.getAllByRequisition(requisitionId));
+        }
+
+        [HttpGet("type/{typeId}/{year}")]
+        public async Task<IActionResult> getAllByTypeInYear(long typeId, int year){
+            return new OkObjectResult(await expenseRepo.getAllApprovedExpensesByTypeInYear(typeId, year));
+        }
+
+        [HttpGet("type/{typeId}/{year}/{month}")]
+        public async Task<IActionResult> getAllByTypeInMonth(long typeId, int year, int month){
+            return new OkObjectResult(await expenseRepo.getAllByTypeInMonth(typeId, year, month));
+        }
+
+        [HttpGet("group/{groupId}/{year}")]
+        public async Task<IActionResult> getAllByGroupInYear(long groupId, int year){
+            return new OkObjectResult(await expenseRepo.getAllApprovedExpensesByGroupInYear(groupId, year));
+        }
+
+        [HttpGet("group/{groupId}/{year}/{month}")]
+        public async Task<IActionResult> getAllByGroupInMonth(long groupId, int year, int month){
+            return new OkObjectResult(await expenseRepo.getAllByGroupInMonth(groupId, year, month));
         }
 
         [HttpGet("{id}")]

@@ -18,8 +18,8 @@ namespace CoTech.Bi.Modules.Providers.Models{
             this.context = context;
         }
 
-        public Task<List<ProviderEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).ToListAsync();
+        public Task<List<ProviderEntity>> getAll(long idCompany){
+            return db.Where(p => !p.DeletedAt.HasValue && p.CompanyId == idCompany).ToListAsync();
         }
 
         public Task<ProviderEntity> WithId(long id){

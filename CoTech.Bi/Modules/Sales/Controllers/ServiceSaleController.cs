@@ -10,17 +10,37 @@ namespace CoTech.Bi.Modules.Sales.Controllers{
         private readonly ServiceSaleRepository serviceSaleRepo;
 
         public ServiceSaleController(ServiceSaleRepository provierRepo){
-            this.serviceSaleRepo = provierRepo;
+            serviceSaleRepo = provierRepo;
         }
 
         [HttpGet]
-        public async Task<IActionResult> getAll(){
-            return new OkObjectResult(await serviceSaleRepo.getAll());
+        public async Task<IActionResult> getAll(long idCompany){
+            return new OkObjectResult(await serviceSaleRepo.getAll(idCompany));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(long id){
             return new OkObjectResult(await serviceSaleRepo.WithId(id));
+        }
+
+        [HttpGet("date/{year}/{month}")]
+        public async Task<IActionResult> GetAllByMonth(long idCompany, int month, int year){
+            return new OkObjectResult(await serviceSaleRepo.getAllInMonth(idCompany, month, year));
+        }
+
+        [HttpGet("year/{year}")]
+        public async Task<IActionResult> GetAllByYear(long idCompany, int year){
+            return new OkObjectResult(await serviceSaleRepo.getAllInYear(idCompany, year));
+        }
+
+        [HttpGet("service/{idService}/{year}/{month}")]
+        public async Task<IActionResult> GetAllByServiceInMonth(long idCompany, long idService, int month, int year){
+            return new OkObjectResult(await serviceSaleRepo.getAllByServiceInMonth(idCompany, idService, month, year));
+        }
+
+        [HttpGet("client/{idClient}")]
+        public async Task<IActionResult> getAllByClient(long idClient){
+            return new OkObjectResult(await serviceSaleRepo.getAllByClient(idClient));
         }
 
         [HttpPost]

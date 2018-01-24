@@ -13,8 +13,8 @@ namespace CoTech.Bi.Modules.Services.Controllers{
         }
         
         [HttpGet]
-        public async Task<IActionResult> getAll(){
-            return new OkObjectResult(await spcRepo.getAll());
+        public async Task<IActionResult> getAll(long idCompany){
+            return new OkObjectResult(await spcRepo.getAll(idCompany));
         }
 
         [HttpGet("client/{clientId}")]

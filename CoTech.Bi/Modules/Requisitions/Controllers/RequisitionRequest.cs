@@ -43,6 +43,7 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
     public class ApproveRequisitionReq : RequisitionRequest{
         public string PaymentMethod{ set; get; }
         public long BankId{ set; get; }
+        public long? LenderId { set; get; }
     }
 
     public class ComprobateRequisitionReq : RequisitionRequest{

@@ -18,8 +18,8 @@ namespace CoTech.Bi.Modules.Services{
             this.context = context;
         }
 
-        public Task<List<Service_Price_ClientEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).ToListAsync();
+        public Task<List<Service_Price_ClientEntity>> getAll(long idCompany){
+            return db.Where(p => !p.DeletedAt.HasValue && idCompany == p.CompanyId).ToListAsync();
         }
 
         public Task<Service_Price_ClientEntity> WithId(long id){

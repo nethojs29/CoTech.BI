@@ -18,8 +18,25 @@ namespace CoTech.Bi.Modules.Sales.Repositories{
             this.context = context;
         }
 
-        public Task<List<ServiceSaleEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).ToListAsync();
+        public Task<List<ServiceSaleEntity>> getAll(long idCompany){
+            return db.Where(p => !p.DeletedAt.HasValue && idCompany == p.CompanyId).ToListAsync();
+        }
+
+        public Task<List<ServiceSaleEntity>> getAllInMonth(long idCompany, int month, int year){
+            return db.Where(p => !p.DeletedAt.HasValue && idCompany == p.CompanyId && p.CreatedAt.Month == month && p.CreatedAt.Year == year).ToListAsync();
+        }
+
+        public Task<List<ServiceSaleEntity>> getAllInYear(long idCompany, int year){
+            return db.Where(p => !p.DeletedAt.HasValue && idCompany == p.CompanyId && p.CreatedAt.Year == year).ToListAsync();
+        }
+
+        public Task<List<ServiceSaleEntity>>
+            getAllByServiceInMonth(long idCompany, long idService, int month, int year){
+            return db.Where(p => !p.DeletedAt.HasValue && idCompany == p.CompanyId && p.ServiceId == idService && p.CreatedAt.Month == month && p.CreatedAt.Year == year).ToListAsync();
+        }
+        
+        public Task<List<ServiceSaleEntity>> getAllByClient(long idClient){
+            return db.Where(p => !p.DeletedAt.HasValue && idClient == p.Sale.ClientId).Include(s => s.Sale).ToListAsync();
         }
 
         public Task<ServiceSaleEntity> WithId(long id){

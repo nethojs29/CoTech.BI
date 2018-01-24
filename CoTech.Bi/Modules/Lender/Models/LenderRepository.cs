@@ -18,8 +18,8 @@ namespace CoTech.Bi.Modules.Lender.Models{
             this.context = context;
         }
 
-        public Task<List<LenderEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).ToListAsync();
+        public Task<List<LenderEntity>> getAll(long idCompany){
+            return db.Where(p => !p.DeletedAt.HasValue && p.CompanyId == idCompany).ToListAsync();
         }
 
         public Task<LenderEntity> WithId(long id){

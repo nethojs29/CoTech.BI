@@ -417,18 +417,6 @@ namespace CoTech.Bi.Modules.Wer.Seeds
                   new PermissionEntity()
                   {
                       RoleId = 601,
-                      CompanyId = companies["mazcot"].Id
-                  }, new PermissionEntity()
-                  {
-                      RoleId = 601,
-                      CompanyId = companies["siac"].Id
-                  }, new PermissionEntity()
-                  {
-                      RoleId = 601,
-                      CompanyId = companies["super-del-sol"].Id
-                  }, new PermissionEntity()
-                  {
-                      RoleId = 601,
                       CompanyId = companies["gastro-capital"].Id
                   }, new PermissionEntity()
                   {
@@ -446,15 +434,15 @@ namespace CoTech.Bi.Modules.Wer.Seeds
                 Permissions = new List<PermissionEntity> {
                   new PermissionEntity()
                   {
-                      RoleId = 601,
+                      RoleId = 1,
                       CompanyId = companies["mazcot"].Id
                   }, new PermissionEntity()
                   {
-                      RoleId = 601,
+                      RoleId = 1,
                       CompanyId = companies["siac"].Id
                   }, new PermissionEntity()
                   {
-                      RoleId = 601,
+                      RoleId = 1,
                       CompanyId = companies["super-del-sol"].Id
                   }
                 }
@@ -1493,11 +1481,7 @@ namespace CoTech.Bi.Modules.Wer.Seeds
                   new CompanyEntity()
                   {
                       Activity= "Sin especificar",
-                      Modules = new List<CompanyToModule> { 
-                          new CompanyToModule {
-                              ModuleId = 6
-                          }
-                       },
+
                       Name = "MAZCOT",
                       Color ="1078CC",
                       // ParentId = 101,
@@ -1509,8 +1493,38 @@ namespace CoTech.Bi.Modules.Wer.Seeds
                             Activity= "Sin especificar",
                             Modules = new List<CompanyToModule> { 
                                 new CompanyToModule {
-                                    ModuleId = 6
-                                }
+                                    ModuleId = 7
+                                },new CompanyToModule {
+                                    ModuleId = 8
+                                },new CompanyToModule {
+                                    ModuleId = 9
+                                },new CompanyToModule {
+                                    ModuleId = 10
+                                },new CompanyToModule {
+                                    ModuleId = 11
+                                },new CompanyToModule {
+                                    ModuleId = 12
+                                },new CompanyToModule {
+                                    ModuleId = 13
+                                },new CompanyToModule {
+                                    ModuleId = 14
+                                },new CompanyToModule {
+                                    ModuleId = 15
+                                },new CompanyToModule {
+                                    ModuleId = 16
+                                },new CompanyToModule {
+                                    ModuleId = 17
+                                },new CompanyToModule {
+                                    ModuleId = 18
+                                },new CompanyToModule {
+                                    ModuleId = 19
+                                },new CompanyToModule {
+                                    ModuleId = 20
+                                },new CompanyToModule {
+                                    ModuleId = 21
+                                },new CompanyToModule {
+                                    ModuleId = 22
+                                },
                              },
                             Name = "SIAC",
                             Color ="1078CC",

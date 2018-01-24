@@ -19,8 +19,8 @@ namespace CoTech.Bi.Modules.Personal{
             this.context = context;
         }
 
-        public Task<List<PersonalEntity>> getAll(){
-            return db.Where(p => !p.DeletedAt.HasValue).ToListAsync();
+        public Task<List<PersonalEntity>> getAll(long idCompany){
+            return db.Where(p => !p.DeletedAt.HasValue && p.CompanyId == idCompany).ToListAsync();
         }
 
         public Task<PersonalEntity> WithId(long id){
