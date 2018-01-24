@@ -432,18 +432,10 @@ namespace CoTech.Bi.Modules.Wer.Seeds
                 Email="caroovg@hotmail.com",
                 Password="cvillaescusa",
                 Permissions = new List<PermissionEntity> {
-                  new PermissionEntity()
-                  {
-                      RoleId = 1,
-                      CompanyId = companies["mazcot"].Id
-                  }, new PermissionEntity()
+                new PermissionEntity()
                   {
                       RoleId = 1,
                       CompanyId = companies["siac"].Id
-                  }, new PermissionEntity()
-                  {
-                      RoleId = 1,
-                      CompanyId = companies["super-del-sol"].Id
                   }
                 }
             },new UserEntity(){
@@ -1533,11 +1525,6 @@ namespace CoTech.Bi.Modules.Wer.Seeds
                         }, new CompanyEntity()
                         {
                             Activity= "Sin especificar",
-                            Modules = new List<CompanyToModule> { 
-                                new CompanyToModule {
-                                    ModuleId = 6
-                                }
-                             },
                             Name = "SUPER DEL SOL",
                             Color ="1078CC",
                             // ParentId =30,

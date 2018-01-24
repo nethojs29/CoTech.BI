@@ -46,6 +46,22 @@ namespace CoTech.Bi.Core.Users.Seeds
               EmailConfirmed = true,
               Password = "benancio",
               Root = new RootEntity()
+          },
+          new UserEntity {
+            Name = "Ernesto",
+            Lastname = "Jaramillo",
+            Email = "jjaramillo@cotecnologias.com",
+            EmailConfirmed = true,
+            Password = "MFMV1403",
+            Root = new RootEntity()
+          },
+          new UserEntity {
+            Name = "Miguel",
+            Lastname = "Reina",
+            Email = "mreina@cotecnologias.com",
+            EmailConfirmed = true,
+            Password = "batman",
+            Root = new RootEntity()
           }
     };
 
