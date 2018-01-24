@@ -11,8 +11,8 @@ using System;
 namespace CoTech.Bi.Migrations
 {
     [DbContext(typeof(BiContext))]
-    [Migration("20171202004015_init")]
-    partial class init
+    [Migration("20180124171237_facturas-fixes-varios")]
+    partial class facturasfixesvarios
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -566,6 +566,40 @@ namespace CoTech.Bi.Migrations
                     b.HasIndex("CreatorId");
 
                     b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Invoices.Models.InvoicePayment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("CompanyId");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<long>("CreatorId");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<string>("Folio");
+
+                    b.Property<long>("InvoiceId");
+
+                    b.Property<string>("Observations");
+
+                    b.Property<double>("Payment");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.ToTable("Invoice_Payments");
                 });
 
             modelBuilder.Entity("CoTech.Bi.Modules.Lender.Models.LenderEntity", b =>
@@ -1503,6 +1537,24 @@ namespace CoTech.Bi.Migrations
                     b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CoTech.Bi.Modules.Invoices.Models.InvoicePayment", b =>
+                {
+                    b.HasOne("CoTech.Bi.Core.Companies.Models.CompanyEntity", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Core.Users.Models.UserEntity", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoTech.Bi.Modules.Invoices.Models.InvoiceEntity", "Invoice")
+                        .WithMany()
+                        .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
