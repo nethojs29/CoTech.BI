@@ -11,8 +11,8 @@ using System;
 namespace CoTech.Bi.Migrations
 {
     [DbContext(typeof(BiContext))]
-    [Migration("20180124171237_facturas-fixes-varios")]
-    partial class facturasfixesvarios
+    [Migration("20180130181954_Seedv1")]
+    partial class Seedv1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
