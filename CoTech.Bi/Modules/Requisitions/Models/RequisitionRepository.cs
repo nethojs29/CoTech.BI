@@ -27,7 +27,7 @@ namespace CoTech.Bi.Modules.Requisitions.Models{
         }
 
         public Task<RequisitionEntity> WithId(long id){
-            return db.Include(r => r.Responsable).Include(r => r.DinningRoom)
+            return db.Include(r => r.Responsable).Include(r => r.DinningRoom).Include(r => r.ComprobateUser)
                 .FirstOrDefaultAsync(r => r.Id == id);
         }
 

@@ -72,39 +72,27 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
         public async Task<IActionResult> Comprobate(long id, [FromBody] ComprobateRequisitionReq req,
             [FromForm(Name = "file")] IFormFile formFile){
             var requisition = await requisitionRepo.WithId(id);
-            //No sé cómo subir archivos (8
             requisition.Refund = req.Refund;
             requisition.ComprobateDate = DateTime.Now;
             requisition.ComprobateUserId = HttpContext.UserId();
             requisition.Status = 3;
             await requisitionRepo.Comprobate(requisition);
-            return new OkObjectResult(requisition);
-//            try {
-//                if (formFile != null) {
-//                    var directory = Directory.GetCurrentDirectory();
-//                    var filePath = directory + Guid.NewGuid() + Path.GetExtension(formFile.FileName);
-//                    if (formFile.Length > 0) {
-//                        using (var stream = new FileStream(filePath, FileMode.Create)) {
-//                            await formFile.CopyToAsync(stream);
-//                        }
-//                    }
-//                    requisition.Refund = req.Refund;
-//                    requisition.ComprobateFileUrl = filePath;
-//                    requisition.ComprobateDate = DateTime.Now;
-//                    requisition.ComprobateUserId = HttpContext.UserId();
-//            
-//                    return new OkObjectResult(requisition);        
-//                } else {
-//                    return new BadRequestResult();
-//                }
-//            }
-//            catch (Exception exception) {
-//                Console.WriteLine(exception);
-//                return StatusCode(500);
-//            }
 
-
-        }
+            if (requisition.Refund.Value > 0){
+                var mov = new SmallBoxEntity {
+                Concept = String.Format("Devolución de Requisición {0}", requisition.Keyword),
+                Amount = requisition.Refund.Value,
+                Date = DateTime.Now,
+                Type = 1,
+                BankId = req.BankId,
+                RequisitionId = requisition.Id,
+                CreatedAt = DateTime.Now,
+                CompanyId = requisition.CompanyId,
+                CreatorId = HttpContext.UserId().Value
+                };
+                await smallRepo.Create(mov);
+            }
+            return new OkObjectResult(requisition);        }
 
         [HttpPost("{id}/addFile")]
         public async Task<IActionResult> AddFile(long id, [FromForm(Name = "file")] IFormFile formFile){

@@ -48,5 +48,6 @@ namespace CoTech.Bi.Modules.Requisitions.Controllers{
 
     public class ComprobateRequisitionReq : RequisitionRequest{
         public float Refund{ set; get; }
+        public long BankId{ set; get; }
     }
 }

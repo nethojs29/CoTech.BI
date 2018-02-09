@@ -40,7 +40,7 @@ namespace CoTech.Bi.Modules.Requisitions.Models{
         public UserEntity Creator{ set; get; }
         public UserEntity Responsable{ set; get; }
         public UserEntity ApproveUser{ set; get; }
-        public UserEntity ComprobateUSer{ set; get; }
+        public UserEntity ComprobateUser{ set; get; }
         public LenderEntity Lender{ set; get; }
         public CompanyEntity Company{ set; get; }
         public DinningRoomEntity DinningRoom{ set; get; }
