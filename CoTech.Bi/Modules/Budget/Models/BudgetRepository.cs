@@ -30,6 +30,14 @@ namespace CoTech.Bi.Modules.Budget.Models{
             return db.Where(b => !b.DeletedAt.HasValue && b.Year == year && b.Month == month && b.CompanyId == idCompany && b.ExpenseTypeId != 1).OrderBy(b => b.ExpenseTypeId).ToListAsync();
         }
 
+        public Task<List<BudgetEntity>> monthlyByType(long year, long month, long idCompany, long expenseTypeId){
+            return db.Where(b => b.CompanyId == idCompany && b.Year == year && month == b.Month && b.ExpenseTypeId == expenseTypeId).ToListAsync();
+        }
+
+        public Task<BudgetEntity> getBudgetByType(long idCompany, long expenseTypeId){
+            return db.SingleOrDefaultAsync(budget => budget.CompanyId == idCompany && budget.ExpenseTypeId == expenseTypeId);
+        }
+
         public Task<List<BudgetEntity>> getAllByGroup(long type, int year){
             return db.Where(p => !p.DeletedAt.HasValue && p.ExpenseTypeId == type && p.Year == year).ToListAsync();
         }

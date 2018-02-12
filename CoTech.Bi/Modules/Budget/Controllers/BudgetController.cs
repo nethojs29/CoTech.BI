@@ -12,11 +12,13 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
         private readonly BudgetRepository budgetRepo;
         private readonly ExpenseRepository expenseRepo;
         private readonly BudgetConceptRepository conceptRepo;
+        private readonly ExpenseGroupRepository groupRepo;
 
-        public BudgetController(BudgetRepository budgetRepo, ExpenseRepository expenseRepo, BudgetConceptRepository conceptRepo){
+        public BudgetController(BudgetRepository budgetRepo, ExpenseRepository expenseRepo, BudgetConceptRepository conceptRepo, ExpenseGroupRepository groupRepo){
             this.budgetRepo = budgetRepo;
             this.expenseRepo = expenseRepo;
             this.conceptRepo = conceptRepo;
+            this.groupRepo = groupRepo;
         }
         
         [HttpGet("{year}")]
@@ -46,7 +48,16 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
         [HttpGet("limit/{year}/{month}/{groupId}")]
         public async Task<IActionResult> getMonthGroupLimit(int year, int month, long groupId, long idCompany){
             var budgets = await conceptRepo.monthlyGroupBudget(groupId, idCompany, month, year);
-            var totalBudget = budgets.Count > 0 ? budgets.Select(b => b.Amount).Aggregate((a, b) => a + b) : 0;
+            var group = await groupRepo.WithId(groupId);
+            var totalBudget = 0.0;
+            if(budgets.Count > 0){
+                totalBudget = budgets.Select(b => b.Amount).Aggregate((a, b) => a + b);
+            } else {
+                var budget = await budgetRepo.getBudgetByType(idCompany, group.TypeId);
+                var concepts = await conceptRepo.getAllByBudget(budget.Id);
+                return new OkObjectResult(budget.Amount - concepts.Select(c => c.Amount).Aggregate((a, b) => a+b));
+            }
+             
             var spent = await expenseRepo.getAllExpensesByGroupInMonth(groupId, year, month);
             var totalSpent = 0.0;
             spent.ForEach(e => {
