@@ -65,10 +65,6 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
                 typeSpent.ForEach(e => {
                     total += e.Price * e.Quantity;
                 });
-                Console.WriteLine("A verrrrrrr");
-                Console.WriteLine(budget.Amount);
-                Console.WriteLine(total);
-                Console.WriteLine(concepts.Select(c => c.Amount).Aggregate((a, b) => a+b));
                 return new OkObjectResult(budget.Amount - total);
             }
 
