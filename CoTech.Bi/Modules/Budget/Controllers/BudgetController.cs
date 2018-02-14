@@ -58,17 +58,18 @@ namespace CoTech.Bi.Modules.Budget.Controllers{
             if(budgets.Count > 0){
                 totalBudget = budgets.Select(b => b.Amount).Aggregate((a, b) => a + b);
             } else {
-                var budget = await budgetRepo.getBudgetByType(idCompany, group.TypeId);
+                var budget = await budgetRepo.getBudgetByType(idCompany, group.TypeId, year, month);
                 var concepts = await conceptRepo.getAllByBudget(budget.Id);
                 var typeSpent = await expenseRepo.getAllExpensesByTypeInMonth(group.TypeId, year, month);
                 var total = 0.0;
+                var conceptsTotal = concepts.Count > 0 ? concepts.Select(c => c.Amount).Aggregate((a, b) => a+b) : 0.0;
                 typeSpent.ForEach(e => {
-                    total += e.Price * e.Quantity;
+                    if (concepts.Exists(c => c.ExpenseGroupId != e.ExpenseGroupId)){
+                        total += e.Price * e.Quantity;
+                    }
                 });
-                return new OkObjectResult(budget.Amount - total);
+                return new OkObjectResult(budget.Amount - conceptsTotal - total);
             }
-
-            Console.WriteLine(totalBudget - totalSpent);
             return new OkObjectResult(totalBudget - totalSpent);
         }
 

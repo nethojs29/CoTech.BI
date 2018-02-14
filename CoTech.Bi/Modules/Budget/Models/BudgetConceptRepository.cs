@@ -27,7 +27,7 @@ namespace CoTech.Bi.Modules.Budget.Models{
         }
 
         public Task<List<BudgetConceptEntity>> monthlyGroupBudget(long groupId, long companyId, int month, int year){
-            return db.Where(b => b.ExpenseGroupId == groupId && b.CompanyId == companyId && b.Budget.Month == month && b.Budget.Year == year).ToListAsync();
+            return db.Where(b => (b.ExpenseGroupId == groupId) && b.CompanyId == companyId && b.Budget.Month == month && b.Budget.Year == year).ToListAsync();
         }
 
         public async Task Create(BudgetConceptEntity entity){
